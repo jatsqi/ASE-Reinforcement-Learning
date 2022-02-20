@@ -8,32 +8,31 @@ import java.util.List;
 
 public class ReflectionUtils {
 
-    public static void setField(Field field, Object target, Object value) {
-        try {
-            field.set(target, value);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+    public static void setField(Field field, Object target, Object value) throws IllegalAccessException {
+        field.setAccessible(true);
+        field.set(target, value);
     }
 
-    public static Object getField(Field field, Object target) {
-        try {
-            return field.get(target);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    public static Object getField(Field field, Object target) throws IllegalAccessException {
+        field.setAccessible(true);
+        return field.get(target);
     }
 
-    public static Field findField(Class<?> cls, String name) {
+    public static void setField(String name, Object target, Object value) throws NoSuchFieldException, IllegalAccessException {
+        setField(findField(target.getClass(), name), target, value);
+    }
+
+    public static Object getField(String name, Object target) throws NoSuchFieldException, IllegalAccessException {
+        return getField(findField(target.getClass(), name), target);
+    }
+
+    public static Field findField(Class<?> cls, String name) throws NoSuchFieldException {
         try {
-            cls.getField(name);
+            Field field = cls.getField(name);
+            return field;
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            return cls.getDeclaredField(name);
         }
-
-        return null;
     }
 
     public static <T> List<Constructor<T>> findConstructorAnnotatedWith(Class<T> cls, Class<? extends Annotation> annotation) {
