@@ -29,7 +29,7 @@ public class TypeAnalyzer {
 
         try {
             Constructor<T> constructor = findInjectionTarget(target);
-            Class<?>[] dependencies = collectTargetDependencyTypesRecursively(target);
+            Class<?>[] dependencies = collectTargetDependencyTypes(target);
 
             AnalyzedType<T> analyzedType = new AnalyzedType<>(target, constructor, dependencies);
             cachedTypes.put(target, analyzedType);
