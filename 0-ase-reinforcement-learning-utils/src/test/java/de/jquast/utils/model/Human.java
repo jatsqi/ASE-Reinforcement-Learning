@@ -1,4 +1,4 @@
-package de.jquast.utils.reflection;
+package de.jquast.utils.model;
 
 import de.jquast.utils.di.annotations.Inject;
 
@@ -23,5 +23,9 @@ public class Human {
 
     public int getAge() {
         return age;
+    }
+
+    public static Human createDummyHuman() {
+        return new Human("Johannes Quast", 22);
     }
 }

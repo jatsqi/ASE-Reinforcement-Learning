@@ -86,7 +86,7 @@ public class ReflectionUtils {
      * @param annotation    Die Annotation, die vorhanden sein muss.
      * @return              Der gefundene Konstruktor. NULL, wenn kein passender Konstruktor gefunden wurde.
      */
-    public static <T> List<Constructor<T>> findConstructorAnnotatedWith(Class<T> cls, Class<? extends Annotation> annotation) {
+    public static <T> List<Constructor<T>> findConstructorAnnotatedWith(Class<?> cls, Class<? extends Annotation> annotation) {
         List<Constructor<T>> constructors = new ArrayList<>();
 
         for (Constructor c : cls.getConstructors()) {
@@ -106,7 +106,7 @@ public class ReflectionUtils {
      * @param annotation    Die Annotation, die vorhanden sein muss.
      * @return              Der gefundene Konstruktor. NULL, wenn kein passender Konstruktor gefunden wurde.
      */
-    public static <T> List<Constructor<T>> findDeclaredConstructorAnnotatedWith(Class<T> cls, Class<? extends Annotation> annotation) {
+    public static <T> List<Constructor<T>> findDeclaredConstructorAnnotatedWith(Class<?> cls, Class<? extends Annotation> annotation) {
         List<Constructor<T>> constructors = new ArrayList<>();
 
         for (Constructor c : cls.getDeclaredConstructors()) {

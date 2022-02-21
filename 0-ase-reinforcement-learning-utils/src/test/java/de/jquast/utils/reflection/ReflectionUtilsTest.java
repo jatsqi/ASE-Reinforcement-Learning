@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import de.jquast.utils.di.annotations.Inject;
 import de.jquast.utils.di.annotations.Mapping;
+import de.jquast.utils.model.Human;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
@@ -30,57 +31,53 @@ public class ReflectionUtilsTest {
 
     @Test
     void GetFieldsShouldReturnCorrect() throws NoSuchFieldException, IllegalAccessException {
-        Object age = ReflectionUtils.getField(ReflectionUtils.findField(Human.class, "age"), getTestHuman());
-        Object name = ReflectionUtils.getField(ReflectionUtils.findField(Human.class, "name"), getTestHuman());
+        Object age = ReflectionUtils.getField(ReflectionUtils.findField(Human.class, "age"), Human.createDummyHuman());
+        Object name = ReflectionUtils.getField(ReflectionUtils.findField(Human.class, "name"), Human.createDummyHuman());
 
-        assertEquals(age, 22);
-        assertEquals(name, "Johannes Quast");
+        assertEquals(22, age);
+        assertEquals("Johannes Quast", name);
     }
 
     @Test
     void SetFieldsShouldSetPublicName() throws NoSuchFieldException, IllegalAccessException {
-        Human dummy = getTestHuman();
+        Human dummy = Human.createDummyHuman();
 
         ReflectionUtils.setField("name", dummy, "Donald Trump");
-        assertEquals(dummy.getName(), "Donald Trump");
-        assertEquals(dummy.getAge(), 22);
+        assertEquals("Donald Trump", dummy.getName());
+        assertEquals(22, dummy.getAge());
 
         ReflectionUtils.setField(ReflectionUtils.findField(Human.class, "name"), dummy, "Angela Merkel");
-        assertEquals(dummy.getName(), "Angela Merkel");
-        assertEquals(dummy.getAge(), 22);
+        assertEquals("Angela Merkel", dummy.getName());
+        assertEquals(22, dummy.getAge());
     }
 
     @Test
     void SetFieldsShouldSetPrivateAge() throws NoSuchFieldException, IllegalAccessException {
-        Human dummy = getTestHuman();
+        Human dummy = Human.createDummyHuman();
 
         ReflectionUtils.setField("age", dummy, 99);
-        assertEquals(dummy.getName(), "Johannes Quast");
-        assertEquals(dummy.getAge(), 99);
+        assertEquals("Johannes Quast", dummy.getName());
+        assertEquals(99, dummy.getAge());
 
         ReflectionUtils.setField(ReflectionUtils.findField(Human.class, "age"), dummy, 100);
-        assertEquals(dummy.getName(), "Johannes Quast");
-        assertEquals(dummy.getAge(), 100);
+        assertEquals("Johannes Quast", dummy.getName());
+        assertEquals(100, dummy.getAge());
     }
 
     @Test
     void FindAnnotatedConstructorsShouldReturnCorrect() {
         List<Constructor<Human>> constructors = ReflectionUtils.findConstructorAnnotatedWith(Human.class, Inject.class);
 
-        assertEquals(constructors.size(), 1);
-        assertEquals(constructors.get(0).getParameterCount(), 1);
-        assertEquals(constructors.get(0).getParameterTypes()[0], String.class);
+        assertEquals(1, constructors.size());
+        assertEquals(1, constructors.get(0).getParameterCount());
+        assertEquals(String.class, constructors.get(0).getParameterTypes()[0]);
     }
 
     @Test
     void FindAnnotatedConstructorsWithUnusedAnnotationShouldReturnNothing() {
         List<Constructor<Human>> constructors = ReflectionUtils.findConstructorAnnotatedWith(Human.class, Mapping.class);
 
-        assertEquals(constructors.size(), 0);
-    }
-
-    private Human getTestHuman() {
-        return new Human("Johannes Quast", 22);
+        assertEquals(0, constructors.size());
     }
 
 }
