@@ -2,5 +2,5 @@ package de.jquast.utils.di.analyzer;
 
 import java.lang.reflect.Constructor;
 
-public record AnalyzedType<T>(Class<T> clazz, Constructor<T> injectionTarget, Class<?>[] dependencies) {
+public record AnalyzedType<T>(Class<?> clazz, Constructor<T> injectionTarget, Class<?>[] dependencies) {
 }

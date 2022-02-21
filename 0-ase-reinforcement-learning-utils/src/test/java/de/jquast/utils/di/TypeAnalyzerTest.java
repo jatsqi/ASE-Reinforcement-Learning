@@ -1,7 +1,8 @@
-package de.jquast.utils.di.analyzer;
+package de.jquast.utils.di;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import de.jquast.utils.di.analyzer.TypeAnalyzer;
 import de.jquast.utils.di.annotations.Inject;
 import de.jquast.utils.exception.InjectionException;
 import de.jquast.utils.model.Human;

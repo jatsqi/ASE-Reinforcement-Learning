@@ -22,7 +22,7 @@ public class TypeAnalyzer {
      * @param <T>
      * @return
      */
-    public static <T> AnalyzedType<T> analyze(Class<T> target) {
+    public static <T> AnalyzedType<T> analyze(Class<?> target) {
         if (cachedTypes.containsKey(target)) {
             return (AnalyzedType<T>) cachedTypes.get(target);
         }
@@ -31,7 +31,7 @@ public class TypeAnalyzer {
             Constructor<T> constructor = findInjectionTarget(target);
             Class<?>[] dependencies = collectTargetDependencyTypes(target);
 
-            AnalyzedType<T> analyzedType = new AnalyzedType<>(target, constructor, dependencies);
+            AnalyzedType<T> analyzedType = new AnalyzedType<T>(target, constructor, dependencies);
             cachedTypes.put(target, analyzedType);
             return analyzedType;
         } catch (InjectionException e) {
@@ -54,7 +54,7 @@ public class TypeAnalyzer {
      * @return Der gefundene Konstruktor.
      * @throws InjectionException Wenn kein passender Konstruktor gefunden werden, wird eine Exception geworfen.
      */
-    public static <T> Constructor<T> findInjectionTarget(Class<T> target) throws InjectionException {
+    public static <T> Constructor<T> findInjectionTarget(Class<?> target) throws InjectionException {
         Constructor[] constructors = target.getConstructors();
 
         // Genau ein Konstruktor vorhanden.
@@ -81,7 +81,7 @@ public class TypeAnalyzer {
      *                              zu können.
      * @throws InjectionException   Wenn kein passender Konstruktor gefunden werden konnte.
      */
-    public static <T> Class<?>[] collectTargetDependencyTypes(Class<T> clazz) throws InjectionException {
+    public static <T> Class<?>[] collectTargetDependencyTypes(Class<?> clazz) throws InjectionException {
         Constructor<T> constructor = findInjectionTarget(clazz);
         return constructor.getParameterTypes();
     }
@@ -94,7 +94,7 @@ public class TypeAnalyzer {
      *                              eines Typs zu instantiieren.
      * @throws InjectionException   Wenn kein passender Konstruktor gefunden werden konnte.
      */
-    public static <T> Class<?>[] collectTargetDependencyTypesRecursively(Class<T> clazz) throws InjectionException {
+    public static <T> Class<?>[] collectTargetDependencyTypesRecursively(Class<?> clazz) throws InjectionException {
         Constructor<T> constructor = findInjectionTarget(clazz);
         Class<?>[] dependencies = constructor.getParameterTypes();
 
