@@ -11,4 +11,5 @@ public @interface Command {
     String name();
     String description();
     String help() default "Just use google man.";
+    Class<?>[] subcommands() default {};
 }

@@ -9,12 +9,16 @@ import de.jquast.utils.di.analyzer.TypeAnalyzer;
 import de.jquast.utils.reflection.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CommandAnalyzer {
 
+    /**
+     * Cache für bereits analysierte Commands.
+     */
     private static final Map<Class<?>, AnalyzedCommand<?>> analyzedCommandCache = new HashMap<>();
 
     public static <T> AnalyzedCommand<T> analyze(Class<?> clazz) throws CommandAnalyzerException {
@@ -36,7 +40,18 @@ public class CommandAnalyzer {
         List<FieldAnnotationPair<Parameter>> cmdParameters = cmdOptionFields.stream().map(
                 field -> new FieldAnnotationPair<Parameter>(field, field.getAnnotation(Parameter.class))).toList();
 
-        AnalyzedCommand<T> analyzedCommand = new AnalyzedCommand<>(metadata, cmdType, cmdOptions, cmdParameters);
+        AnalyzedCommand<?>[] analyzedSubCommands = new AnalyzedCommand[metadata.subcommands().length];
+        for (int i = 0; i < metadata.subcommands().length; ++i) {
+            analyzedSubCommands[i] = analyze(metadata.subcommands()[i]);
+        }
+
+        AnalyzedCommand<T> analyzedCommand = new AnalyzedCommand<>(
+                metadata,
+                cmdType,
+                cmdOptions,
+                cmdParameters,
+                analyzedSubCommands);
+
         analyzedCommandCache.put(clazz, analyzedCommand);
         return analyzedCommand;
     }

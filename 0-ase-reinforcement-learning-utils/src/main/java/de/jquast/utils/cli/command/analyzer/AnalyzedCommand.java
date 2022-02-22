@@ -12,5 +12,6 @@ public record AnalyzedCommand<T>(
         Command command,
         AnalyzedType<T> analyzedType,
         List<FieldAnnotationPair<Option>> options,
-        List<FieldAnnotationPair<Parameter>> parameters) {
+        List<FieldAnnotationPair<Parameter>> parameters,
+        AnalyzedCommand<?>[] analyzedSubCommands) {
 }
