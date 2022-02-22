@@ -9,7 +9,6 @@ import de.jquast.utils.di.analyzer.TypeAnalyzer;
 import de.jquast.utils.reflection.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,13 @@ public class CommandAnalyzer {
      */
     private static final Map<Class<?>, AnalyzedCommand<?>> analyzedCommandCache = new HashMap<>();
 
+    /**
+     * Analysiert den Typen {@code clazz} und extrahiert alle notwendigen Metadaten, die den Command betreffen.
+     *
+     * @param clazz                         Den zu analysierenden Typen.
+     * @return                              Ein Objekt mit den extrahierten Metadaten.
+     * @throws CommandAnalyzerException     Wenn der Typ keine Command Annotation aufweist.
+     */
     public static <T> AnalyzedCommand<T> analyze(Class<?> clazz) throws CommandAnalyzerException {
         if (analyzedCommandCache.containsKey(clazz)) {
             return (AnalyzedCommand<T>) analyzedCommandCache.get(clazz);
@@ -35,10 +41,10 @@ public class CommandAnalyzer {
 
         List<Field> cmdOptionFields = ReflectionUtils.findDeclaredFieldsAnnotatedWith(clazz, Option.class);
         List<Field> cmdParameterFields = ReflectionUtils.findDeclaredFieldsAnnotatedWith(clazz, Parameter.class);
-        List<FieldAnnotationPair<Option>> cmdOptions = cmdOptionFields.stream().map(
-                field -> new FieldAnnotationPair<Option>(field, field.getAnnotation(Option.class))).toList();
-        List<FieldAnnotationPair<Parameter>> cmdParameters = cmdOptionFields.stream().map(
-                field -> new FieldAnnotationPair<Parameter>(field, field.getAnnotation(Parameter.class))).toList();
+        List<OptionField> cmdOptions = cmdOptionFields.stream().map(
+                field -> new OptionField(field, field.getAnnotation(Option.class))).toList();
+        List<ParameterField> cmdParameters = cmdOptionFields.stream().map(
+                field -> new ParameterField(field, field.getAnnotation(Parameter.class))).toList();
 
         AnalyzedCommand<?>[] analyzedSubCommands = new AnalyzedCommand[metadata.subcommands().length];
         for (int i = 0; i < metadata.subcommands().length; ++i) {
