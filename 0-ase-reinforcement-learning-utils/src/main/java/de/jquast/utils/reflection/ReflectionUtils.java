@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ReflectionUtils {
@@ -76,6 +77,17 @@ public class ReflectionUtils {
         } catch (NoSuchFieldException e) {
             return cls.getDeclaredField(name);
         }
+    }
+
+    /**
+     * Gibt eine Liste der deklarierten Felder zurück, die mit einer bestimmten Annotation versehen sind.
+     *
+     * @param cls           Der Klassentyp.
+     * @param annotation    Die gesuchte Annotation.
+     * @return              Eine Liste der passenden Felder.
+     */
+    public static <T> List<Field> findDeclaredFieldsAnnotatedWith(Class<?> cls, Class<? extends Annotation> annotation) {
+        return Arrays.stream(cls.getDeclaredFields()).filter(field -> field.isAnnotationPresent(annotation)).toList();
     }
 
     /**
