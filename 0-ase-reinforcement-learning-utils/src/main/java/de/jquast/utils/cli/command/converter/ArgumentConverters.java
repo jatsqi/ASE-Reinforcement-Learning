@@ -9,6 +9,9 @@ import java.util.List;
 public abstract class ArgumentConverters {
 
     public Object convert(String source, Class<?> target) throws TypeConversionException {
+        if (target.equals(String.class))
+            return source;
+
         for (Converter converter : getConverters()) {
             Object converted = converter.convertArgument(source, target);
             if (converted != null)
