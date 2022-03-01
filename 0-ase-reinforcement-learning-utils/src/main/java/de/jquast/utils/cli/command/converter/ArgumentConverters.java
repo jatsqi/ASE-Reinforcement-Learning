@@ -3,26 +3,23 @@ package de.jquast.utils.cli.command.converter;
 import de.jquast.utils.cli.command.exception.TypeConversionException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class ArgumentConverters {
-
-    private List<Converter> converters = new ArrayList<>();
-
-    public ArgumentConverters() {}
-
-    public void addConverter(Converter converter) {
-        converters.add(converter);
-    }
+public abstract class ArgumentConverters {
 
     public Object convert(String source, Class<?> target) throws TypeConversionException {
-        for (Converter converter : converters) {
-            Object converted = converter.convertArgument(source, target)
+        for (Converter converter : getConverters()) {
+            Object converted = converter.convertArgument(source, target);
             if (converted != null)
                 return converted;
         }
 
         throw new TypeConversionException(source, target, "Kein passender Konverter gefunden.");
     }
+
+    public abstract Collection<Converter> getConverters();
+
+    public abstract void addConverter(Converter converter);
 
 }
