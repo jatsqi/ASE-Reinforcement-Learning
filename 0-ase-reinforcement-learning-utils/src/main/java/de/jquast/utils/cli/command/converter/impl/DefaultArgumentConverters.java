@@ -12,7 +12,10 @@ public class DefaultArgumentConverters extends ArgumentConverters {
 
     private List<Converter> converters = new ArrayList<>();
 
-    public DefaultArgumentConverters() {}
+    public DefaultArgumentConverters() {
+        addConverter(new FileSystemConverter());
+        addConverter(new PrimitiveConverter());
+    }
 
     @Override
     public Collection<Converter> getConverters() {
