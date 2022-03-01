@@ -37,7 +37,7 @@ public class StatelessCommandExecutionEngine implements CommandExecutionEngine {
         AnalyzedCommand<?> analyzedTopLevelCommand = commandRegistry.get(topLevelCommand);
         Object commandInstance = commandFactory.createCommandInstance(command, analyzedTopLevelCommand);
 
-        if (!commandInstance.getClass().isAssignableFrom(Runnable.class)) {
+        if (!Runnable.class.isAssignableFrom(commandInstance.getClass())) {
             throw new CommandException(command, "Das Objekt des Commands ist nicht ausführbar, bitte Runnable implementieren.");
         }
 
