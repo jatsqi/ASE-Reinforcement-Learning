@@ -76,10 +76,10 @@ public class TypeAnalyzer {
     /**
      * Extrahiert die Klassentypen, die benötigt werden, um ein Objekt des Typs {clazz} zu erstellen.
      *
-     * @param clazz                 Der zu untersuchende Klassentyp.
-     * @return                      Ein Array mit den Klassentypen, die der Target benötigt, um instantiiert werden
-     *                              zu können.
-     * @throws InjectionException   Wenn kein passender Konstruktor gefunden werden konnte.
+     * @param clazz Der zu untersuchende Klassentyp.
+     * @return Ein Array mit den Klassentypen, die der Target benötigt, um instantiiert werden
+     * zu können.
+     * @throws InjectionException Wenn kein passender Konstruktor gefunden werden konnte.
      */
     public static <T> Class<?>[] collectTargetDependencyTypes(Class<?> clazz) throws InjectionException {
         Constructor<T> constructor = findInjectionTarget(clazz);
@@ -89,10 +89,10 @@ public class TypeAnalyzer {
     /**
      * Extrahiert rekursiv die Klassentypen, die für die erzeugung eines Objektes des Typs {clazz} benötigt werden.
      *
-     * @param clazz                 Der zu untersuchende Klassentyp.
-     * @return                      Ein Array mit den Klassentypen, die benötigt werden, um die komplette Hierarchie
-     *                              eines Typs zu instantiieren.
-     * @throws InjectionException   Wenn kein passender Konstruktor gefunden werden konnte.
+     * @param clazz Der zu untersuchende Klassentyp.
+     * @return Ein Array mit den Klassentypen, die benötigt werden, um die komplette Hierarchie
+     * eines Typs zu instantiieren.
+     * @throws InjectionException Wenn kein passender Konstruktor gefunden werden konnte.
      */
     public static <T> Class<?>[] collectTargetDependencyTypesRecursively(Class<?> clazz) throws InjectionException {
         Constructor<T> constructor = findInjectionTarget(clazz);

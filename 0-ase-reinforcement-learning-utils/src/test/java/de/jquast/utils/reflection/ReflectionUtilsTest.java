@@ -1,7 +1,5 @@
 package de.jquast.utils.reflection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import de.jquast.utils.di.annotations.Inject;
 import de.jquast.utils.di.annotations.Mapping;
 import de.jquast.utils.model.Human;
@@ -9,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ReflectionUtilsTest {
 

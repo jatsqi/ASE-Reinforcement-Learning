@@ -9,7 +9,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Command {
     String name();
+
     String description();
+
     String help() default "Just use google man.";
+
     Class<?>[] subcommands() default {};
 }

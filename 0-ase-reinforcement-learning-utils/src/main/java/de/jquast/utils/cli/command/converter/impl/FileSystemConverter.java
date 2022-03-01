@@ -3,7 +3,6 @@ package de.jquast.utils.cli.command.converter.impl;
 import de.jquast.utils.cli.command.converter.Converter;
 
 import java.io.File;
-import java.nio.file.Files;
 
 public class FileSystemConverter implements Converter {
 

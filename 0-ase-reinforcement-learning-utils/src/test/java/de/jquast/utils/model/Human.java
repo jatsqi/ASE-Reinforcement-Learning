@@ -17,15 +17,15 @@ public class Human {
         this(name, 50);
     }
 
+    public static Human createDummyHuman() {
+        return new Human("Johannes Quast", 22);
+    }
+
     public String getName() {
         return name;
     }
 
     public int getAge() {
         return age;
-    }
-
-    public static Human createDummyHuman() {
-        return new Human("Johannes Quast", 22);
     }
 }

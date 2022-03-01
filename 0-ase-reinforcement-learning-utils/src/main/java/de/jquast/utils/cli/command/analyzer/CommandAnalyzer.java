@@ -23,9 +23,9 @@ public class CommandAnalyzer {
     /**
      * Analysiert den Typen {@code clazz} und extrahiert alle notwendigen Metadaten, die den Command betreffen.
      *
-     * @param clazz                         Den zu analysierenden Typen.
-     * @return                              Ein Objekt mit den extrahierten Metadaten.
-     * @throws CommandAnalyzerException     Wenn der Typ keine Command Annotation aufweist.
+     * @param clazz Den zu analysierenden Typen.
+     * @return Ein Objekt mit den extrahierten Metadaten.
+     * @throws CommandAnalyzerException Wenn der Typ keine Command Annotation aufweist.
      */
     public static <T> AnalyzedCommand<T> analyze(Class<?> clazz) throws CommandAnalyzerException {
         if (analyzedCommandCache.containsKey(clazz)) {

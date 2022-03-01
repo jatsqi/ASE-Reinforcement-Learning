@@ -2,7 +2,6 @@ package de.jquast.utils.cli.command.converter.impl;
 
 import de.jquast.utils.cli.command.converter.ArgumentConverters;
 import de.jquast.utils.cli.command.converter.Converter;
-import de.jquast.utils.cli.command.exception.TypeConversionException;
 
 import java.util.ArrayList;
 import java.util.Collection;

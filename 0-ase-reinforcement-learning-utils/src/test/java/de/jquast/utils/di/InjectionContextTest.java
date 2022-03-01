@@ -1,25 +1,11 @@
 package de.jquast.utils.di;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import de.jquast.utils.exception.InjectionException;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class InjectionContextTest {
-
-    private interface Repository1 {}
-    private interface Repository2 {}
-    private interface Service {}
-
-    private static class Repository1Impl implements Repository1 {
-        public Repository1Impl() {}
-    }
-    private static class Repository2Impl implements Repository2 {
-        public Repository2Impl() {}
-    }
-    private static class ServiceImpl implements Service {
-        public ServiceImpl(Repository1 repository1, Repository2 repository2) {}
-    }
 
     @Test
     void NewInstanceOfInterfaceShouldThrow() {
@@ -63,6 +49,30 @@ public class InjectionContextTest {
     void NewInstanceShouldInjectSameContext() throws InjectionException {
         InjectionContext context = new InjectionContext();
         assertSame(context, context.createNewInstance(InjectionContext.class));
+    }
+
+    private interface Repository1 {
+    }
+
+    private interface Repository2 {
+    }
+
+    private interface Service {
+    }
+
+    private static class Repository1Impl implements Repository1 {
+        public Repository1Impl() {
+        }
+    }
+
+    private static class Repository2Impl implements Repository2 {
+        public Repository2Impl() {
+        }
+    }
+
+    private static class ServiceImpl implements Service {
+        public ServiceImpl(Repository1 repository1, Repository2 repository2) {
+        }
     }
 
 }

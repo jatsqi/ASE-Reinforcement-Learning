@@ -7,7 +7,7 @@ import de.jquast.utils.cli.command.annotations.Parameter;
 @Command(name = "helloFriend", description = "fcjjffej")
 public class ExampleCommand implements Runnable {
 
-    @Option(names = { "--test", "--test2" }, required = true)
+    @Option(names = {"--test", "--test2"}, required = true)
     public int test;
 
     @Parameter(index = 0)

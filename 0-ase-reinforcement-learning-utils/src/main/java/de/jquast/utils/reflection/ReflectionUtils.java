@@ -12,10 +12,10 @@ public class ReflectionUtils {
     /**
      * Überschreibt das übergebene Feld {@code field} des Objektes {@code target} mit dem Wert aus {@code value}.
      *
-     * @param field                     Das zu überschreibende Feld.
-     * @param target                    Das betroffene Objekt.
-     * @param value                     Der neue Wert des Feldes.
-     * @throws IllegalAccessException   Wenn auf das Feld nicht zugegriffen werden kann.
+     * @param field  Das zu überschreibende Feld.
+     * @param target Das betroffene Objekt.
+     * @param value  Der neue Wert des Feldes.
+     * @throws IllegalAccessException Wenn auf das Feld nicht zugegriffen werden kann.
      */
     public static void setField(Field field, Object target, Object value) throws IllegalAccessException {
         field.setAccessible(true);
@@ -25,11 +25,11 @@ public class ReflectionUtils {
     /**
      * Überschreibt das Feld mit dem Namen {@code name} des Objektes {@code target} mit dem Wert aus {@code value}.
      *
-     * @param name                      Der Name des zu überschreibenden Feldes.
-     * @param target                    Das betroffene Objekt.
-     * @param value                     Der neue Wert des Feldes.
-     * @throws NoSuchFieldException     Wenn das Feld nicht gefunden wurde.
-     * @throws IllegalAccessException   Wenn auf das Feld nicht zugegriffen werden kann.
+     * @param name   Der Name des zu überschreibenden Feldes.
+     * @param target Das betroffene Objekt.
+     * @param value  Der neue Wert des Feldes.
+     * @throws NoSuchFieldException   Wenn das Feld nicht gefunden wurde.
+     * @throws IllegalAccessException Wenn auf das Feld nicht zugegriffen werden kann.
      */
     public static void setField(String name, Object target, Object value) throws NoSuchFieldException, IllegalAccessException {
         setField(findField(target.getClass(), name), target, value);
@@ -38,10 +38,10 @@ public class ReflectionUtils {
     /**
      * Gibt den Wert des Feldes {@code field} des Objektes {@code target} zurück.
      *
-     * @param field                     Das zu lesende Feld.
-     * @param target                    Das Objekt, welches das zu lesende Feld beinhaltet.
-     * @return                          Den Wert des Feldes, welches in dem Objekt gespeichert ist.
-     * @throws IllegalAccessException   Wenn auf das Feld nicht zugegriffen werden kann.
+     * @param field  Das zu lesende Feld.
+     * @param target Das Objekt, welches das zu lesende Feld beinhaltet.
+     * @return Den Wert des Feldes, welches in dem Objekt gespeichert ist.
+     * @throws IllegalAccessException Wenn auf das Feld nicht zugegriffen werden kann.
      */
     public static Object getField(Field field, Object target) throws IllegalAccessException {
         field.setAccessible(true);
@@ -51,10 +51,10 @@ public class ReflectionUtils {
     /**
      * Gibt den Wert des Feldes {@code field} des Objektes {@code target} zurück.
      *
-     * @param name                      Der Name des zu lesenden Feldes.
-     * @param target                    Das Objekt, welches das zu lesende Feld beinhaltet.
-     * @return                          Den Wert des Feldes, welches in dem Objekt gespeichert ist.
-     * @throws IllegalAccessException   Wenn auf das Feld nicht zugegriffen werden kann.
+     * @param name   Der Name des zu lesenden Feldes.
+     * @param target Das Objekt, welches das zu lesende Feld beinhaltet.
+     * @return Den Wert des Feldes, welches in dem Objekt gespeichert ist.
+     * @throws IllegalAccessException Wenn auf das Feld nicht zugegriffen werden kann.
      */
     public static Object getField(String name, Object target) throws NoSuchFieldException, IllegalAccessException {
         return getField(findField(target.getClass(), name), target);
@@ -65,9 +65,9 @@ public class ReflectionUtils {
      * Sollte kein Feld gefunden werden, wird rekursiv die Klassenhierarchie nach öffentlichen Feldern mit
      * entsprechendem Namen durchsucht.
      *
-     * @param cls                   Der Klassentyp, von dem aus die Suche gestartet werden soll.
-     * @param name                  Der Name des Feldes.
-     * @return                      Das gefundene Feld.
+     * @param cls  Der Klassentyp, von dem aus die Suche gestartet werden soll.
+     * @param name Der Name des Feldes.
+     * @return Das gefundene Feld.
      * @throws NoSuchFieldException Wenn kein entsprechendes Feld gefunden wurde.
      */
     public static Field findField(Class<?> cls, String name) throws NoSuchFieldException {
@@ -82,9 +82,9 @@ public class ReflectionUtils {
     /**
      * Gibt eine Liste der deklarierten Felder zurück, die mit einer bestimmten Annotation versehen sind.
      *
-     * @param cls           Der Klassentyp.
-     * @param annotation    Die gesuchte Annotation.
-     * @return              Eine Liste der passenden Felder.
+     * @param cls        Der Klassentyp.
+     * @param annotation Die gesuchte Annotation.
+     * @return Eine Liste der passenden Felder.
      */
     public static <T> List<Field> findDeclaredFieldsAnnotatedWith(Class<?> cls, Class<? extends Annotation> annotation) {
         return Arrays.stream(cls.getDeclaredFields()).filter(field -> field.isAnnotationPresent(annotation)).toList();
@@ -94,9 +94,9 @@ public class ReflectionUtils {
      * Durchsucht den Klassentyp {@code cls} und seine Hierarchie rekursiv nach einem öffentlichen Konstruktor,
      * der mit einer bestimmten Annotation {@code annotation} versehen ist.
      *
-     * @param cls           Der Klassentyp, der durchsucht wird.
-     * @param annotation    Die Annotation, die vorhanden sein muss.
-     * @return              Der gefundene Konstruktor. NULL, wenn kein passender Konstruktor gefunden wurde.
+     * @param cls        Der Klassentyp, der durchsucht wird.
+     * @param annotation Die Annotation, die vorhanden sein muss.
+     * @return Der gefundene Konstruktor. NULL, wenn kein passender Konstruktor gefunden wurde.
      */
     public static <T> List<Constructor<T>> findConstructorAnnotatedWith(Class<?> cls, Class<? extends Annotation> annotation) {
         List<Constructor<T>> constructors = new ArrayList<>();
@@ -114,9 +114,9 @@ public class ReflectionUtils {
      * Durchsucht den Klassentyp {@code cls} nach einem öffentlichen oder privaten Konstruktor, der mit einer
      * bestimmten Annotation {@code annotation} versehen ist.
      *
-     * @param cls           Der Klassentyp, der durchsucht wird.
-     * @param annotation    Die Annotation, die vorhanden sein muss.
-     * @return              Der gefundene Konstruktor. NULL, wenn kein passender Konstruktor gefunden wurde.
+     * @param cls        Der Klassentyp, der durchsucht wird.
+     * @param annotation Die Annotation, die vorhanden sein muss.
+     * @return Der gefundene Konstruktor. NULL, wenn kein passender Konstruktor gefunden wurde.
      */
     public static <T> List<Constructor<T>> findDeclaredConstructorAnnotatedWith(Class<?> cls, Class<? extends Annotation> annotation) {
         List<Constructor<T>> constructors = new ArrayList<>();

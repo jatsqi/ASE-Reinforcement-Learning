@@ -6,7 +6,8 @@ import de.jquast.utils.di.annotations.Singleton;
 import de.jquast.utils.exception.InjectionException;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class InjectionContext {
 
@@ -25,8 +26,8 @@ public class InjectionContext {
     /**
      * Erstellt eine neue Instanz des Typs {@code type}.
      *
-     * @param type  Der Typ des zu erstellenden Objektes.
-     * @return      Neu erstellte Instanz mit allen angeforderten Abhängigkeiten.
+     * @param type Der Typ des zu erstellenden Objektes.
+     * @return Neu erstellte Instanz mit allen angeforderten Abhängigkeiten.
      */
     public <T> T createNewInstance(Class<?> type) throws InjectionException {
         // Wenn der Kontext eine Instanz von sich selbst erstellen soll, dann gibt er sich selbst zurück.
@@ -55,7 +56,7 @@ public class InjectionContext {
         Constructor<T> target = analyzedType.injectionTarget();
         Object[] createdDependencies = new Object[target.getParameterCount()];
 
-        for(int i = 0; i < target.getParameterCount(); ++i) {
+        for (int i = 0; i < target.getParameterCount(); ++i) {
             createdDependencies[i] = createNewInstance(target.getParameterTypes()[i]);
         }
 
@@ -72,7 +73,6 @@ public class InjectionContext {
     }
 
     /**
-     *
      * @param interf
      * @param clazz
      * @return
@@ -87,7 +87,6 @@ public class InjectionContext {
     }
 
     /**
-     *
      * @param clazz
      */
     public void markAsSingleton(Class<?> clazz) {
@@ -95,7 +94,6 @@ public class InjectionContext {
     }
 
     /**
-     *
      * @param clazz
      * @return
      */
