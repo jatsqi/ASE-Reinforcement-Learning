@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class DefaultArgumentConverters extends ArgumentConverters {
+public class DefaultArgumentConverters implements ArgumentConverters {
 
     private List<Converter> converters = new ArrayList<>();
 

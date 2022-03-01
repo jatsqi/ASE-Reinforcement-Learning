@@ -2,13 +2,11 @@ package de.jquast.utils.cli.command.converter;
 
 import de.jquast.utils.cli.command.exception.TypeConversionException;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-public abstract class ArgumentConverters {
+public interface ArgumentConverters {
 
-    public Object convert(String source, Class<?> target) throws TypeConversionException {
+    default Object convert(String source, Class<?> target) throws TypeConversionException {
         if (target.equals(String.class))
             return source;
 
@@ -21,8 +19,8 @@ public abstract class ArgumentConverters {
         throw new TypeConversionException(source, target, "Kein passender Konverter gefunden.");
     }
 
-    public abstract Collection<Converter> getConverters();
+    Collection<Converter> getConverters();
 
-    public abstract void addConverter(Converter converter);
+    void addConverter(Converter converter);
 
 }
