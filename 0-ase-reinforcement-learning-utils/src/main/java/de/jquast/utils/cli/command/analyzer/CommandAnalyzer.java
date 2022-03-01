@@ -43,7 +43,7 @@ public class CommandAnalyzer {
         List<Field> cmdParameterFields = ReflectionUtils.findDeclaredFieldsAnnotatedWith(clazz, Parameter.class);
         List<OptionField> cmdOptions = cmdOptionFields.stream().map(
                 field -> new OptionField(field, field.getAnnotation(Option.class))).toList();
-        List<ParameterField> cmdParameters = cmdOptionFields.stream().map(
+        List<ParameterField> cmdParameters = cmdParameterFields.stream().map(
                 field -> new ParameterField(field, field.getAnnotation(Parameter.class))).toList();
 
         AnalyzedCommand<?>[] analyzedSubCommands = new AnalyzedCommand[metadata.subcommands().length];
