@@ -34,7 +34,7 @@ public class StatelessCommandExecutionEngine implements CommandExecutionEngine {
         }
 
         // Command Object erstellen
-        AnalyzedCommand<?> analyzedTopLevelCommand = commandRegistry.get(commandRegistry);
+        AnalyzedCommand<?> analyzedTopLevelCommand = commandRegistry.get(topLevelCommand);
         Object commandInstance = commandFactory.createCommandInstance(command, analyzedTopLevelCommand);
 
         if (!commandInstance.getClass().isAssignableFrom(Runnable.class)) {
