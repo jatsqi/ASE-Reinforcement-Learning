@@ -9,6 +9,7 @@ import de.jquast.utils.cli.command.annotations.Parameter;
 import de.jquast.utils.cli.command.arguments.ArgumentParser;
 import de.jquast.utils.cli.command.arguments.Arguments;
 import de.jquast.utils.cli.command.converter.ArgumentConverters;
+import de.jquast.utils.cli.command.exception.CommandException;
 import de.jquast.utils.cli.command.exception.TypeConversionException;
 import de.jquast.utils.di.InjectionContext;
 import de.jquast.utils.di.annotations.Inject;
@@ -30,7 +31,7 @@ public class InjectingCommandFactory implements CommandFactory {
     }
 
     @Override
-    public Object createCommandInstance(String rawCommand, AnalyzedCommand<?> cmdMetadata) {
+    public Object createCommandInstance(String rawCommand, AnalyzedCommand<?> cmdMetadata) throws CommandException {
         String[] parts = rawCommand.split(" ");
         if (!parts[0].equalsIgnoreCase(cmdMetadata.command().name())) {
             throw new RuntimeException("Command <-> Metadata mismatch!");
@@ -60,8 +61,8 @@ public class InjectingCommandFactory implements CommandFactory {
             try {
                 injectArguments(newInstance, parsedArguments, current);
                 injectParameters(newInstance, parsedArguments, current);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new CommandException(rawCommand, e.getMessage());
             }
 
             return newInstance;
@@ -72,7 +73,7 @@ public class InjectingCommandFactory implements CommandFactory {
         return null;
     }
 
-    private void injectArguments(Object obj, Arguments arguments, AnalyzedCommand<?> commandMetadata) throws IllegalAccessException {
+    private void injectArguments(Object obj, Arguments arguments, AnalyzedCommand<?> commandMetadata) throws IllegalAccessException, TypeConversionException {
         Map<String, OptionField> mappedOptions = new HashMap<>();
         commandMetadata.options().forEach(option -> {
             for (String name : option.optionAnnotation().names())
@@ -89,11 +90,7 @@ public class InjectingCommandFactory implements CommandFactory {
                     if (found)
                         throw new RuntimeException("Duplicated Option!");
 
-                    try {
-                        ReflectionUtils.setField(optionField.field(), obj, converters.convert(arguments.options().get(name), optionField.field().getType()));
-                    } catch (TypeConversionException e) {
-                        e.printStackTrace();
-                    }
+                    ReflectionUtils.setField(optionField.field(), obj, converters.convert(arguments.options().get(name), optionField.field().getType()));
                     found = true;
                 }
             }
@@ -103,18 +100,14 @@ public class InjectingCommandFactory implements CommandFactory {
         }
     }
 
-    private void injectParameters(Object obj, Arguments arguments, AnalyzedCommand<?> commandMetadata) throws IllegalAccessException {
+    private void injectParameters(Object obj, Arguments arguments, AnalyzedCommand<?> commandMetadata) throws IllegalAccessException, TypeConversionException {
         for (ParameterField parameterField : commandMetadata.parameters()) {
             Parameter parameter = parameterField.parameterAnnotation();
 
             if (parameter.index() >= arguments.parameters().size())
                 throw new RuntimeException("Not enough parameters!");
 
-            try {
-                ReflectionUtils.setField(parameterField.field(), obj, converters.convert(arguments.parameters().get(parameter.index()), parameterField.field().getType()));
-            } catch (TypeConversionException e) {
-                e.printStackTrace();
-            }
+            ReflectionUtils.setField(parameterField.field(), obj, converters.convert(arguments.parameters().get(parameter.index()), parameterField.field().getType()));
         }
     }
 }
