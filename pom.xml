@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>0-ase-reinforcement-learning-utils</module>
+        <module>1-ase-reinforcement-learning-domain</module>
     </modules>
 
     <properties>
