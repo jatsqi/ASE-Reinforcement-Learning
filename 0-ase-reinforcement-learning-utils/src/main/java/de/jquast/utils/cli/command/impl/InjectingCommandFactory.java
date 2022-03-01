@@ -8,6 +8,8 @@ import de.jquast.utils.cli.command.annotations.Option;
 import de.jquast.utils.cli.command.annotations.Parameter;
 import de.jquast.utils.cli.command.arguments.ArgumentParser;
 import de.jquast.utils.cli.command.arguments.Arguments;
+import de.jquast.utils.cli.command.converter.ArgumentConverters;
+import de.jquast.utils.cli.command.exception.TypeConversionException;
 import de.jquast.utils.di.InjectionContext;
 import de.jquast.utils.di.annotations.Inject;
 import de.jquast.utils.exception.InjectionException;
@@ -19,10 +21,12 @@ import java.util.Map;
 public class InjectingCommandFactory implements CommandFactory {
 
     private final InjectionContext context;
+    private final ArgumentConverters converters;
 
     @Inject
-    public InjectingCommandFactory(InjectionContext context) {
+    public InjectingCommandFactory(InjectionContext context, ArgumentConverters converters) {
         this.context = context;
+        this.converters = converters;
     }
 
     @Override
@@ -85,7 +89,11 @@ public class InjectingCommandFactory implements CommandFactory {
                     if (found)
                         throw new RuntimeException("Duplicated Option!");
 
-                    ReflectionUtils.setField(optionField.field(), obj, arguments.options().get(name));
+                    try {
+                        ReflectionUtils.setField(optionField.field(), obj, converters.convert(arguments.options().get(name), optionField.field().getType()));
+                    } catch (TypeConversionException e) {
+                        e.printStackTrace();
+                    }
                     found = true;
                 }
             }
@@ -102,7 +110,11 @@ public class InjectingCommandFactory implements CommandFactory {
             if (parameter.index() >= arguments.parameters().size())
                 throw new RuntimeException("Not enough parameters!");
 
-            ReflectionUtils.setField(parameterField.field(), obj, arguments.parameters().get(parameter.index()));
+            try {
+                ReflectionUtils.setField(parameterField.field(), obj, converters.convert(arguments.parameters().get(parameter.index()), parameterField.field().getType()));
+            } catch (TypeConversionException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
