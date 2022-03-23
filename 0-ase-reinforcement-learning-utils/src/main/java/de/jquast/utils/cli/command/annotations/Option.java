@@ -10,6 +10,8 @@ import java.lang.annotation.Target;
 public @interface Option {
     String[] names();
 
+    String description();
+
     boolean required() default false;
 
     String defaultValue() default "";
