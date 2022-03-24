@@ -9,6 +9,7 @@ import de.jquast.utils.cli.command.annotations.Parameter;
 import de.jquast.utils.cli.command.arguments.ArgumentParser;
 import de.jquast.utils.cli.command.arguments.Arguments;
 import de.jquast.utils.cli.command.converter.ArgumentConverters;
+import de.jquast.utils.cli.command.exception.CommandCreationException;
 import de.jquast.utils.cli.command.exception.CommandException;
 import de.jquast.utils.cli.command.exception.TypeConversionException;
 import de.jquast.utils.di.InjectionContext;
@@ -31,7 +32,7 @@ public class InjectingCommandFactory implements CommandFactory {
     }
 
     @Override
-    public Object createCommandInstance(String rawCommand, AnalyzedCommand<?> cmdMetadata) throws CommandException {
+    public Object createCommandInstance(String rawCommand, AnalyzedCommand<?> cmdMetadata) throws CommandCreationException {
         String[] parts = rawCommand.split(" ");
         if (!parts[0].equalsIgnoreCase(cmdMetadata.command().name())) {
             throw new RuntimeException("Command <-> Metadata mismatch!");
@@ -40,7 +41,7 @@ public class InjectingCommandFactory implements CommandFactory {
         AnalyzedCommand<?> current = cmdMetadata;
         int firstNonMatchingIndex = 1;
 
-        for (int i = 1; i < parts.length; ++i) {
+        outer: for (int i = 1; i < parts.length; ++i) {
             String part = parts[i];
 
             for (AnalyzedCommand<?> subCommand : current.analyzedSubCommands()) {
@@ -48,7 +49,7 @@ public class InjectingCommandFactory implements CommandFactory {
                     current = subCommand;
                 } else {
                     firstNonMatchingIndex = i;
-                    break;
+                    break outer;
                 }
             }
         }
@@ -62,7 +63,7 @@ public class InjectingCommandFactory implements CommandFactory {
                 injectArguments(newInstance, parsedArguments, current);
                 injectParameters(newInstance, parsedArguments, current);
             } catch (Exception e) {
-                throw new CommandException(rawCommand, e.getMessage());
+                throw new CommandCreationException(e.getMessage(), current);
             }
 
             return newInstance;
@@ -73,7 +74,7 @@ public class InjectingCommandFactory implements CommandFactory {
         return null;
     }
 
-    private void injectArguments(Object obj, Arguments arguments, AnalyzedCommand<?> commandMetadata) throws IllegalAccessException, TypeConversionException {
+    private void injectArguments(Object obj, Arguments arguments, AnalyzedCommand<?> commandMetadata) throws IllegalAccessException, TypeConversionException, CommandCreationException {
         Map<String, OptionField> mappedOptions = new HashMap<>();
         commandMetadata.options().forEach(option -> {
             for (String name : option.optionAnnotation().names())
@@ -81,31 +82,43 @@ public class InjectingCommandFactory implements CommandFactory {
         });
 
         for (OptionField optionField : commandMetadata.options()) {
+            System.out.println(optionField.optionAnnotation());
             Option annotation = optionField.optionAnnotation();
-            boolean found = false;
+
+            Object foundOption = null;
 
             // Suche Option
             for (String name : annotation.names()) {
                 if (arguments.options().containsKey(name)) {
-                    if (found)
-                        throw new RuntimeException("Duplicated Option!");
+                    if (foundOption != null)
+                        throw new CommandCreationException(String.format("Die Option '%s' wurde bereits übergeben.", name), commandMetadata);
 
-                    ReflectionUtils.setField(optionField.field(), obj, converters.convert(arguments.options().get(name), optionField.field().getType()));
-                    found = true;
+                    if (!optionField.isBooleanOption()) {
+                        foundOption = converters.convert(arguments.options().get(name), optionField.field().getType());
+                    } else {
+                        foundOption = true;
+                    }
                 }
             }
 
-            if (!found && annotation.required())
-                throw new RuntimeException("Options " + String.join(", ", annotation.names()) + " not found.");
+            if (optionField.isBooleanOption()) {
+                boolean b = foundOption != null;
+                ReflectionUtils.setField(optionField.field(), obj, b);
+            } else {
+                if (foundOption == null && annotation.required())
+                    throw new CommandCreationException("Erforderliche Optionen " + String.join(", ", annotation.names()) + " wurden nicht gefunden.", commandMetadata);
+
+                ReflectionUtils.setField(optionField.field(), obj, foundOption);
+            }
         }
     }
 
-    private void injectParameters(Object obj, Arguments arguments, AnalyzedCommand<?> commandMetadata) throws IllegalAccessException, TypeConversionException {
+    private void injectParameters(Object obj, Arguments arguments, AnalyzedCommand<?> commandMetadata) throws IllegalAccessException, TypeConversionException, CommandCreationException {
         for (ParameterField parameterField : commandMetadata.parameters()) {
             Parameter parameter = parameterField.parameterAnnotation();
 
             if (parameter.index() >= arguments.parameters().size())
-                throw new RuntimeException("Not enough parameters!");
+                throw new CommandCreationException("Die Anzahl der Parameter stimmt nicht überein.", commandMetadata);
 
             ReflectionUtils.setField(parameterField.field(), obj, converters.convert(arguments.parameters().get(parameter.index()), parameterField.field().getType()));
         }
