@@ -38,17 +38,20 @@ public class InjectingCommandFactory implements CommandFactory {
         }
 
         AnalyzedCommand<?> current = cmdMetadata;
-        int firstNonMatchingIndex = 1;
+        int firstNonMatchingIndex = parts.length;
 
         outer: for (int i = 1; i < parts.length; ++i) {
             String part = parts[i];
+            firstNonMatchingIndex = i;
+
+            if (current.analyzedSubCommands().length == 0) {
+                break;
+            }
 
             for (AnalyzedCommand<?> subCommand : current.analyzedSubCommands()) {
                 if (subCommand.command().name().equalsIgnoreCase(part)) {
                     current = subCommand;
-                } else {
-                    firstNonMatchingIndex = i;
-                    break outer;
+                    continue outer;
                 }
             }
         }
