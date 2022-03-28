@@ -22,4 +22,10 @@ public interface RLAlgorithm {
      */
     Policy getPolicy();
 
+    /**
+     *
+     * @return
+     */
+    int getTimeSteps();
+
 }
