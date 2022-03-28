@@ -28,7 +28,7 @@ public class StatelessCommandExecutionEngine implements CommandExecutionEngine {
     public StatelessCommandExecutionEngine(CommandFactory commandFactory) {
         this.commandFactory = commandFactory;
 
-        registerCommand(DefaultHelpCommand.class);
+        registerTopLevelCommand(DefaultHelpCommand.class);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class StatelessCommandExecutionEngine implements CommandExecutionEngine {
     }
 
     @Override
-    public void registerCommand(Class<?> clazz) {
+    public void registerTopLevelCommand(Class<?> clazz) {
         try {
             AnalyzedCommand<?> analyzedCommand = CommandAnalyzer.analyze(clazz);
             commandRegistry.put(analyzedCommand.command().name(), analyzedCommand);

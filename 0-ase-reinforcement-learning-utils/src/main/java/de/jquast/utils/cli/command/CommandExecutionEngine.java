@@ -6,6 +6,6 @@ public interface CommandExecutionEngine {
 
     void execute(String command) throws CommandException;
 
-    void registerCommand(Class<?> clazz);
+    void registerTopLevelCommand(Class<?> clazz);
 
 }
