@@ -11,7 +11,7 @@
     <modules>
         <module>0-ase-reinforcement-learning-utils</module>
         <module>1-ase-reinforcement-learning-domain</module>
-        <module>3-ase-reinforcement-learning-plugin</module>
+        <module>4-ase-reinforcement-learning-plugin</module>
         <module>2-ase-reinforcement-learning-application</module>
     </modules>
 
