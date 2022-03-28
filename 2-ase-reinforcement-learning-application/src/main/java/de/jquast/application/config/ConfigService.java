@@ -22,8 +22,7 @@ public class ConfigService {
     }
 
     public boolean setConfigItem(String key, String value) {
-        //return configRepository.setConfigItem();
-        return false;
+        return configRepository.setConfigItem(new ConfigItem(key, value));
     }
 
     public Optional<ConfigItem> getConfigItem(String name) {

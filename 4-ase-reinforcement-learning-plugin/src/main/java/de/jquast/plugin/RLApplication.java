@@ -1,6 +1,8 @@
 package de.jquast.plugin;
 
+import de.jquast.domain.config.ConfigRepository;
 import de.jquast.plugin.commands.ConfigCommand;
+import de.jquast.plugin.config.PropertiesConfigRepository;
 import de.jquast.utils.cli.command.CommandExecutionEngine;
 import de.jquast.utils.cli.command.CommandFactory;
 import de.jquast.utils.cli.command.converter.ArgumentConverters;
@@ -21,6 +23,7 @@ public class RLApplication {
         CONTEXT.mapInterface(CommandExecutionEngine.class, StatelessCommandExecutionEngine.class);
         CONTEXT.mapInterface(CommandFactory.class, InjectingCommandFactory.class);
         CONTEXT.mapInterface(ArgumentConverters.class, DefaultArgumentConverters.class);
+        CONTEXT.mapInterface(ConfigRepository.class, PropertiesConfigRepository.class);
     }
 
     public static void main(String[] args) throws InjectionException, CommandException {

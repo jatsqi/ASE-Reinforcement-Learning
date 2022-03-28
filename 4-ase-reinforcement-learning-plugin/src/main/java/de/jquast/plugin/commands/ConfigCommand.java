@@ -1,7 +1,9 @@
 package de.jquast.plugin.commands;
 
+import de.jquast.application.config.ConfigService;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;
+import de.jquast.utils.di.annotations.Inject;
 
 @Command(
         name = "config",
@@ -16,6 +18,13 @@ public class ConfigCommand {
     )
     public class ConfigSetCommand implements Runnable {
 
+        private final ConfigService configService;
+
+        @Inject
+        public ConfigSetCommand(ConfigService service) {
+            this.configService = service;
+        }
+
         @Parameter(index = 0, description = "Der betroffene Key, der geändert werden soll.")
         public String key;
 
@@ -24,8 +33,7 @@ public class ConfigCommand {
 
         @Override
         public void run() {
-            System.out.println(key);
-            System.out.println(value);
+            configService.setConfigItem(key, value);
         }
     }
 
