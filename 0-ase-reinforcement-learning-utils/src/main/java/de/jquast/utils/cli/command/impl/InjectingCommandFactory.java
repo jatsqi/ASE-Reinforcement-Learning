@@ -10,7 +10,6 @@ import de.jquast.utils.cli.command.arguments.ArgumentParser;
 import de.jquast.utils.cli.command.arguments.Arguments;
 import de.jquast.utils.cli.command.converter.ArgumentConverters;
 import de.jquast.utils.cli.command.exception.CommandCreationException;
-import de.jquast.utils.cli.command.exception.CommandException;
 import de.jquast.utils.cli.command.exception.TypeConversionException;
 import de.jquast.utils.di.InjectionContext;
 import de.jquast.utils.di.annotations.Inject;
