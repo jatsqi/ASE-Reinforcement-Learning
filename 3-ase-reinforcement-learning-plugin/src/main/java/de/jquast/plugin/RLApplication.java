@@ -1,5 +1,6 @@
 package de.jquast.plugin;
 
+import de.jquast.plugin.commands.ConfigCommand;
 import de.jquast.utils.cli.command.CommandExecutionEngine;
 import de.jquast.utils.cli.command.CommandFactory;
 import de.jquast.utils.cli.command.converter.ArgumentConverters;
@@ -24,6 +25,7 @@ public class RLApplication {
 
     public static void main(String[] args) throws InjectionException, CommandException {
         CommandExecutionEngine engine = CONTEXT.createNewInstance(CommandExecutionEngine.class);
+        engine.registerTopLevelCommand(ConfigCommand.class);
 
         engine.execute(String.join(" ", args));
     }

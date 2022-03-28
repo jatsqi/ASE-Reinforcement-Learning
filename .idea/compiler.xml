@@ -6,8 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="1-ase-reinforcement-learning-domain" />
         <module name="3-ase-reinforcement-learning-plugin" />
+        <module name="2-ase-reinforcement-learning-application" />
+        <module name="1-ase-reinforcement-learning-domain" />
         <module name="0-ase-reinforcement-learning-utils" />
       </profile>
     </annotationProcessing>
