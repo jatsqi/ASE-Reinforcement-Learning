@@ -1,14 +1,21 @@
 package de.jquast.plugin.commands;
 
 import de.jquast.application.config.ConfigService;
+import de.jquast.domain.config.ConfigItem;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;
 import de.jquast.utils.di.annotations.Inject;
 
+import java.util.Optional;
+
 @Command(
         name = "config",
         description = "Verwaltet die Konfiguration der Anwendung.",
-        subcommands = {ConfigCommand.ConfigSetCommand.class, ConfigCommand.ConfigDelCommand.class}
+        subcommands = {
+                ConfigCommand.ConfigSetCommand.class,
+                ConfigCommand.ConfigDelCommand.class,
+                ConfigCommand.ConfigGetCommand.class
+        }
 )
 public class ConfigCommand {
 
@@ -33,9 +40,20 @@ public class ConfigCommand {
 
         @Override
         public void run() {
-            configService.setConfigItem(key, value);
+            Optional<ConfigItem> created = configService.setConfigItem(key, value);
+
+            if (created.isEmpty()) {
+                System.out.println("Ungültiger Key, verfügbare Config Keys: ");
+                configService.getAvailableConfigKeys().forEach(System.out::println);
+                return;
+            }
+
+            ConfigItem unwrapped = created.get();
+            System.out.printf("Key '%s' erfolgreich auf '%s' gesetzt.%n", unwrapped.name(), unwrapped.value());
         }
-    }
+     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Command(
             name = "del",
@@ -46,6 +64,39 @@ public class ConfigCommand {
         @Override
         public void run() {
 
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @Command(
+            name = "get",
+            description = "Gibt einen bestimmten Key aus."
+    )
+    public class ConfigGetCommand implements Runnable {
+
+        @Parameter(index = 0, description = "Der Key eines Config Items.")
+        public String key;
+
+        public final ConfigService configService;
+
+        @Inject
+        public ConfigGetCommand(ConfigService service) {
+            this.configService = service;
+        }
+
+        @Override
+        public void run() {
+            Optional<ConfigItem> item = configService.getConfigItem(key.trim());
+
+            if (item.isEmpty()) {
+                System.out.println("Ungültiger Key, verfügbare Config Keys: ");
+                configService.getAvailableConfigKeys().forEach(System.out::println);
+                return;
+            }
+
+            ConfigItem unwrapped = item.get();
+            System.out.printf("Key '%s' besitzt den Wert '%s'.%n", unwrapped.name(), unwrapped.value());
         }
     }
 
