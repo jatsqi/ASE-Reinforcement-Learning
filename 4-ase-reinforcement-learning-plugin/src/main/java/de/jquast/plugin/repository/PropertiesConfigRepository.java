@@ -1,4 +1,4 @@
-package de.jquast.plugin.config;
+package de.jquast.plugin.repository;
 
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
