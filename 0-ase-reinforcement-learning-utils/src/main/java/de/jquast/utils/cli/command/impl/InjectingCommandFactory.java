@@ -42,9 +42,9 @@ public class InjectingCommandFactory implements CommandFactory {
 
         outer: for (int i = 1; i < parts.length; ++i) {
             String part = parts[i];
-            firstNonMatchingIndex = i;
 
             if (current.analyzedSubCommands().length == 0) {
+                firstNonMatchingIndex = i;
                 break;
             }
 
@@ -54,6 +54,8 @@ public class InjectingCommandFactory implements CommandFactory {
                     continue outer;
                 }
             }
+
+            firstNonMatchingIndex = i;
         }
 
         Arguments parsedArguments = ArgumentParser.parseArguments(parts, firstNonMatchingIndex);
