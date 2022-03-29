@@ -1,8 +1,8 @@
 package de.jquast.domain.config;
 
 public enum ConfigItems {
-    OUTPUT_FORMAT("MODEL_OUTPUT_FORMAT", new String[]{ "csv", "txt" }, "csv"),
-    OUTPUT_DIRECTORY("MODEL_OUTPUT_DIRECTORY", null, ".");
+    MODEL_OUTPUT_FORMAT("MODEL_OUTPUT_FORMAT", new String[]{ "csv", "txt" }, "csv"),
+    MODEL_OUTPUT_DIRECTORY("MODEL_OUTPUT_DIRECTORY", null, ".");
 
     private String key;
     private String[] predefinedOptions;
