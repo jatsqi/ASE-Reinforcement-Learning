@@ -16,7 +16,9 @@ import de.jquast.utils.di.annotations.Inject;
 import de.jquast.utils.exception.InjectionException;
 import de.jquast.utils.reflection.ReflectionUtils;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InjectingCommandFactory implements CommandFactory {
@@ -67,6 +69,7 @@ public class InjectingCommandFactory implements CommandFactory {
                 injectArguments(newInstance, parsedArguments, current);
                 injectParameters(newInstance, parsedArguments, current);
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new CommandCreationException(e.getMessage(), current);
             }
 
@@ -118,10 +121,26 @@ public class InjectingCommandFactory implements CommandFactory {
     }
 
     private void injectParameters(Object obj, Arguments arguments, AnalyzedCommand<?> commandMetadata) throws IllegalAccessException, TypeConversionException, CommandCreationException {
-        for (ParameterField parameterField : commandMetadata.parameters()) {
+        List<ParameterField> sortedParameterFields = commandMetadata.parameters().stream().sorted(Comparator.comparingInt(f -> f.parameterAnnotation().index())).toList();
+
+        for (int i = 0; i < sortedParameterFields.size(); ++i) {
+            ParameterField parameterField = sortedParameterFields.get(i);
             Parameter parameter = parameterField.parameterAnnotation();
 
-            if (parameter.index() >= arguments.parameters().size())
+            // Sollte der Parameter optional sein und der nächste, falls vorhanden, nicht optional sein.
+            if (!parameter.required() &&
+                    i + 1 < sortedParameterFields.size() &&
+                    sortedParameterFields.get(i + 1).parameterAnnotation().required()) {
+                throw new CommandCreationException("Optionale Parameter dürfen nur am Ende eines Commands auftauchen.", commandMetadata);
+            }
+
+            // Sollte der Parameter Optional sein und keine weiteren Parameter von der Command Line vorhanden sind
+            if (!parameter.required() && parameter.index() >= arguments.parameters().size()) {
+                break;
+            }
+
+            // Sollte der Parameter erforderlich sein und keine weiteren Parameter von der Command Line vorhanden sein.
+            if (parameter.required() && parameter.index() >= arguments.parameters().size())
                 throw new CommandCreationException("Die Anzahl der Parameter stimmt nicht überein.", commandMetadata);
 
             ReflectionUtils.setField(parameterField.field(), obj, converters.convert(arguments.parameters().get(parameter.index()), parameterField.field().getType()));
