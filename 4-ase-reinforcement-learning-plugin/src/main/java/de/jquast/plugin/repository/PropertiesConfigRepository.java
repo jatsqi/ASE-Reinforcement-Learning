@@ -1,6 +1,7 @@
 package de.jquast.plugin.repository;
 
 import de.jquast.domain.config.ConfigItem;
+import de.jquast.domain.config.ConfigItems;
 import de.jquast.domain.config.ConfigRepository;
 
 import java.io.*;
@@ -14,6 +15,12 @@ public class PropertiesConfigRepository implements ConfigRepository {
     private static final String FILE_NAME = "config.properties";
 
     private Map<String, ConfigItem> configItems = new HashMap<>();
+
+    public PropertiesConfigRepository() {
+        for (ConfigItems item : ConfigItems.values()) {
+            configItems.put(item.getKey(), new ConfigItem(item.getKey(), item.getDefaultValue()));
+        }
+    }
 
     @Override
     public Collection<ConfigItem> getConfigItems() {
