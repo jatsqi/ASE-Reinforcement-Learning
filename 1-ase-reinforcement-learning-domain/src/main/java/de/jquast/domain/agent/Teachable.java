@@ -2,9 +2,9 @@ package de.jquast.domain.agent;
 
 public interface Teachable {
 
-    void setReward(double reward);
-
     double getReward();
+
+    void setReward(double reward);
 
     double addReward(double reward);
 

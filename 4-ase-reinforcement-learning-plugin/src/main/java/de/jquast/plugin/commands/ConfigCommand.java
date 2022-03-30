@@ -26,17 +26,15 @@ public class ConfigCommand {
     public class ConfigSetCommand implements Runnable {
 
         private final ConfigService configService;
+        @Parameter(index = 0, description = "Der betroffene Key, der geändert werden soll.")
+        public String key;
+        @Parameter(index = 1, description = "Die Value, auf die der Key gesetzt werden soll.")
+        public String value;
 
         @Inject
         public ConfigSetCommand(ConfigService service) {
             this.configService = service;
         }
-
-        @Parameter(index = 0, description = "Der betroffene Key, der geändert werden soll.")
-        public String key;
-
-        @Parameter(index = 1, description = "Die Value, auf die der Key gesetzt werden soll.")
-        public String value;
 
         @Override
         public void run() {
@@ -51,7 +49,7 @@ public class ConfigCommand {
             ConfigItem unwrapped = created.get();
             System.out.printf("Key '%s' erfolgreich auf '%s' gesetzt.%n", unwrapped.name(), unwrapped.value());
         }
-     }
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -75,10 +73,9 @@ public class ConfigCommand {
     )
     public class ConfigGetCommand implements Runnable {
 
+        public final ConfigService configService;
         @Parameter(index = 0, description = "Der Key eines Config Items.", required = false)
         public String key;
-
-        public final ConfigService configService;
 
         @Inject
         public ConfigGetCommand(ConfigService service) {

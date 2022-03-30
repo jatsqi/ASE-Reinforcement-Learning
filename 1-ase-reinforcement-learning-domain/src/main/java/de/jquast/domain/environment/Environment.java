@@ -4,6 +4,7 @@ public interface Environment {
 
     /**
      * Führt eine
+     *
      * @return
      */
     double performAction(int action);

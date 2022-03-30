@@ -42,7 +42,8 @@ public class InjectingCommandFactory implements CommandFactory {
         AnalyzedCommand<?> current = cmdMetadata;
         int firstNonMatchingIndex = parts.length;
 
-        outer: for (int i = 1; i < parts.length; ++i) {
+        outer:
+        for (int i = 1; i < parts.length; ++i) {
             String part = parts[i];
 
             if (current.analyzedSubCommands().length == 0) {

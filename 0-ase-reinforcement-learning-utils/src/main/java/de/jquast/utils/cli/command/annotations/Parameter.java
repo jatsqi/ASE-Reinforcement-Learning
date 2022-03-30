@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Parameter {
     int index();
+
     String description();
+
     boolean required() default true;
 }

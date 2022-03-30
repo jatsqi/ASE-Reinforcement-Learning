@@ -9,13 +9,13 @@ public abstract class Agent implements Teachable {
     abstract void onEpisodeEnd();
 
     @Override
-    public void setReward(double reward) {
-        this.reward = reward;
+    public double getReward() {
+        return reward;
     }
 
     @Override
-    public double getReward() {
-        return reward;
+    public void setReward(double reward) {
+        this.reward = reward;
     }
 
     @Override
