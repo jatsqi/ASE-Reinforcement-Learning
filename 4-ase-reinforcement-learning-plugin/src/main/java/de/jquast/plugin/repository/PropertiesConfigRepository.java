@@ -17,6 +17,8 @@ public class PropertiesConfigRepository implements ConfigRepository {
 
     @Override
     public Collection<ConfigItem> getConfigItems() {
+        refreshConfigItems();
+
         return configItems.values();
     }
 
