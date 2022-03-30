@@ -75,7 +75,7 @@ public class ConfigCommand {
     )
     public class ConfigGetCommand implements Runnable {
 
-        @Parameter(index = 0, description = "Der Key eines Config Items.")
+        @Parameter(index = 0, description = "Der Key eines Config Items.", required = false)
         public String key;
 
         public final ConfigService configService;
@@ -87,6 +87,14 @@ public class ConfigCommand {
 
         @Override
         public void run() {
+            if (key == null) {
+                for (ConfigItem item : configService.getConfigItems()) {
+                    System.out.println(item);
+                }
+
+                return;
+            }
+
             Optional<ConfigItem> item = configService.getConfigItem(key.trim());
 
             if (item.isEmpty()) {
@@ -96,7 +104,7 @@ public class ConfigCommand {
             }
 
             ConfigItem unwrapped = item.get();
-            System.out.printf("Key '%s' besitzt den Wert '%s'.%n", unwrapped.name(), unwrapped.value());
+            System.out.println(unwrapped);
         }
     }
 
