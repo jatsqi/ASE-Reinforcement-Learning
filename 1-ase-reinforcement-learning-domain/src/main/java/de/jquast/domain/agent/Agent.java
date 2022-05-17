@@ -1,27 +1,26 @@
 package de.jquast.domain.agent;
 
-public abstract class Agent implements Teachable {
+import de.jquast.domain.environment.Action;
+import de.jquast.domain.environment.Environment;
+import de.jquast.domain.policy.ActionSource;
 
-    private double reward;
+public abstract class Agent {
 
-    abstract void onEpisodeBegin();
+    private final Environment environment;
+    private final ActionSource actionSource;
 
-    abstract void onEpisodeEnd();
-
-    @Override
-    public double getReward() {
-        return reward;
+    public Agent(Environment environment, ActionSource source) {
+        this.environment = environment;
+        this.actionSource = source;
     }
 
-    @Override
-    public void setReward(double reward) {
-        this.reward = reward;
+    public void executeNextAction() {
+        environment.executeAction(actionSource.selectAction(environment.getCurrentState()));
     }
 
-    @Override
-    public double addReward(double reward) {
-        this.reward += reward;
-
-        return this.reward;
+    public Environment getEnvironment() {
+        return environment;
     }
+
+    public abstract Action[] getAvailableActions();
 }
