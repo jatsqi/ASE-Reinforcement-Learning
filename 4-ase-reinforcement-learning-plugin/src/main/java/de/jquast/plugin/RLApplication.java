@@ -2,9 +2,12 @@ package de.jquast.plugin;
 
 import de.jquast.domain.algorithm.RLAlgorithmRepository;
 import de.jquast.domain.config.ConfigRepository;
+import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.plugin.commands.AlgorithmCommand;
 import de.jquast.plugin.commands.ConfigCommand;
+import de.jquast.plugin.commands.EnvironmentCommand;
 import de.jquast.plugin.repository.InMemoryAlgorithmRepository;
+import de.jquast.plugin.repository.InMemoryEnvironmentRepository;
 import de.jquast.plugin.repository.PropertiesConfigRepository;
 import de.jquast.utils.cli.command.CommandExecutionEngine;
 import de.jquast.utils.cli.command.CommandFactory;
@@ -28,12 +31,14 @@ public class RLApplication {
         CONTEXT.mapInterface(ArgumentConverters.class, DefaultArgumentConverters.class);
         CONTEXT.mapInterface(ConfigRepository.class, PropertiesConfigRepository.class);
         CONTEXT.mapInterface(RLAlgorithmRepository.class, InMemoryAlgorithmRepository.class);
+        CONTEXT.mapInterface(EnvironmentRepository.class, InMemoryEnvironmentRepository.class);
     }
 
     public static void main(String[] args) throws InjectionException, CommandException {
         CommandExecutionEngine engine = CONTEXT.createNewInstance(CommandExecutionEngine.class);
         engine.registerTopLevelCommand(ConfigCommand.class);
         engine.registerTopLevelCommand(AlgorithmCommand.class);
+        engine.registerTopLevelCommand(EnvironmentCommand.class);
 
         engine.execute(String.join(" ", args));
     }
