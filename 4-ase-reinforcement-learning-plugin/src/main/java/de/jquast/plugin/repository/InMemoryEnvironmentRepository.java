@@ -1,11 +1,9 @@
 package de.jquast.plugin.repository;
 
-import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.shared.Action;
-import de.jquast.plugin.algorithm.QLearning;
-import de.jquast.plugin.environments.KArmedBandit;
+import de.jquast.plugin.environments.KArmedBanditEnvironment;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,7 +21,7 @@ public class InMemoryEnvironmentRepository implements EnvironmentRepository {
         ENVIRONMENTS.put(kArmedBandit, new EnvironmentDescriptor(
                 kArmedBandit,
                 "N Spieleautomaten (einarmige Banditen) mit jeweils einem Hebel.",
-                KArmedBandit.class,
+                KArmedBanditEnvironment.class,
                 new Action[] {
                         Action.DO_NOTHING,
                         Action.PULL

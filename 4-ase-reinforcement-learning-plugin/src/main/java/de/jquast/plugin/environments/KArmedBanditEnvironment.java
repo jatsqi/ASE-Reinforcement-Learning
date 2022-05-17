@@ -5,13 +5,13 @@ import de.jquast.domain.shared.Action;
 
 import java.util.Random;
 
-public class KArmedBandit implements Environment {
+public class KArmedBanditEnvironment implements Environment {
 
     private int lastTriggeredBandit = -1;
     private int banditCount;
     private double[] precomputedBanditRewards;
 
-    public KArmedBandit(int banditCount) {
+    public KArmedBanditEnvironment(int banditCount) {
         this.banditCount = banditCount;
         this.precomputedBanditRewards = new double[banditCount];
 
@@ -34,7 +34,7 @@ public class KArmedBandit implements Environment {
 
     @Override
     public int getCurrentState() {
-        return 0; // Diese Umgebung hat stets den selben State
+        return 0; // Diese Umgebung hat stets denselben State
     }
 
     @Override
