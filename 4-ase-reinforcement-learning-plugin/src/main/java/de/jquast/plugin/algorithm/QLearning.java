@@ -21,20 +21,12 @@ public class QLearning extends RLAlgorithm {
 
     @Override
     public void criticiseAction(int oldState, int action, int newState, double reward) {
-        double highestValue = Double.MIN_VALUE;
-        int hAction = 0;
-        double[] prevEstimates = actionValueStoreDelegate.getActionValues(newState);
-
-        for (int i = 0; i < prevEstimates.length; ++i) {
-            if (prevEstimates[i] > highestValue) {
-                highestValue = prevEstimates[i];
-                hAction = i;
-            }
-        }
+        ActionValueStore.ActionValueEntry maxEntry = actionValueStoreDelegate.getMaxActionValue(newState);
 
         double oldValue = actionValueStoreDelegate.getActionValue(oldState, action);
-        double newFutureEstimate = actionValueStoreDelegate.getActionValue(newState, hAction);
+        double newFutureEstimate = maxEntry.value();
         double newEstimate = oldValue * learningRate * (reward + discountFactor * newFutureEstimate - oldValue);
+
         actionValueStoreDelegate.setActionValue(oldState, action, newEstimate);
     }
 }

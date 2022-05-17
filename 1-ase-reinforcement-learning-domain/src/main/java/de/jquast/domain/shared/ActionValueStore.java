@@ -28,6 +28,20 @@ public class ActionValueStore {
         return actionValueEstimates[state];
     }
 
+    public ActionValueEntry getMaxActionValue(int state) {
+        double maxValue = Double.MIN_VALUE;
+        int maxAction = 0;
+
+        for (int i = 0; i < actionValueEstimates[state].length; ++i) {
+            if (actionValueEstimates[state][i] > maxValue) {
+                maxValue = actionValueEstimates[state][i];
+                maxAction = i;
+            }
+        }
+
+        return new ActionValueEntry(state, maxAction, maxValue);
+    }
+
     public void setActionValue(int state, int action, double value) {
         actionValueEstimates[state][action] = value;
     }
@@ -43,4 +57,6 @@ public class ActionValueStore {
     public int getActionCount() {
         return actionCount;
     }
+
+    public record ActionValueEntry(int state, int action, double value) { }
 }

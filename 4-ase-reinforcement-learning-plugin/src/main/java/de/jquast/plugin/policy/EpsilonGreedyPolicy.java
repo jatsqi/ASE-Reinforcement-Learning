@@ -29,18 +29,8 @@ public class EpsilonGreedyPolicy extends Policy {
             return RANDOM.nextInt(getActionValueStore().getActionCount());
         }
 
-        double[] estimates = getActionValueStore().getActionValues(state);
-        int selectedAction = 0;
-        double highestValue = Double.MIN_VALUE;
-
-        for (int i = 0; i < estimates.length; ++i) {
-            if (estimates[i] > highestValue) {
-                highestValue = estimates[i];
-                selectedAction = i;
-            }
-        }
-
-        return selectedAction;
+        ActionValueStore.ActionValueEntry maxActionValue = getActionValueStore().getMaxActionValue(state);
+        return maxActionValue.action();
     }
 
     public double getEpsilon() {
