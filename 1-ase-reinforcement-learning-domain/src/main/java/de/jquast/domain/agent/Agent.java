@@ -14,9 +14,7 @@ public abstract class Agent {
         this.actionSource = source;
     }
 
-    public void executeNextAction() {
-        environment.executeAction(actionSource.selectAction(environment.getCurrentState()));
-    }
+    public abstract void executeNextAction();
 
     public Environment getEnvironment() {
         return environment;

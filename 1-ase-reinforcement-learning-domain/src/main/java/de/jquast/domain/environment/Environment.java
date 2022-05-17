@@ -10,13 +10,7 @@ public interface Environment extends RewardSource {
      * @param action    Die auszuführende Aktion.
      * @return          Gibt true zurück, sofern die Aktion gültig ist. false anderenfalls.
      */
-    boolean executeAction(Action action);
-
-    /**
-     * Gibt eine Liste der Aktionen zurück, die in dieser Umgebung unterstüzt werden.
-     * @return
-     */
-    Action[] getSupportedActions();
+    boolean executeAction(Action action, int data);
 
     /**
      * Calculates the current state of the environment.
