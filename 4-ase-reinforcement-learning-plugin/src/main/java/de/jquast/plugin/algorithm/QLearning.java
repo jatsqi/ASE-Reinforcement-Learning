@@ -6,7 +6,7 @@ import de.jquast.domain.shared.ActionValueStore;
 
 public class QLearning extends RLAlgorithm {
 
-    private double discountFactor = 1.0;
+    private double discountFactor;
 
     public QLearning(ActionValueStore actionValueStore, ActionSource actionSource, double learningRate, double discountFactor) {
         super(actionValueStore, actionSource, learningRate);
