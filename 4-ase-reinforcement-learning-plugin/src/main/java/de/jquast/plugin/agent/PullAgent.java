@@ -13,7 +13,7 @@ public class PullAgent extends Agent {
 
     @Override
     protected ActionDataPair transformAction(int action) {
-        return new ActionDataPair(Action.PULL, action);
+        return new ActionDataPair(Action.PULL, action); // Action = Der Hebel, an dem gezogen wird.
     }
 
 }
