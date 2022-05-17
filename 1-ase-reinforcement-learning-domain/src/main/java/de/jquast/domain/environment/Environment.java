@@ -3,7 +3,7 @@ package de.jquast.domain.environment;
 import de.jquast.domain.shared.Action;
 import de.jquast.domain.shared.RewardSource;
 
-public interface Environment extends RewardSource {
+public abstract class Environment implements RewardSource {
 
     /**
      * Führt eine bestimmte Aktion in der Umgebung aus.
@@ -11,18 +11,23 @@ public interface Environment extends RewardSource {
      * @param action Die auszuführende Aktion.
      * @return Gibt true zurück, sofern die Aktion gültig ist. false anderenfalls.
      */
-    boolean executeAction(Action action, int data);
+    public abstract boolean executeAction(Action action, int data);
 
     /**
      * Calculates the current state of the environment.
      *
      * @return The current state of the environment.
      */
-    int getCurrentState();
+    public abstract int getCurrentState();
 
     /**
      * @return
      */
-    int getStateSpace();
+    public abstract int getStateSpace();
+
+    /**
+     *
+     */
+    public abstract void tick();
 
 }
