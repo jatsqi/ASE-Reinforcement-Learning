@@ -1,5 +1,6 @@
 package de.jquast.plugin.policy;
 
+import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.shared.ActionValueStore;
 
@@ -9,23 +10,18 @@ public class EpsilonGreedyPolicy extends Policy {
 
     private static final Random RANDOM = new Random();
 
-    private double epsilon;
+    public EpsilonGreedyPolicy(ActionValueStore actionValueStore, RLSettings settings) {
+        super(actionValueStore, settings);
 
-    public EpsilonGreedyPolicy(ActionValueStore actionValueStore, double epsilon) {
-        super(actionValueStore);
-
-        this.epsilon = epsilon;
     }
 
-    public EpsilonGreedyPolicy(int stateCount, int actionCount, double epsilon) {
-        super(stateCount, actionCount);
-
-        this.epsilon = epsilon;
+    public EpsilonGreedyPolicy(int stateCount, int actionCount, RLSettings settings) {
+        super(stateCount, actionCount, settings);
     }
 
     @Override
     public int selectAction(int state) {
-        if (epsilon > RANDOM.nextDouble()) {
+        if (getSettings().explorationRate() > RANDOM.nextDouble()) {
             return RANDOM.nextInt(getActionValueStore().getActionCount());
         }
 
@@ -36,9 +32,5 @@ public class EpsilonGreedyPolicy extends Policy {
     @Override
     public void criticiseAction(int oldState, int action, int newState, double reward) {
         // Nichts machen
-    }
-
-    public double getEpsilon() {
-        return epsilon;
     }
 }
