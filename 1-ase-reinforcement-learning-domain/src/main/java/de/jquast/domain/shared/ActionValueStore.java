@@ -24,6 +24,10 @@ public class ActionValueStore {
         return actionValueEstimates[state][action];
     }
 
+    public double[] getActionValues(int state) {
+        return actionValueEstimates[state];
+    }
+
     public void setActionValue(int state, int action, double value) {
         actionValueEstimates[state][action] = value;
     }
