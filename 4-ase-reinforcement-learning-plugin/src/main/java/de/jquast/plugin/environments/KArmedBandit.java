@@ -38,6 +38,11 @@ public class KArmedBandit implements Environment {
     }
 
     @Override
+    public int getStateSpace() {
+        return 1;
+    }
+
+    @Override
     public double getReward() {
         return precomputedBanditRewards[lastTriggeredBandit];
     }

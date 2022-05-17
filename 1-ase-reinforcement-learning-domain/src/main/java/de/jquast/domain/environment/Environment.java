@@ -19,4 +19,10 @@ public interface Environment extends RewardSource {
      */
     int getCurrentState();
 
+    /**
+     *
+     * @return
+     */
+    int getStateSpace();
+
 }
