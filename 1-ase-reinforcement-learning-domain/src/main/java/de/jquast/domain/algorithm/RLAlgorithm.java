@@ -1,19 +1,17 @@
 package de.jquast.domain.algorithm;
 
-import de.jquast.domain.policy.ActionSource;
-import de.jquast.domain.policy.Policy;
+import de.jquast.domain.shared.ActionSource;
+import de.jquast.domain.shared.ActionValueStore;
 
 public abstract class RLAlgorithm implements ActionSource {
 
-    private Policy basePolicy;
+    protected ActionValueStore actionValueStoreDelegate;
+    protected ActionSource actionSourceDelegate;
+    protected final double learningRate;
 
-    /**
-     * Gibt die verwendete Policy des Algorithmus zurück.
-     *
-     * @return Die verwendete Policy, sofern der Algorithmus ein on-Policy Algorithmus ist. NULL andernfalls.
-     */
-    public Policy getPolicy() {
-        return basePolicy;
+    public RLAlgorithm(ActionValueStore actionValueStore, ActionSource actionSource, double learningDate) {
+        this.actionValueStoreDelegate = actionValueStore;
+        this.actionSourceDelegate = actionSource;
+        this.learningRate = learningDate;
     }
-
 }
