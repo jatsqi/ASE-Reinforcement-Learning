@@ -7,4 +7,9 @@ public record EnvironmentDescriptor(
         String description,
         Class<? extends Environment> clazz,
         Action[] supportedCapabilities) {
+
+    @Override
+    public String toString() {
+        return String.format("%s: %s", name, description);
+    }
 }
