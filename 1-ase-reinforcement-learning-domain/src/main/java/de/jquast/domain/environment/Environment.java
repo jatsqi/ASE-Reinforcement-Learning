@@ -1,6 +1,6 @@
 package de.jquast.domain.environment;
 
-public interface Environment {
+public interface Environment extends RewardSource {
 
     /**
      * Führt eine bestimmte Aktion in der Umgebung aus.
@@ -14,5 +14,12 @@ public interface Environment {
      * @return
      */
     Action[] getSupportedActions();
+
+    /**
+     * Calculates the current state of the environment.
+     *
+     * @return The current state of the environment.
+     */
+    int getCurrentState();
 
 }
