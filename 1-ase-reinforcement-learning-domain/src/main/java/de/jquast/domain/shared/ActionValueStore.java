@@ -1,4 +1,4 @@
-package de.jquast.domain.policy;
+package de.jquast.domain.shared;
 
 public class ActionValueStore {
 

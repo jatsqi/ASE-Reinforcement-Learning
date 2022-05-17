@@ -1,4 +1,4 @@
-package de.jquast.domain.environment;
+package de.jquast.domain.shared;
 
 public enum Action {
 

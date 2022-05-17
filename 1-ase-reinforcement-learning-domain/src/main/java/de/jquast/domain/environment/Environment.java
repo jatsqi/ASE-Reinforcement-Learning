@@ -1,5 +1,8 @@
 package de.jquast.domain.environment;
 
+import de.jquast.domain.shared.Action;
+import de.jquast.domain.shared.RewardSource;
+
 public interface Environment extends RewardSource {
 
     /**
