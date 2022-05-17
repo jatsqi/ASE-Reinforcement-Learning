@@ -22,7 +22,7 @@ public class InMemoryEnvironmentRepository implements EnvironmentRepository {
                 kArmedBandit,
                 "N Spieleautomaten (einarmige Banditen) mit jeweils einem Hebel.",
                 KArmedBanditEnvironment.class,
-                new Action[] {
+                new Action[]{
                         Action.DO_NOTHING,
                         Action.PULL
                 }

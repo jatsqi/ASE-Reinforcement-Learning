@@ -2,9 +2,9 @@ package de.jquast.domain.shared;
 
 public class ActionValueStore {
 
-    private double[][] actionValueEstimates;
     private final int stateCount;
     private final int actionCount;
+    private double[][] actionValueEstimates;
 
     public ActionValueStore(double[][] prevActionValueEstimates) {
         this(prevActionValueEstimates, prevActionValueEstimates.length, prevActionValueEstimates[0].length);
@@ -58,5 +58,6 @@ public class ActionValueStore {
         return actionCount;
     }
 
-    public record ActionValueEntry(int state, int action, double value) { }
+    public record ActionValueEntry(int state, int action, double value) {
+    }
 }

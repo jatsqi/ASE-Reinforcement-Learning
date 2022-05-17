@@ -1,7 +1,7 @@
 package de.jquast.domain.agent;
 
-import de.jquast.domain.shared.Action;
 import de.jquast.domain.environment.Environment;
+import de.jquast.domain.shared.Action;
 import de.jquast.domain.shared.ActionSource;
 
 public abstract class Agent {

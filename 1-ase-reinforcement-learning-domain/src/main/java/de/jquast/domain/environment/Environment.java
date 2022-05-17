@@ -7,8 +7,9 @@ public interface Environment extends RewardSource {
 
     /**
      * Führt eine bestimmte Aktion in der Umgebung aus.
-     * @param action    Die auszuführende Aktion.
-     * @return          Gibt true zurück, sofern die Aktion gültig ist. false anderenfalls.
+     *
+     * @param action Die auszuführende Aktion.
+     * @return Gibt true zurück, sofern die Aktion gültig ist. false anderenfalls.
      */
     boolean executeAction(Action action, int data);
 
@@ -20,7 +21,6 @@ public interface Environment extends RewardSource {
     int getCurrentState();
 
     /**
-     *
      * @return
      */
     int getStateSpace();

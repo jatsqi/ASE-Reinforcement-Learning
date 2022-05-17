@@ -24,6 +24,10 @@ public class AlgorithmCommand implements Runnable {
         this.algorithmService = algorithmService;
     }
 
+    private static void printAlgorithm(RLAlgorithmDescriptor descriptor) {
+        System.out.println(String.format("  %s: %s", descriptor.name(), descriptor.description()));
+    }
+
     @Override
     public void run() {
         Optional<RLAlgorithmDescriptor> toPrint = algorithmService.getAlgorithm(algorithm);
@@ -38,9 +42,5 @@ public class AlgorithmCommand implements Runnable {
     private void printAlgorithms() {
         System.out.println("Algorithmen: ");
         algorithmService.getAlgorithms().forEach(AlgorithmCommand::printAlgorithm);
-    }
-
-    private static void printAlgorithm(RLAlgorithmDescriptor descriptor) {
-        System.out.println(String.format("  %s: %s", descriptor.name(), descriptor.description()));
     }
 }

@@ -1,6 +1,5 @@
 package de.jquast.application.algorithm;
 
-import de.jquast.domain.algorithm.RLAlgorithm;
 import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.domain.algorithm.RLAlgorithmRepository;
 import de.jquast.utils.di.annotations.Inject;

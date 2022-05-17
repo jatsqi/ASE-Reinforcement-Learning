@@ -1,8 +1,8 @@
 package de.jquast.plugin.repository;
 
 import de.jquast.domain.config.ConfigItem;
-import de.jquast.domain.config.DefaultConfigItem;
 import de.jquast.domain.config.ConfigRepository;
+import de.jquast.domain.config.DefaultConfigItem;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -75,7 +75,7 @@ public class PropertiesConfigRepository implements ConfigRepository {
     }
 
     private void saveConfigItems() {
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(FILE_NAME), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(FILE_NAME), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 
 
             for (ConfigItem item : configItems.values()) {
