@@ -1,6 +1,6 @@
 package de.jquast.domain.config;
 
-public enum ConfigItems {
+public enum DefaultConfigItem {
     MODEL_OUTPUT_FORMAT("DEFAULT_MODEL_OUTPUT_FORMAT", new String[]{"csv", "txt"}, "csv"),
     MODEL_OUTPUT_DIRECTORY("DEFAULT_MODEL_OUTPUT_DIRECTORY", null, "."),
     ALGORITHM_TIME_STEPS("DEFAULT_ALGORITHM_TIME_STEPS", null, "100"),
@@ -11,7 +11,7 @@ public enum ConfigItems {
     private String[] predefinedOptions;
     private String defaultValue;
 
-    ConfigItems(String key, String[] predefinedOptions, String defaultValue) {
+    DefaultConfigItem(String key, String[] predefinedOptions, String defaultValue) {
         this.key = key.toUpperCase();
         this.predefinedOptions = predefinedOptions;
         this.defaultValue = defaultValue;

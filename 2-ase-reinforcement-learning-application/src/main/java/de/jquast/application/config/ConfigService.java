@@ -1,7 +1,7 @@
 package de.jquast.application.config;
 
 import de.jquast.domain.config.ConfigItem;
-import de.jquast.domain.config.ConfigItems;
+import de.jquast.domain.config.DefaultConfigItem;
 import de.jquast.domain.config.ConfigRepository;
 import de.jquast.utils.di.annotations.Inject;
 
@@ -23,7 +23,7 @@ public class ConfigService {
     }
 
     public Collection<String> getAvailableConfigKeys() {
-        return Arrays.stream(ConfigItems.values()).map(ConfigItems::getKey).toList();
+        return Arrays.stream(DefaultConfigItem.values()).map(DefaultConfigItem::getKey).toList();
     }
 
     public Optional<ConfigItem> setConfigItem(String key, String value) {
@@ -38,14 +38,14 @@ public class ConfigService {
 
     public Optional<ConfigItem> getConfigItem(String name) {
         try {
-            ConfigItems item = ConfigItems.valueOf(name);
+            DefaultConfigItem item = DefaultConfigItem.valueOf(name);
             return Optional.ofNullable(getConfigItem(item));
         } catch (IllegalArgumentException ex) {
             return Optional.empty();
         }
     }
 
-    public ConfigItem getConfigItem(ConfigItems item) {
+    public ConfigItem getConfigItem(DefaultConfigItem item) {
         Optional<ConfigItem> configItem = configRepository.getConfigItem(item.getKey());
         if (configItem.isEmpty())
             return new ConfigItem(item.getKey(), item.getDefaultValue());

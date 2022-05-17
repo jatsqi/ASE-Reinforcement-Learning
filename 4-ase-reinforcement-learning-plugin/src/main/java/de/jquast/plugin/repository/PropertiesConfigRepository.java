@@ -1,7 +1,7 @@
 package de.jquast.plugin.repository;
 
 import de.jquast.domain.config.ConfigItem;
-import de.jquast.domain.config.ConfigItems;
+import de.jquast.domain.config.DefaultConfigItem;
 import de.jquast.domain.config.ConfigRepository;
 
 import java.io.BufferedWriter;
@@ -20,7 +20,7 @@ public class PropertiesConfigRepository implements ConfigRepository {
     private Map<String, ConfigItem> configItems = new HashMap<>();
 
     public PropertiesConfigRepository() {
-        for (ConfigItems item : ConfigItems.values()) {
+        for (DefaultConfigItem item : DefaultConfigItem.values()) {
             configItems.put(item.getKey(), new ConfigItem(item.getKey(), item.getDefaultValue()));
         }
     }
