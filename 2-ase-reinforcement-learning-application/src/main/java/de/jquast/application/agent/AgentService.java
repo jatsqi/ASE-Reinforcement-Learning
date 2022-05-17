@@ -6,7 +6,7 @@ import de.jquast.domain.agent.AgentRepository;
 import java.util.Collection;
 import java.util.Optional;
 
-public class AgentService implements AgentRepository {
+public class AgentService {
 
     private final AgentRepository repository;
 
@@ -14,12 +14,10 @@ public class AgentService implements AgentRepository {
         this.repository = repository;
     }
 
-    @Override
     public Collection<AgentDescriptor> getAgents() {
         return repository.getAgents();
     }
 
-    @Override
     public Optional<AgentDescriptor> getAgent(String name) {
         return repository.getAgent(name);
     }

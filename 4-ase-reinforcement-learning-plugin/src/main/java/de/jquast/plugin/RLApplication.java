@@ -1,11 +1,14 @@
 package de.jquast.plugin;
 
+import de.jquast.domain.agent.AgentRepository;
 import de.jquast.domain.algorithm.RLAlgorithmRepository;
 import de.jquast.domain.config.ConfigRepository;
 import de.jquast.domain.environment.EnvironmentRepository;
+import de.jquast.plugin.commands.AgentCommand;
 import de.jquast.plugin.commands.AlgorithmCommand;
 import de.jquast.plugin.commands.ConfigCommand;
 import de.jquast.plugin.commands.EnvironmentCommand;
+import de.jquast.plugin.repository.InMemoryAgentRepository;
 import de.jquast.plugin.repository.InMemoryAlgorithmRepository;
 import de.jquast.plugin.repository.InMemoryEnvironmentRepository;
 import de.jquast.plugin.repository.PropertiesConfigRepository;
@@ -32,6 +35,7 @@ public class RLApplication {
         CONTEXT.mapInterface(ConfigRepository.class, PropertiesConfigRepository.class);
         CONTEXT.mapInterface(RLAlgorithmRepository.class, InMemoryAlgorithmRepository.class);
         CONTEXT.mapInterface(EnvironmentRepository.class, InMemoryEnvironmentRepository.class);
+        CONTEXT.mapInterface(AgentRepository.class, InMemoryAgentRepository.class);
     }
 
     public static void main(String[] args) throws InjectionException, CommandException {
@@ -39,6 +43,7 @@ public class RLApplication {
         engine.registerTopLevelCommand(ConfigCommand.class);
         engine.registerTopLevelCommand(AlgorithmCommand.class);
         engine.registerTopLevelCommand(EnvironmentCommand.class);
+        engine.registerTopLevelCommand(AgentCommand.class);
 
         engine.execute(String.join(" ", args));
     }
