@@ -28,4 +28,9 @@ public enum DefaultConfigItem {
     public String getDefaultValue() {
         return defaultValue;
     }
+
+    public ConfigItem createNewItem() {
+        return new ConfigItem(getKey(), getDefaultValue());
+    }
+
 }

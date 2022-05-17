@@ -48,7 +48,7 @@ public class ConfigService {
     public ConfigItem getConfigItem(DefaultConfigItem item) {
         Optional<ConfigItem> configItem = configRepository.getConfigItem(item.getKey());
         if (configItem.isEmpty())
-            return new ConfigItem(item.getKey(), item.getDefaultValue());
+            return item.createNewItem();
 
         return configItem.get();
     }
