@@ -1,33 +1,19 @@
 package de.jquast.domain.algorithm;
 
+import de.jquast.domain.policy.ActionSource;
 import de.jquast.domain.policy.Policy;
 
-public interface RLAlgorithm {
+public abstract class RLAlgorithm implements ActionSource {
 
-    /**
-     * Gibt den Namen des Algorithmus zurück.
-     *
-     * @return Der Name des Algorithmus.
-     */
-    String getName();
-
-    /**
-     * Gibt die Beschreibung des Algorithmus zurück.
-     *
-     * @return Die Beschreibung des Algorithmus.
-     */
-    String getDescription();
+    private Policy basePolicy;
 
     /**
      * Gibt die verwendete Policy des Algorithmus zurück.
      *
      * @return Die verwendete Policy, sofern der Algorithmus ein on-Policy Algorithmus ist. NULL andernfalls.
      */
-    Policy getPolicy();
-
-    /**
-     * @return
-     */
-    int getTimeSteps();
+    public Policy getPolicy() {
+        return basePolicy;
+    }
 
 }
