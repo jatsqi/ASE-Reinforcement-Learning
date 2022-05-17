@@ -33,6 +33,11 @@ public class EpsilonGreedyPolicy extends Policy {
         return maxActionValue.action();
     }
 
+    @Override
+    public void criticiseAction(int oldState, int action, int newState, double reward) {
+        // Nichts machen
+    }
+
     public double getEpsilon() {
         return epsilon;
     }
