@@ -22,7 +22,7 @@ public class InMemoryEnvironmentRepository implements EnvironmentRepository {
         String kArmedBandit = "k-armed-bandit";
         ENVIRONMENTS.put(kArmedBandit, new EnvironmentDescriptor(
                 kArmedBandit,
-                "Spielautomaten",
+                "N Spieleautomaten (einarmige Banditen) mit jeweils einem Hebel.",
                 KArmedBandit.class,
                 new Action[] {
                         Action.DO_NOTHING,
@@ -33,11 +33,11 @@ public class InMemoryEnvironmentRepository implements EnvironmentRepository {
 
     @Override
     public Collection<EnvironmentDescriptor> getEnvironments() {
-        return null;
+        return ENVIRONMENTS.values();
     }
 
     @Override
     public Optional<EnvironmentDescriptor> getEnvironment(String name) {
-        return Optional.empty();
+        return Optional.ofNullable(ENVIRONMENTS.get(name));
     }
 }
