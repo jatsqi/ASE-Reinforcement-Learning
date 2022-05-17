@@ -6,5 +6,6 @@ public record AgentDescriptor(
         String name,
         String description,
         Class<? extends Agent> clazz,
-        Action[] requiredCapabilities) {
+        Action[] requiredCapabilities,
+        int actionSpace) {
 }
