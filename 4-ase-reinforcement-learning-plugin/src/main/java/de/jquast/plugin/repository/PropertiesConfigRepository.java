@@ -75,15 +75,14 @@ public class PropertiesConfigRepository implements ConfigRepository {
     }
 
     private void saveConfigItems() {
-        try {
-            BufferedWriter writer = Files.newBufferedWriter(Paths.get(FILE_NAME), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(FILE_NAME), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+
 
             for (ConfigItem item : configItems.values()) {
                 writer.write(String.format("%s=%s\n", item.name(), item.value()));
             }
 
             writer.flush();
-            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
