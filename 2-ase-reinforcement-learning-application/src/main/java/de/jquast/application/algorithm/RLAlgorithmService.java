@@ -1,6 +1,7 @@
 package de.jquast.application.algorithm;
 
 import de.jquast.domain.algorithm.RLAlgorithm;
+import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.domain.algorithm.RLAlgorithmRepository;
 import de.jquast.utils.di.annotations.Inject;
 
@@ -16,11 +17,11 @@ public class RLAlgorithmService {
         this.algorithmRepository = algorithmRepository;
     }
 
-    public Collection<RLAlgorithm> getAlgorithms() {
+    public Collection<RLAlgorithmDescriptor> getAlgorithms() {
         return algorithmRepository.getAlgorithms();
     }
 
-    public Optional<RLAlgorithm> getAlgorithm(String name) {
+    public Optional<RLAlgorithmDescriptor> getAlgorithm(String name) {
         return algorithmRepository.getAlgorithm(name);
     }
 }

@@ -5,8 +5,8 @@ import java.util.Optional;
 
 public interface RLAlgorithmRepository {
 
-    Collection<RLAlgorithm> getAlgorithms();
+    Collection<RLAlgorithmDescriptor> getAlgorithms();
 
-    Optional<RLAlgorithm> getAlgorithm(String name);
+    Optional<RLAlgorithmDescriptor> getAlgorithm(String name);
 
 }
