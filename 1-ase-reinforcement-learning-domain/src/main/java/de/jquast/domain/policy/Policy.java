@@ -1,8 +1,9 @@
 package de.jquast.domain.policy;
 
+import de.jquast.domain.shared.ActionSource;
 import de.jquast.domain.shared.ActionValueStore;
 
-public abstract class Policy {
+public abstract class Policy implements ActionSource {
 
     private ActionValueStore actionValueStore;
 
