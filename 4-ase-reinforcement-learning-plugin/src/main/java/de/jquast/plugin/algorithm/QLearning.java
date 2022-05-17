@@ -25,7 +25,7 @@ public class QLearning extends RLAlgorithm {
 
         double oldValue = actionValueStoreDelegate.getActionValue(oldState, action);
         double newFutureEstimate = maxEntry.value();
-        double newEstimate = oldValue * learningRate * (reward + discountFactor * newFutureEstimate - oldValue);
+        double newEstimate = oldValue + learningRate * (reward + discountFactor * newFutureEstimate - oldValue);
 
         actionValueStoreDelegate.setActionValue(oldState, action, newEstimate);
     }
