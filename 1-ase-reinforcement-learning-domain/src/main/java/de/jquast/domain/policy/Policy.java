@@ -1,5 +1,22 @@
 package de.jquast.domain.policy;
 
-public interface Policy {
-    int chooseAction(double[] estimatedActionUtility);
+import de.jquast.domain.shared.ActionValueStore;
+
+public abstract class Policy {
+
+    private ActionValueStore actionValueStore;
+
+    public Policy(ActionValueStore actionValueStore) {
+        this.actionValueStore = actionValueStore;
+    }
+
+    public Policy(int stateCount, int actionCount) {
+        this(new ActionValueStore(stateCount, actionCount));
+    }
+
+    public abstract int selectAction(int state);
+
+    public ActionValueStore getActionValueStore() {
+        return actionValueStore;
+    }
 }
