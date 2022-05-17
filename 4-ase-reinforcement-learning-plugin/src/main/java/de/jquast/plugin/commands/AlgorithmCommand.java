@@ -1,9 +1,12 @@
 package de.jquast.plugin.commands;
 
 import de.jquast.application.algorithm.RLAlgorithmService;
+import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;
 import de.jquast.utils.di.annotations.Inject;
+
+import java.util.Optional;
 
 @Command(
         name = "algorithm",
@@ -23,8 +26,21 @@ public class AlgorithmCommand implements Runnable {
 
     @Override
     public void run() {
-        if (algorithm == null) {
+        Optional<RLAlgorithmDescriptor> toPrint = algorithmService.getAlgorithm(algorithm);
 
+        if (toPrint.isEmpty()) {
+            printAlgorithms();
+        } else {
+            printAlgorithm(toPrint.get());
         }
+    }
+
+    private void printAlgorithms() {
+        System.out.println("Algorithmen: ");
+        algorithmService.getAlgorithms().forEach(AlgorithmCommand::printAlgorithm);
+    }
+
+    private static void printAlgorithm(RLAlgorithmDescriptor descriptor) {
+        System.out.println(String.format("  %s: %s", descriptor.name(), descriptor.description()));
     }
 }
