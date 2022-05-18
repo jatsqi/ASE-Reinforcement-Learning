@@ -14,4 +14,16 @@ public abstract class RLAlgorithm implements ActionSource {
         this.actionSourceDelegate = actionSource;
         this.settings = settings;
     }
+
+    public RLSettings getSettings() {
+        return settings;
+    }
+
+    public ActionValueStore getActionValueStoreDelegate() {
+        return actionValueStoreDelegate;
+    }
+
+    public ActionSource getActionSourceDelegate() {
+        return actionSourceDelegate;
+    }
 }

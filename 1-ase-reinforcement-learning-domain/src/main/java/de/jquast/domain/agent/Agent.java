@@ -50,5 +50,9 @@ public abstract class Agent {
         return environment;
     }
 
+    public ActionSource getActionSource() {
+        return actionSource;
+    }
+
     public record ActionDataPair(Action action, int data) {}
 }
