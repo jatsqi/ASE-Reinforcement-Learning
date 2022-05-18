@@ -1,13 +1,18 @@
 package de.jquast.plugin;
 
+import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.agent.AgentRepository;
+import de.jquast.domain.algorithm.AlgorithmFactory;
 import de.jquast.domain.algorithm.RLAlgorithmRepository;
 import de.jquast.domain.config.ConfigRepository;
+import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.environment.EnvironmentRepository;
-import de.jquast.plugin.commands.AgentCommand;
-import de.jquast.plugin.commands.AlgorithmCommand;
-import de.jquast.plugin.commands.ConfigCommand;
-import de.jquast.plugin.commands.EnvironmentCommand;
+import de.jquast.domain.policy.PolicyFactory;
+import de.jquast.plugin.commands.*;
+import de.jquast.plugin.factory.SimpleAgentFactory;
+import de.jquast.plugin.factory.SimpleAlgorithmFactory;
+import de.jquast.plugin.factory.SimpleEnvironmentFactory;
+import de.jquast.plugin.factory.SimplePolicyFactory;
 import de.jquast.plugin.repository.InMemoryAgentRepository;
 import de.jquast.plugin.repository.InMemoryAlgorithmRepository;
 import de.jquast.plugin.repository.InMemoryEnvironmentRepository;
@@ -32,10 +37,16 @@ public class RLApplication {
         CONTEXT.mapInterface(CommandExecutionEngine.class, StatelessCommandExecutionEngine.class);
         CONTEXT.mapInterface(CommandFactory.class, InjectingCommandFactory.class);
         CONTEXT.mapInterface(ArgumentConverters.class, DefaultArgumentConverters.class);
+
         CONTEXT.mapInterface(ConfigRepository.class, PropertiesConfigRepository.class);
         CONTEXT.mapInterface(RLAlgorithmRepository.class, InMemoryAlgorithmRepository.class);
         CONTEXT.mapInterface(EnvironmentRepository.class, InMemoryEnvironmentRepository.class);
         CONTEXT.mapInterface(AgentRepository.class, InMemoryAgentRepository.class);
+
+        CONTEXT.mapInterface(EnvironmentFactory.class, SimpleEnvironmentFactory.class);
+        CONTEXT.mapInterface(AgentFactory.class, SimpleAgentFactory.class);
+        CONTEXT.mapInterface(PolicyFactory.class, SimplePolicyFactory.class);
+        CONTEXT.mapInterface(AlgorithmFactory.class, SimpleAlgorithmFactory.class);
     }
 
     public static void main(String[] args) throws InjectionException, CommandException {
@@ -44,6 +55,7 @@ public class RLApplication {
         engine.registerTopLevelCommand(AlgorithmCommand.class);
         engine.registerTopLevelCommand(EnvironmentCommand.class);
         engine.registerTopLevelCommand(AgentCommand.class);
+        engine.registerTopLevelCommand(RunCommand.class);
 
         engine.execute(String.join(" ", args));
     }
