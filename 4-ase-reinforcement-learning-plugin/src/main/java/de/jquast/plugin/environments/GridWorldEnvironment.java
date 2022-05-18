@@ -59,15 +59,15 @@ public class GridWorldEnvironment extends Environment {
 
     @Override
     public void tick() {
-        if (squashTo1DCoordinate(currX, currY) == terminalState) {
-            currY = 0;
+        if (isTerminalState()) {
             currX = 0;
+            currY = 0;
         }
     }
 
     @Override
     public double getReward() {
-        if (squashTo1DCoordinate(currX, currY) == terminalState) {
+        if (isTerminalState()) {
             return 5;
         }
 
@@ -76,5 +76,9 @@ public class GridWorldEnvironment extends Environment {
 
     private int squashTo1DCoordinate(int x, int y) {
         return (y * width) + x;
+    }
+
+    private boolean isTerminalState() {
+        return getCurrentState() == terminalState;
     }
 }
