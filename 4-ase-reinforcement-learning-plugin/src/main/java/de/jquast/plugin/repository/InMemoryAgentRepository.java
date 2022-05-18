@@ -5,6 +5,7 @@ import de.jquast.domain.agent.AgentRepository;
 import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.domain.algorithm.RLAlgorithmRepository;
 import de.jquast.domain.shared.Action;
+import de.jquast.plugin.agent.MovingAgent2D;
 import de.jquast.plugin.agent.PullAgent;
 import de.jquast.plugin.algorithm.QLearning;
 
@@ -27,6 +28,15 @@ public class InMemoryAgentRepository implements AgentRepository {
                 PullAgent.class,
                 new Action[]{ Action.DO_NOTHING, Action.PULL },
                 AgentDescriptor.AGENT_ACTION_SPACE_MATCHES_STATE_SPACE
+        ));
+
+        String movingAgent2d = "2d-moving-agent";
+        AGENTS.put(movingAgent2d, new AgentDescriptor(
+                movingAgent2d,
+                "Agent, der sich auf einer 2D-Ebene fortbewegen kann",
+                MovingAgent2D.class,
+                new Action[]{ Action.DO_NOTHING, Action.PULL },
+                5
         ));
     }
 
