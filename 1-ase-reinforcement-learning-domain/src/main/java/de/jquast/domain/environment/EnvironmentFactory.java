@@ -5,6 +5,6 @@ import java.util.Optional;
 
 public interface EnvironmentFactory {
 
-    Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, Object> parameters);
+    Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters);
 
 }

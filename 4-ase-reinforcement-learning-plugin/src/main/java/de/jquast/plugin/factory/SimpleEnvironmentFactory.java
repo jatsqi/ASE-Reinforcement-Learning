@@ -12,7 +12,7 @@ import java.util.Optional;
 public class SimpleEnvironmentFactory implements EnvironmentFactory {
 
     @Override
-    public Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, Object> parameters) {
+    public Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters) {
         Environment environment = switch (descriptor.name().toLowerCase()) {
             case "k-armed-bandit" -> createKArmedBanditEnvironment(parameters);
             case "grid-world" -> createGridWorldEnvironment(parameters);
@@ -22,11 +22,16 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
         return Optional.of(environment);
     }
 
-    private KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, Object> parameters) {
-        return null;
+    private KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters) {
+        Integer k = Integer.parseInt(parameters.get("bandits"));
+
+        return new KArmedBanditEnvironment(k);
     }
 
-    private GridWorldEnvironment createGridWorldEnvironment(Map<String, Object> parameters) {
-        return null;
+    private GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) {
+        Integer height = Integer.parseInt(parameters.get("height"));
+        Integer width = Integer.parseInt(parameters.get("width"));
+
+        return new GridWorldEnvironment(height, width);
     }
 }
