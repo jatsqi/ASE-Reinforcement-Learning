@@ -12,7 +12,7 @@ public @interface Command {
 
     String description();
 
-    String help() default "Just use google man.";
+    String help() default "Just use DuckDuckGo man.";
 
     Class<?>[] subcommands() default {};
 }
