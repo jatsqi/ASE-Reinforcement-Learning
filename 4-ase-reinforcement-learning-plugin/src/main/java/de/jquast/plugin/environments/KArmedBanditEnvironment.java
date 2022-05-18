@@ -42,7 +42,7 @@ public class KArmedBanditEnvironment extends Environment {
 
     @Override
     public int getStateSpace() {
-        return 1;
+        return 2;
     }
 
     @Override
