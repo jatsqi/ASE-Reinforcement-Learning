@@ -34,7 +34,7 @@ public class GridWorldEnvironment extends Environment {
         }
 
         if (action.equals(Action.MOVE_Y_UP) && currY + 1 < height) {
-            currX += 1;
+            currY += 1;
             return true;
         }
 
@@ -43,6 +43,7 @@ public class GridWorldEnvironment extends Environment {
             return true;
         }
 
+        System.out.println("Do nothing");
         return true;
     }
 
@@ -66,7 +67,11 @@ public class GridWorldEnvironment extends Environment {
 
     @Override
     public double getReward() {
-        return -0.1;
+        if (squashTo1DCoordinate(currX, currY) == terminalState) {
+            return 5;
+        }
+
+        return -0.01;
     }
 
     private int squashTo1DCoordinate(int x, int y) {
