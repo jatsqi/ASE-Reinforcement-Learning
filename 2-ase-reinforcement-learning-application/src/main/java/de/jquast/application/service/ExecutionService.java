@@ -52,7 +52,7 @@ public class ExecutionService {
         this.algorithmFactory = factoryBundle.getAlgorithmFactory();
     }
 
-    public void startAgentTraining(String agentName, String envName, String envOptions, long steps) throws StartAgentTrainingException {
+    public Agent startAgentTraining(String agentName, String envName, String envOptions, long steps) throws StartAgentTrainingException {
         Optional<AgentDescriptor> agentDescriptorOp = agentService.getAgent(agentName);
         Optional<EnvironmentDescriptor> environmentDescriptorOp = envService.getEnvironment(envName);
         RLSettings settings = rlSettingsService.getRLSettings();
@@ -90,14 +90,16 @@ public class ExecutionService {
             throw new StartAgentTrainingException("Fehler beim Erstellen des Agenten.");
 
         // Start Training
-        startTrainLoop(agentOp.get(), environment, steps);
+        return startTrainLoop(agentOp.get(), environment, steps);
     }
 
-    private void startTrainLoop(Agent agent, Environment environment, long steps) {
+    private Agent startTrainLoop(Agent agent, Environment environment, long steps) {
         while (--steps > 0) {
             environment.tick();
             agent.executeNextAction();
         }
+
+        return agent;
     }
 
     private Map<String, String> parseEnvOptions(String envOptions) {
