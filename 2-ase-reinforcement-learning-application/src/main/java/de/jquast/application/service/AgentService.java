@@ -1,4 +1,4 @@
-package de.jquast.application.agent;
+package de.jquast.application.service;
 
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentRepository;

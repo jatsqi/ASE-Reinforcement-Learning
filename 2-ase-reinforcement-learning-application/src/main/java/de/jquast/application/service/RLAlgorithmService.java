@@ -1,4 +1,4 @@
-package de.jquast.application.algorithm;
+package de.jquast.application.service;
 
 import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.domain.algorithm.RLAlgorithmRepository;

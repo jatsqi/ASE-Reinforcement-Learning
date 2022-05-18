@@ -1,4 +1,4 @@
-package de.jquast.application.environment;
+package de.jquast.application.service;
 
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentRepository;

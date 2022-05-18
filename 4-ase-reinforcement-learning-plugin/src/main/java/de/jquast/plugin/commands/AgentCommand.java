@@ -1,6 +1,6 @@
 package de.jquast.plugin.commands;
 
-import de.jquast.application.agent.AgentService;
+import de.jquast.application.service.AgentService;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;

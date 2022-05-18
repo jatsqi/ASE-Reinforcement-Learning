@@ -1,6 +1,6 @@
 package de.jquast.plugin.commands;
 
-import de.jquast.application.config.ConfigService;
+import de.jquast.application.service.ConfigService;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;

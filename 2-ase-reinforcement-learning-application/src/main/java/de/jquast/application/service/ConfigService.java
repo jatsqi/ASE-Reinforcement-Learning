@@ -1,4 +1,4 @@
-package de.jquast.application.config;
+package de.jquast.application.service;
 
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;

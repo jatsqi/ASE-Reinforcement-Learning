@@ -1,6 +1,6 @@
 package de.jquast.plugin.commands;
 
-import de.jquast.application.environment.EnvironmentService;
+import de.jquast.application.service.EnvironmentService;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;
