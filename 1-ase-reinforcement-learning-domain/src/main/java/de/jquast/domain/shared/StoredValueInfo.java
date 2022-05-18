@@ -1,4 +1,19 @@
 package de.jquast.domain.shared;
 
-public record StoredValueInfo(int id, String name, String environment) {
+import java.util.Objects;
+
+public record StoredValueInfo(int id, String name, String agent, String environment) {
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StoredValueInfo that = (StoredValueInfo) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
