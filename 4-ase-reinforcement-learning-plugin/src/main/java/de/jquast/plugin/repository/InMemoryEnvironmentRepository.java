@@ -3,6 +3,7 @@ package de.jquast.plugin.repository;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.shared.Action;
+import de.jquast.plugin.environments.GridWorldEnvironment;
 import de.jquast.plugin.environments.KArmedBanditEnvironment;
 
 import java.util.Collection;
@@ -25,6 +26,18 @@ public class InMemoryEnvironmentRepository implements EnvironmentRepository {
                 new Action[]{
                         Action.DO_NOTHING,
                         Action.PULL
+                }
+        ));
+
+        String gridWorld = "grid-world";
+        ENVIRONMENTS.put(gridWorld, new EnvironmentDescriptor(
+                gridWorld,
+                "Eine Welt bestehend aus Kacheln",
+                GridWorldEnvironment.class,
+                new Action[]{
+                        Action.DO_NOTHING,
+                        Action.MOVE_X_DOWN, Action.MOVE_X_UP,
+                        Action.MOVE_Y_DOWN, Action.MOVE_Y_UP
                 }
         ));
     }

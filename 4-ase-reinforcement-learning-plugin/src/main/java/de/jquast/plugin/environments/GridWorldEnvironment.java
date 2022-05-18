@@ -43,8 +43,7 @@ public class GridWorldEnvironment extends Environment {
             return true;
         }
 
-        System.out.println("Do nothing");
-        return true;
+        return action.equals(Action.DO_NOTHING);
     }
 
     @Override
