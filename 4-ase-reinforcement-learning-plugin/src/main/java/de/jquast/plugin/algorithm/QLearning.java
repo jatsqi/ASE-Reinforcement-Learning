@@ -18,6 +18,8 @@ public class QLearning extends RLAlgorithm {
 
     @Override
     public void criticiseAction(int oldState, int action, int newState, double reward) {
+        actionSourceDelegate.criticiseAction(oldState, action, newState, reward);
+
         ActionValueStore.ActionValueEntry maxEntry = actionValueStoreDelegate.getMaxActionValue(newState);
 
         double oldValue = actionValueStoreDelegate.getActionValue(oldState, action);
