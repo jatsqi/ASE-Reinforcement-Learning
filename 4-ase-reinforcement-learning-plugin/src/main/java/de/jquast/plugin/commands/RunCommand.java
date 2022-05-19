@@ -32,6 +32,9 @@ public class RunCommand implements Runnable {
     @Option(names = "--init-from", description = "Init Environment from file.")
     public String initFromFile;
 
+    @Option(names = "--resume", description = "Benutze Values eines vorherigen Trainings", defaultValue = "-1")
+    public int resumeFromStoreId;
+
     private final ExecutionService executionService;
 
     @Inject
@@ -47,13 +50,15 @@ public class RunCommand implements Runnable {
             System.out.println("    Agent: " + agentName);
             System.out.println("    Optionen: " + environmentOptions);
             System.out.println("    Steps: " + steps);
+            System.out.println("    Store-ID: " + (resumeFromStoreId == -1 ? null : resumeFromStoreId));
 
             Optional<PolicyVisualizer> vis = executionService.startAgentTraining(
                     agentName,
                     environmentName,
                     environmentOptions,
                     steps,
-                    initFromFile);
+                    initFromFile,
+                    resumeFromStoreId);
 
             if (vis.isEmpty()) {
                 System.out.println("Leider konnte keine Visualisierung für die Trainierte Policy erstellt werden :(");

@@ -9,12 +9,10 @@ import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.policy.PolicyFactory;
 import de.jquast.domain.policy.PolicyVisualizerFactory;
+import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.plugin.commands.*;
 import de.jquast.plugin.factory.*;
-import de.jquast.plugin.repository.InMemoryAgentRepository;
-import de.jquast.plugin.repository.InMemoryAlgorithmRepository;
-import de.jquast.plugin.repository.InMemoryEnvironmentRepository;
-import de.jquast.plugin.repository.PropertiesConfigRepository;
+import de.jquast.plugin.repository.*;
 import de.jquast.utils.cli.command.CommandExecutionEngine;
 import de.jquast.utils.cli.command.CommandFactory;
 import de.jquast.utils.cli.command.converter.ArgumentConverters;
@@ -40,6 +38,7 @@ public class RLApplication {
         CONTEXT.mapInterface(RLAlgorithmRepository.class, InMemoryAlgorithmRepository.class);
         CONTEXT.mapInterface(EnvironmentRepository.class, InMemoryEnvironmentRepository.class);
         CONTEXT.mapInterface(AgentRepository.class, InMemoryAgentRepository.class);
+        CONTEXT.mapInterface(ActionValueRepository.class, FileSystemActionValueRepository.class);
 
         CONTEXT.mapInterface(EnvironmentFactory.class, SimpleEnvironmentFactory.class);
         CONTEXT.mapInterface(AgentFactory.class, SimpleAgentFactory.class);

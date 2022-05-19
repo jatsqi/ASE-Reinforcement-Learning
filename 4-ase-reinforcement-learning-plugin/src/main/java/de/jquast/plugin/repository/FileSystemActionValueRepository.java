@@ -2,26 +2,24 @@ package de.jquast.plugin.repository;
 
 import de.jquast.application.service.AgentService;
 import de.jquast.application.service.EnvironmentService;
-import de.jquast.domain.agent.AgentDescriptor;
-import de.jquast.domain.environment.Environment;
-import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.domain.shared.StoredValueInfo;
 import de.jquast.utils.di.annotations.Inject;
 import de.jquast.utils.files.CSVReader;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class FileSystemActionValueRepository implements ActionValueRepository {
 
     private static final String STORAGE_FOLDER_PATH = "stored_values";
-    private static final String STORAGE_FILE_EXTENSION = "csv";
+    private static final String STORAGE_FILE_EXTENSION = "store";
     private static final String STORAGE_FILE_DELIMITER = ";";
 
     private Map<Integer, StoredValueInfo> valueInfo = new HashMap();
@@ -47,11 +45,11 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         return Optional.ofNullable(valueInfo.get(id));
     }
 
-    @Override
+    /*@Override
     public Optional<StoredValueInfo> getStoredActionValueInfoByName(String name) {
         updateValueInfo();
         return valueInfo.values().stream().filter(info -> info.name().equals(name)).findFirst();
-    }
+    }*/
 
     @Override
     public Optional<ActionValueStore> fetchActionValueInfo(StoredValueInfo info) {
@@ -59,14 +57,30 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     }
 
     @Override
-    public StoredValueInfo createActionValueStore(ActionValueStore store) {
-        return null;
+    public StoredValueInfo createActionValueStore(String agentName, String envName, ActionValueStore store) {
+        int id = findNextId(agentName, envName);
+        StoredValueInfo info = new StoredValueInfo(id, agentName, envName);
+
+        try(BufferedWriter writer = Files.newBufferedWriter(Path.of(STORAGE_FOLDER_PATH, infoToFileName(info)), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+            writer.write("state;action;value\n");
+
+            for (int i = 0; i < store.getStateCount(); i++) {
+                for (int j = 0; j < store.getActionCount(); j++) {
+                    writer.write(String.format(Locale.US, "%d;%d;%f\n", i, j, store.getActionValue(i, j)));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return info;
     }
 
     private void updateValueInfo() {
         try {
-            List<Path> csvFiles = Files.walk(Paths.get(STORAGE_FOLDER_PATH))
-                    .filter(p -> p.toString().endsWith(STORAGE_FILE_EXTENSION))
+            List<Path> csvFiles = Files.walk(Path.of(STORAGE_FOLDER_PATH))
+                    .filter(p -> {
+                        System.out.println(p.toString()); return p.toString().endsWith(STORAGE_FILE_EXTENSION);})
                     .collect(Collectors.toList());
             valueInfo.clear();
 
@@ -81,22 +95,6 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         }
     }
 
-    private Optional<StoredValueInfo> fileNameToInfo(String fileName) {
-        String[] parts = fileName.split("_");
-        if (parts.length != 4)
-            return Optional.empty();
-
-        return Optional.of(new StoredValueInfo(Integer.parseInt(parts[0]), parts[1], parts[2], parts[3]));
-    }
-
-    private static String infoToFileName(StoredValueInfo info) {
-        return String.format("%d_%s_%s_%s",
-                info.id(),
-                info.name().replace("_", ""),
-                info.agent().replace("_", ""),
-                info.environment().replace("_", ""));
-    }
-
     private Optional<ActionValueStore> readActionValueStore(StoredValueInfo info) {
         /*
         CSV Aufbau:
@@ -105,21 +103,70 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
             ....
          */
         CSVReader reader = new CSVReader(Path.of(STORAGE_FOLDER_PATH, infoToFileName(info)), STORAGE_FILE_DELIMITER);
-        Optional<String[][]> vars = reader.read();
+        Optional<String[][]> varsOp = reader.read();
 
-        if (vars.isEmpty())
+        if (varsOp.isEmpty())
             return Optional.empty();
 
-        Optional<EnvironmentDescriptor> environment = environmentService.getEnvironment(info.environment());
-        Optional<AgentDescriptor> agent = agentService.getAgent(info.agent());
+        String[][] vars = varsOp.get();
 
-        if (environment.isEmpty() || agent.isEmpty())
-            return Optional.empty();
+        // Letzte Zeile enthält Nummer des maximalen States und der maximalen Action
+        StoreCSVEntry lastEntry = parseLine(vars[vars.length - 1]);
+        double[][] values = new double[lastEntry.state + 1][lastEntry.action + 1];
 
-        AgentDescriptor agentDescriptor = agent.get();
-        EnvironmentDescriptor environmentDescriptor = environment.get();
+        // Read every line
+        for (String[] line : vars) {
+            StoreCSVEntry entry = parseLine(line);
 
-        //ActionValueStore store = new ActionValueStore(environmentDescriptor.)
-        return Optional.empty();
+            if (entry.action > lastEntry.action || entry.action < 0 || entry.state > lastEntry.state || entry.state < 0)
+                return Optional.empty();
+
+            values[entry.state][entry.action] = entry.value;
+        }
+
+        // Create store
+        ActionValueStore store = new ActionValueStore(values);
+        return Optional.of(store);
     }
+
+    private StoreCSVEntry parseLine(String[] cols) {
+        return new StoreCSVEntry(
+                Integer.parseInt(cols[0]),
+                Integer.parseInt(cols[1]),
+                Double.parseDouble(cols[2])
+        );
+    }
+
+    private Optional<StoredValueInfo> fileNameToInfo(String fileName) {
+        String[] parts = fileName.split("\\.")[0].split("_");
+        if (parts.length != 3)
+            return Optional.empty();
+
+        return Optional.of(new StoredValueInfo(Integer.parseInt(parts[0]), parts[1], parts[2]));
+    }
+
+    private int findNextId(String agentName, String envName) {
+        for (int i = 0; i < Integer.MAX_VALUE; ++i) {
+            if (!Files.exists(Path.of(STORAGE_FOLDER_PATH, infoToFileName(i, agentName, envName)))) {
+                return i;
+            }
+        }
+
+        throw new RuntimeException("This should never happen....");
+    }
+
+    private static String infoToFileName(StoredValueInfo info) {
+        return infoToFileName(info.id(), info.agent(), info.environment());
+    }
+
+    private static String infoToFileName(int id, String agent, String env) {
+        return String.format("%d_%s_%s.%s",
+                id,
+                agent,
+                env,
+                STORAGE_FILE_EXTENSION);
+    }
+
+    private record StoreCSVEntry(int state, int action, double value) { }
+
 }

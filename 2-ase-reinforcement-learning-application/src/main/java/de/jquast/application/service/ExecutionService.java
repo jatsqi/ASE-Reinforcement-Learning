@@ -14,11 +14,14 @@ import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyFactory;
 import de.jquast.domain.policy.PolicyVisualizer;
 import de.jquast.domain.policy.PolicyVisualizerFactory;
+import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
+import de.jquast.domain.shared.StoredValueInfo;
 import de.jquast.utils.di.annotations.Inject;
 import exception.StartAgentTrainingException;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,7 +31,7 @@ public class ExecutionService {
     private EnvironmentService envService;
     private ConfigService configService;
     private RLSettingsService rlSettingsService;
-    private RLAlgorithmService algorithmService;
+    private ActionValueRepository actionValueRepository;
 
     private EnvironmentFactory environmentFactory;
     private AgentFactory agentFactory;
@@ -42,13 +45,13 @@ public class ExecutionService {
             EnvironmentService envService,
             ConfigService configService,
             RLSettingsService rlSettingsService,
-            RLAlgorithmService algorithmService,
+            ActionValueRepository actionValueRepository,
             RLFactoryBundle factoryBundle) {
         this.agentService = agentService;
         this.envService = envService;
         this.configService = configService;
         this.rlSettingsService = rlSettingsService;
-        this.algorithmService = algorithmService;
+        this.actionValueRepository = actionValueRepository;
 
         this.environmentFactory = factoryBundle.getEnvironmentFactory();
         this.agentFactory = factoryBundle.getAgentFactory();
@@ -57,7 +60,13 @@ public class ExecutionService {
         this.policyVisualizerFactory = factoryBundle.getPolicyVisualizerFactory();
     }
 
-    public Optional<PolicyVisualizer> startAgentTraining(String agentName, String envName, String envOptions, long steps, String initFromFile) throws StartAgentTrainingException {
+    public Optional<PolicyVisualizer> startAgentTraining(
+            String agentName,
+            String envName,
+            String envOptions,
+            long steps,
+            String initFromFile,
+            int resumeFromStore) throws StartAgentTrainingException {
         Optional<AgentDescriptor> agentDescriptorOp = agentService.getAgent(agentName);
         Optional<EnvironmentDescriptor> environmentDescriptorOp = envService.getEnvironment(envName);
         RLSettings settings = rlSettingsService.getRLSettings();
@@ -83,7 +92,9 @@ public class ExecutionService {
 
         // Unwrap Environment
         Environment environment = environmentOp.get();
-        ActionValueStore store = new ActionValueStore(environment.getStateSpace(), agentDescriptor.actionSpace());
+        ActionValueStore store = buildStore(environment.getStateSpace(), agentDescriptor.actionSpace(), resumeFromStore);
+        if (environment.getStateSpace() != store.getStateCount() || agentDescriptor.actionSpace() != store.getActionCount())
+            throw new StartAgentTrainingException("Dieser Value-Store ist nicht mit dem Environment kompatibel!");
 
         // Create & Check Policy
         Optional<Policy> policyOp = policyFactory.createPolicy(null, store, settings);
@@ -100,11 +111,29 @@ public class ExecutionService {
         if (agentOp.isEmpty())
             throw new StartAgentTrainingException("Fehler beim Erstellen des Agenten.");
 
-        // Start Training
+        // Start Training & Store result
         startTrainLoop(agentOp.get(), environment, steps);
+        storeTrainedPolicy(agentName, envName, policyOp.get());
 
         // Create Visualization
         return policyVisualizerFactory.createVisualizer(policyOp.get(), environment);
+    }
+
+    private ActionValueStore buildStore(int stateSpace, int actionSpace, int resumeFromStore) throws StartAgentTrainingException {
+        if (resumeFromStore != -1) {
+            Optional<StoredValueInfo> storedValueInfoOp = actionValueRepository.getStoredActionValueInfoById(resumeFromStore);
+
+            if (storedValueInfoOp.isEmpty())
+                throw new StartAgentTrainingException("ID des Stores ungültig!");
+
+            Optional<ActionValueStore> actionValueStoreOp = actionValueRepository.fetchActionValueInfo(storedValueInfoOp.get());
+            if (actionValueStoreOp.isEmpty())
+                throw new StartAgentTrainingException("Fehler beim Lesen des Stores.");
+
+             return actionValueStoreOp.get();
+        }
+
+        return new ActionValueStore(stateSpace, actionSpace);
     }
 
     private void startTrainLoop(Agent agent, Environment environment, long steps) {
@@ -115,6 +144,7 @@ public class ExecutionService {
         while (currStep < steps) {
             if (currStep - lastMessage >= trainingMessageInterval) {
                 System.out.println(String.format(
+                        Locale.US,
                         "Schritt %d/%d (%.2f%%), Durchschnittlicher Reward %f",
                         currStep,
                         steps,
@@ -129,6 +159,10 @@ public class ExecutionService {
 
             currStep++;
         }
+    }
+
+    private void storeTrainedPolicy(String agent, String environment, Policy policy) {
+        actionValueRepository.createActionValueStore(agent, environment, policy.getActionValueStore());
     }
 
     private Map<String, String> parseEnvOptions(String envOptions) {

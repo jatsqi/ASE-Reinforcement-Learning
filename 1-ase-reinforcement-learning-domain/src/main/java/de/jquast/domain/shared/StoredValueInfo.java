@@ -2,7 +2,7 @@ package de.jquast.domain.shared;
 
 import java.util.Objects;
 
-public record StoredValueInfo(int id, String name, String agent, String environment) {
+public record StoredValueInfo(int id, String agent, String environment) {
 
     @Override
     public boolean equals(Object o) {
