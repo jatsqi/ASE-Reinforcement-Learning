@@ -1,6 +1,7 @@
 package de.jquast.plugin.agent;
 
 import de.jquast.domain.agent.Agent;
+import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.shared.Action;
 import de.jquast.domain.shared.ActionSource;
@@ -22,8 +23,8 @@ public class MovingAgent2D extends Agent {
         ACTION_INT_TO_ACTION_MAPPING.put(4, Action.MOVE_Y_DOWN);
     }
 
-    public MovingAgent2D(Environment environment, ActionSource source) {
-        super(environment, source);
+    public MovingAgent2D(Environment environment, ActionSource source, RLSettings settings) {
+        super(environment, source, settings);
     }
 
     @Override

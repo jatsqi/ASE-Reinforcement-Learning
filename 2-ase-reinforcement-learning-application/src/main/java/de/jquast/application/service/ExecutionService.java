@@ -85,7 +85,7 @@ public class ExecutionService {
             throw new StartAgentTrainingException("Fehler beim Erstellen des Algorithmus.");
 
         // Create & Check Agent
-        Optional<Agent> agentOp = agentFactory.createAgent(agentName, environment, algorithmOp.get());
+        Optional<Agent> agentOp = agentFactory.createAgent(agentName, environment, algorithmOp.get(), settings);
         if (agentOp.isEmpty())
             throw new StartAgentTrainingException("Fehler beim Erstellen des Agenten.");
 
