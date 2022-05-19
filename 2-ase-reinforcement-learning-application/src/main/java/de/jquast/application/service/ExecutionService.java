@@ -6,6 +6,7 @@ import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.algorithm.AlgorithmFactory;
 import de.jquast.domain.algorithm.RLAlgorithm;
 import de.jquast.domain.algorithm.RLSettings;
+import de.jquast.domain.config.DefaultConfigItem;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentFactory;
@@ -56,6 +57,7 @@ public class ExecutionService {
         Optional<AgentDescriptor> agentDescriptorOp = agentService.getAgent(agentName);
         Optional<EnvironmentDescriptor> environmentDescriptorOp = envService.getEnvironment(envName);
         RLSettings settings = rlSettingsService.getRLSettings();
+        System.out.println(settings.toString());
 
         // Check availability
         if (agentDescriptorOp.isEmpty() || environmentDescriptorOp.isEmpty())
@@ -94,7 +96,16 @@ public class ExecutionService {
     }
 
     private Agent startTrainLoop(Agent agent, Environment environment, long steps) {
-        while (--steps > 0) {
+        int trainingMessageInterval = Integer.parseInt(configService.getConfigItem(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_MS).value());
+        long lastMessage = 0;
+
+        long currStep = 0;
+        while (++currStep < steps) {
+            if (System.currentTimeMillis() - lastMessage > trainingMessageInterval) {
+                System.out.println(String.format("Schritt %d, Durchschnittlicher Reward %f", currStep, agent.getCurrentAverageReward()));
+                lastMessage = System.currentTimeMillis();
+            }
+
             environment.tick();
             agent.executeNextAction();
         }
