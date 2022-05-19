@@ -29,6 +29,9 @@ public class RunCommand implements Runnable {
     @Option(names = "--steps", description = "Anzahl der Trainingschritte.", required = true)
     public int steps;
 
+    @Option(names = "--init-from", description = "Init Environment from file.")
+    public String initFromFile;
+
     private final ExecutionService executionService;
 
     @Inject
@@ -45,12 +48,17 @@ public class RunCommand implements Runnable {
             System.out.println("    Optionen: " + environmentOptions);
             System.out.println("    Steps: " + steps);
 
-            Optional<PolicyVisualizer> vis = executionService.startAgentTraining(agentName, environmentName, environmentOptions, steps);
+            Optional<PolicyVisualizer> vis = executionService.startAgentTraining(
+                    agentName,
+                    environmentName,
+                    environmentOptions,
+                    steps,
+                    initFromFile);
 
             System.out.println(new String(vis.get().visualize(VisualizationFormat.TEXT), StandardCharsets.UTF_8));
         } catch (StartAgentTrainingException e) {
-            System.out.println("ERRRRROR");
-            e.printStackTrace();
+            System.out.println();
+            System.out.println(e.getMessage());
         }
     }
 }

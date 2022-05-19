@@ -6,6 +6,11 @@ import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.plugin.environments.GridWorldEnvironment;
 import de.jquast.plugin.environments.KArmedBanditEnvironment;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,7 +24,7 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
             default -> null;
         };
 
-        return Optional.of(environment);
+        return Optional.ofNullable(environment);
     }
 
     private KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters) {
@@ -32,6 +37,28 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
         Integer height = Integer.parseInt(parameters.get("height"));
         Integer width = Integer.parseInt(parameters.get("width"));
 
-        return new GridWorldEnvironment(height, width);
+        if (!parameters.containsKey("from")) {
+            return new GridWorldEnvironment(height, width);
+        }
+
+        String from = parameters.get("from");
+        Path fromPath = Paths.get(from);
+        try {
+            List<String> lines = Files.readAllLines(fromPath);
+            int[][] grid = new int[lines.get(0).length()][lines.size()];
+
+            for (int i = 0; i < lines.size(); i++) {
+                char[] chars = lines.get(i).toCharArray();
+
+                for (int j = 0; j < chars.length; j++) {
+                    int num = chars[j] - '0';
+                    grid[j][i] = num;
+                }
+            }
+
+            return new GridWorldEnvironment(grid);
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

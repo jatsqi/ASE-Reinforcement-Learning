@@ -57,7 +57,7 @@ public class ExecutionService {
         this.policyVisualizerFactory = factoryBundle.getPolicyVisualizerFactory();
     }
 
-    public Optional<PolicyVisualizer> startAgentTraining(String agentName, String envName, String envOptions, long steps) throws StartAgentTrainingException {
+    public Optional<PolicyVisualizer> startAgentTraining(String agentName, String envName, String envOptions, long steps, String initFromFile) throws StartAgentTrainingException {
         Optional<AgentDescriptor> agentDescriptorOp = agentService.getAgent(agentName);
         Optional<EnvironmentDescriptor> environmentDescriptorOp = envService.getEnvironment(envName);
         RLSettings settings = rlSettingsService.getRLSettings();
@@ -72,7 +72,12 @@ public class ExecutionService {
         EnvironmentDescriptor environmentDescriptor = environmentDescriptorOp.get();
 
         // Create & Check Environment
-        Optional<Environment> environmentOp = environmentFactory.createEnvironment(environmentDescriptor, parseEnvOptions(envOptions));
+        Map<String, String> envOptionsMap = parseEnvOptions(envOptions);
+        if (initFromFile != null && !initFromFile.isEmpty()) {
+            envOptionsMap.put("from", initFromFile);
+        }
+
+        Optional<Environment> environmentOp = environmentFactory.createEnvironment(environmentDescriptor, envOptionsMap);
         if (environmentOp.isEmpty())
             throw new StartAgentTrainingException("Beim Erstellen des Environments ist ein Fehler aufgetreten. Bitte Parameter überprüfen!");
 
@@ -131,6 +136,9 @@ public class ExecutionService {
 
         for (String s : envOptions.split(";")) {
             String[] parts = s.split("=");
+            if (parts.length != 2)
+                return null;
+
             result.put(parts[0], parts[1]);
         }
 
