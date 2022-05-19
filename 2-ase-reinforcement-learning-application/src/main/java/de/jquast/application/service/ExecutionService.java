@@ -137,7 +137,7 @@ public class ExecutionService {
         for (String s : envOptions.split(";")) {
             String[] parts = s.split("=");
             if (parts.length != 2)
-                return null;
+                continue;
 
             result.put(parts[0], parts[1]);
         }

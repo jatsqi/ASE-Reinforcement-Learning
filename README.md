@@ -20,7 +20,7 @@ Momentan sind folgende Algorithmen implementiert:
 Das Grid-World Environment besteht aus einem schachbrettartigen Feld, wie oben im Bild zu sehen.
 Der Agent hat das Ziel, von seinem Startpunkt aus zum Ziel zu gelangen, um eine Belohnung zu erhalten.
 
-Umgewandelt in die repräsentation, die das CLI versteht, sieht die obere Abbildung folgendermaßen aus:
+Umgewandelt in die Repräsentation, die das CLI versteht, sieht die obere Abbildung folgendermaßen aus:
 ```
 000000021
 002000020
@@ -40,7 +40,7 @@ In der folgenden Tabelle sind alle möglichen Zustände mit ihrer Bedeutung aufg
 | 3                   | Spawnpunkt                                        |
 | 4                   | Gefährliches Feld, Agent erhält Bestrafung von -5 |
 
-Ausprobiert werden kann das Szenario mittels folgendem Befehl, wobei das obrige Grid in der Datei `datei.grid` gespeichert sein muss.
+Ausprobiert werden kann das Szenario mittels folgendem Befehl, wobei das obere Grid in der Datei `datei.grid` gespeichert sein muss.
 
 ```shell
 <jar> run --agent 2d-moving-agent --environment grid-world --steps 5000000 --envopts from=datei.grid

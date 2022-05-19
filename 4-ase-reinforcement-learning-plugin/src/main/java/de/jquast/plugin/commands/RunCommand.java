@@ -55,6 +55,11 @@ public class RunCommand implements Runnable {
                     steps,
                     initFromFile);
 
+            if (vis.isEmpty()) {
+                System.out.println("Leider konnte keine Visualisierung für die Trainierte Policy erstellt werden :(");
+                return;
+            }
+
             System.out.println();
             System.out.println(new String(vis.get().visualize(VisualizationFormat.TEXT), StandardCharsets.UTF_8));
         } catch (StartAgentTrainingException e) {
