@@ -80,4 +80,12 @@ public class GridWorldEnvironment extends Environment {
     private boolean isTerminalState() {
         return getCurrentState() == terminalState;
     }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
 }
