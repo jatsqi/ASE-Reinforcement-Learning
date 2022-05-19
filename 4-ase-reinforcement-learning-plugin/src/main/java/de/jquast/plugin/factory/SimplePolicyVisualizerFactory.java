@@ -49,11 +49,12 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
             GridWorldEnvironment gridWorld = (GridWorldEnvironment) environment;
 
             for (int i = 0; i < gridWorld.getStateSpace(); i++) {
-                if (i % gridWorld.getWidth() == 0) {
+                if (i > 0 && i % gridWorld.getWidth() == 0) {
                     builder.append("\n");
                 }
 
                 builder.append(actionToDirection(policy.selectBestAction(i)));
+                builder.append(" ");
             }
 
             return builder.toString().getBytes();
@@ -62,10 +63,10 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
         private char actionToDirection(int action) {
             return switch (action) {
                 case 0 -> '-';
-                case 1 -> 'E';
-                case 2 -> 'W';
-                case 3 -> 'S';
-                case 4 -> 'N';
+                case 1 -> '→';
+                case 2 -> '←';
+                case 3 -> '↓';
+                case 4 -> '↑';
                 default -> '?';
             };
         }

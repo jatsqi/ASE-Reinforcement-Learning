@@ -1,16 +1,14 @@
 package de.jquast.plugin.commands;
 
 import de.jquast.application.service.ExecutionService;
-import de.jquast.domain.agent.Agent;
 import de.jquast.domain.policy.PolicyVisualizer;
 import de.jquast.domain.policy.VisualizationFormat;
-import de.jquast.plugin.algorithm.QLearning;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Option;
 import de.jquast.utils.di.annotations.Inject;
 import exception.StartAgentTrainingException;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Command(
@@ -49,11 +47,7 @@ public class RunCommand implements Runnable {
 
             Optional<PolicyVisualizer> vis = executionService.startAgentTraining(agentName, environmentName, environmentOptions, steps);
 
-            try {
-                System.out.println(new String(vis.get().visualize(VisualizationFormat.TEXT), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            System.out.println(new String(vis.get().visualize(VisualizationFormat.TEXT), StandardCharsets.UTF_8));
         } catch (StartAgentTrainingException e) {
             System.out.println("ERRRRROR");
             e.printStackTrace();

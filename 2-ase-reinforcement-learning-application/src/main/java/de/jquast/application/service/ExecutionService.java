@@ -103,18 +103,26 @@ public class ExecutionService {
     }
 
     private void startTrainLoop(Agent agent, Environment environment, long steps) {
-        int trainingMessageInterval = Integer.parseInt(configService.getConfigItem(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_MS).value());
+        int trainingMessageInterval = Integer.parseInt(configService.getConfigItem(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_STEPS).value());
         long lastMessage = 0;
 
         long currStep = 0;
-        while (++currStep < steps) {
-            if (System.currentTimeMillis() - lastMessage > trainingMessageInterval) {
-                System.out.println(String.format("Schritt %d, Durchschnittlicher Reward %f", currStep, agent.getCurrentAverageReward()));
-                lastMessage = System.currentTimeMillis();
+        while (currStep < steps) {
+            if (currStep - lastMessage >= trainingMessageInterval) {
+                System.out.println(String.format(
+                        "Schritt %d/%d (%.2f%%), Durchschnittlicher Reward %f",
+                        currStep,
+                        steps,
+                        (float) currStep / steps * 100,
+                        agent.getCurrentAverageReward()));
+
+                lastMessage = currStep;
             }
 
             environment.tick();
             agent.executeNextAction();
+
+            currStep++;
         }
     }
 
