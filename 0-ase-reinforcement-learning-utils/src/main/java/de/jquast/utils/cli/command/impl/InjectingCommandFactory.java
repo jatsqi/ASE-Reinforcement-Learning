@@ -116,6 +116,10 @@ public class InjectingCommandFactory implements CommandFactory {
                 if (foundOption == null && annotation.required())
                     throw new CommandCreationException("Erforderliche Optionen " + String.join(", ", annotation.names()) + " wurden nicht gefunden.", commandMetadata);
 
+                if (foundOption == null) {
+                    foundOption = converters.convert(optionField.optionAnnotation().defaultValue(), optionField.field().getType());
+                }
+
                 ReflectionUtils.setField(optionField.field(), obj, foundOption);
             }
         }
