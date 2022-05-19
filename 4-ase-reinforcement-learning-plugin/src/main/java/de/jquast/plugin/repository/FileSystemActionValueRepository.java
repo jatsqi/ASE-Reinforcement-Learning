@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileSystemActionValueRepository implements ActionValueRepository {
 
@@ -45,12 +45,6 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         return Optional.ofNullable(valueInfo.get(id));
     }
 
-    /*@Override
-    public Optional<StoredValueInfo> getStoredActionValueInfoByName(String name) {
-        updateValueInfo();
-        return valueInfo.values().stream().filter(info -> info.name().equals(name)).findFirst();
-    }*/
-
     @Override
     public Optional<ActionValueStore> fetchStoreFromInfo(PersistedStoreInfo info) {
         return readActionValueStore(info);
@@ -77,14 +71,13 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     }
 
     private void updateValueInfo() {
-        try {
-            List<Path> csvFiles = Files.walk(Path.of(STORAGE_FOLDER_PATH))
-                    .filter(p -> {
-                        System.out.println(p.toString()); return p.toString().endsWith(STORAGE_FILE_EXTENSION);})
-                    .collect(Collectors.toList());
+        try (Stream<Path> foundFiles = Files.walk(Path.of(STORAGE_FOLDER_PATH))) {
+            List<Path> storeFiles = foundFiles
+                    .filter(p -> p.toString().endsWith(STORAGE_FILE_EXTENSION)).toList();
+
             valueInfo.clear();
 
-            for (Path p : csvFiles) {
+            for (Path p : storeFiles) {
                 Optional<PersistedStoreInfo> info = fileNameToInfo(p.getFileName().toString());
 
                 if (info.isPresent())
