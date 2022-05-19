@@ -1,3 +1,3 @@
 package de.jquast.domain.algorithm;
 
-public record RLSettings(double learningRate, double discountFactor, double explorationRate) { }
+public record RLSettings(double learningRate, double discountFactor, double explorationRate, double agentRewardStepSize) { }

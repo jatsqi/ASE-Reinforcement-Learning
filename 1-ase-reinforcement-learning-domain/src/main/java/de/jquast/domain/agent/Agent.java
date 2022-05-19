@@ -38,7 +38,7 @@ public abstract class Agent {
     }
 
     protected void updateRewardEstimates(int action, double receivedReward) {
-        averageReward = averageReward + settings.learningRate() * (receivedReward - averageReward);
+        averageReward = averageReward + settings.agentRewardStepSize() * (receivedReward - averageReward);
     }
 
     public void executeNextAction() {

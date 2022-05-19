@@ -17,7 +17,8 @@ public class RLSettingsService {
         RLSettings settings = new RLSettings(
                 getDoubleConfigItem(DefaultConfigItem.ALGORITHM_LEARNING_RARE),
                 getDoubleConfigItem(DefaultConfigItem.ALGORITHM_DISCOUNT_FACTOR),
-                getDoubleConfigItem(DefaultConfigItem.ALGORITHM_EXPLORATION_RATE)
+                getDoubleConfigItem(DefaultConfigItem.ALGORITHM_EXPLORATION_RATE),
+                getDoubleConfigItem(DefaultConfigItem.AGENT_REWARD_UPDATE_STEP_SIZE)
         );
 
         return settings;
