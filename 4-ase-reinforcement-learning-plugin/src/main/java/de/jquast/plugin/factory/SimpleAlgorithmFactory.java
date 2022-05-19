@@ -18,7 +18,7 @@ public class SimpleAlgorithmFactory implements AlgorithmFactory {
             default -> null;
         };
 
-        return Optional.of(algorithm);
+        return Optional.ofNullable(algorithm);
     }
 
     private QLearning createQLearning(ActionValueStore store, ActionSource delegate, RLSettings settings) {

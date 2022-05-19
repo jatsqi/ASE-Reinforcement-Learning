@@ -41,6 +41,9 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
             return new GridWorldEnvironment(height, width);
         }
 
+        // Das Parsen könnte man noch in eine eigene Klasse auslagern und über Interface in dieses Objekt injecten,
+        // aber für dieses einfache Beispiel ist es denke ich so O.K.
+
         String from = parameters.get("from");
         Path fromPath = Paths.get(from);
         try {

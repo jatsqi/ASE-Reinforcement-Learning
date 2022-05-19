@@ -27,7 +27,7 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
         if (constructor.isEmpty())
             return Optional.empty();
 
-        return Optional.of(constructor.get().constructVisualizer(policy, environment));
+        return Optional.ofNullable(constructor.get().constructVisualizer(policy, environment));
     }
 
     private interface VisualizerConstructor {

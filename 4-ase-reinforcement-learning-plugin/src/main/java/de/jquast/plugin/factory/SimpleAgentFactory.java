@@ -20,7 +20,7 @@ public class SimpleAgentFactory implements AgentFactory {
             default -> null;
         };
 
-        return Optional.of(agent);
+        return Optional.ofNullable(agent);
     }
 
     private PullAgent createPullAgent(Environment environment, ActionSource source, RLSettings settings) {
