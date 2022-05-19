@@ -8,11 +8,14 @@ public class GridWorldEnvironment extends Environment {
     public static final int STATE_NORMAL = 0;
     public static final int STATE_TERMINAL = 1;
     public static final int STATE_FORBIDDEN = 2;
+    public static final int STATE_SPAWN = 3;
 
     private int height;
     private int width;
     private int currX;
     private int currY;
+    private int spawnX;
+    private int spawnY;
     private int[][] grid;
 
     private int stepsInEpisode = 0;
@@ -31,6 +34,10 @@ public class GridWorldEnvironment extends Environment {
         this.currY = 0;
 
         this.grid = grid;
+
+        this.spawnX = 0;
+        this.spawnY = 0;
+        locateSpawnPosition();
     }
 
     @Override
@@ -77,8 +84,8 @@ public class GridWorldEnvironment extends Environment {
         stepsInEpisode++;
 
         if (isTerminalState() || stepsInEpisode >= 1000) {
-            currX = 0;
-            currY = 0;
+            currX = spawnX;
+            currY = spawnY;
             stepsInEpisode = 0;
         }
     }
@@ -92,6 +99,18 @@ public class GridWorldEnvironment extends Environment {
         return -0.01;
     }
 
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int[][] getGrid() {
+        return grid;
+    }
+
     private int squashTo1DCoordinate(int x, int y) {
         return (y * width) + x;
     }
@@ -102,11 +121,16 @@ public class GridWorldEnvironment extends Environment {
 
     private boolean isForbiddenState() { return grid[currX][currY] == STATE_FORBIDDEN; }
 
-    public int getHeight() {
-        return height;
-    }
+    private void locateSpawnPosition() {
+        outer: for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (grid[x][y] == STATE_SPAWN) {
+                    spawnX = x;
+                    spawnY = y;
 
-    public int getWidth() {
-        return width;
+                    break outer;
+                }
+            }
+        }
     }
 }
