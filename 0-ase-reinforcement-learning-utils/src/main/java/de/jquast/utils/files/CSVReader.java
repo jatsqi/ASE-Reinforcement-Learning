@@ -28,6 +28,8 @@ public class CSVReader {
                 String[] splitted = lines.get(i).split(delimiter);
                 result[i - 1] = splitted;
             }
+
+            return Optional.of(result);
         } catch (IOException e) {
             e.printStackTrace();
         }
