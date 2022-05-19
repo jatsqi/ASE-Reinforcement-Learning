@@ -7,6 +7,8 @@ import java.util.Random;
 
 public class KArmedBanditEnvironment extends Environment {
 
+    private static final Random RND = new Random();
+
     private int lastTriggeredBandit = 0;
     private int banditCount;
     private int currentState;
@@ -56,10 +58,8 @@ public class KArmedBanditEnvironment extends Environment {
     }
 
     private void recomputeRewards() {
-        Random r = new Random();
-
         for (int i = 0; i < banditCount; ++i) {
-            precomputedBanditRewards[i] = -1 + 2 * r.nextDouble(); // Werte im Bereich [-1, 1]
+            precomputedBanditRewards[i] = -1 + 2 * RND.nextDouble(); // Werte im Bereich [-1, 1]
         }
     }
 }
