@@ -11,6 +11,7 @@ public class GridWorldEnvironment extends Environment {
     private int currX;
     private int currY;
     private int terminalState;
+    private int stepsInEpisode = 0;
 
     public GridWorldEnvironment(int height, int width) {
         this.height = height;
@@ -58,9 +59,12 @@ public class GridWorldEnvironment extends Environment {
 
     @Override
     public void tick() {
-        if (isTerminalState()) {
+        stepsInEpisode++;
+
+        if (isTerminalState() || stepsInEpisode >= 1000) {
             currX = 0;
             currY = 0;
+            stepsInEpisode = 0;
         }
     }
 
