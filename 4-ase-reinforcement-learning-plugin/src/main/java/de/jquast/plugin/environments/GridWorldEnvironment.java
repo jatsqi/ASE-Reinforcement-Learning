@@ -9,6 +9,7 @@ public class GridWorldEnvironment extends Environment {
     public static final int STATE_TERMINAL = 1;
     public static final int STATE_FORBIDDEN = 2;
     public static final int STATE_SPAWN = 3;
+    public static final int STATE_BOMB = 4;
 
     private int height;
     private int width;
@@ -83,7 +84,7 @@ public class GridWorldEnvironment extends Environment {
     public void tick() {
         stepsInEpisode++;
 
-        if (isTerminalState() || stepsInEpisode >= 1000) {
+        if (isTerminalState() || isBombState() || stepsInEpisode >= 1000) {
             currX = spawnX;
             currY = spawnY;
             stepsInEpisode = 0;
@@ -94,6 +95,10 @@ public class GridWorldEnvironment extends Environment {
     public double getReward() {
         if (isTerminalState()) {
             return 5;
+        }
+
+        if (isBombState()) {
+            return -5;
         }
 
         return -0.01;
@@ -117,6 +122,10 @@ public class GridWorldEnvironment extends Environment {
 
     private boolean isTerminalState() {
         return grid[currX][currY] == STATE_TERMINAL;
+    }
+
+    private boolean isBombState() {
+        return grid[currX][currY] == STATE_BOMB;
     }
 
     private boolean isForbiddenState() { return grid[currX][currY] == STATE_FORBIDDEN; }
