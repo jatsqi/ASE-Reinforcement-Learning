@@ -55,6 +55,7 @@ public class RunCommand implements Runnable {
                     steps,
                     initFromFile);
 
+            System.out.println();
             System.out.println(new String(vis.get().visualize(VisualizationFormat.TEXT), StandardCharsets.UTF_8));
         } catch (StartAgentTrainingException e) {
             System.out.println();

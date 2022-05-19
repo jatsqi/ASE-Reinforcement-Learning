@@ -53,6 +53,11 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
                     builder.append("\n");
                 }
 
+                if (gridWorld.getGrid()[i % gridWorld.getWidth()][i / gridWorld.getHeight()] == GridWorldEnvironment.STATE_TERMINAL) {
+                    builder.append("⚐ ");
+                    continue;
+                }
+
                 builder.append(actionToDirection(policy.selectBestAction(i)));
                 builder.append(" ");
             }
