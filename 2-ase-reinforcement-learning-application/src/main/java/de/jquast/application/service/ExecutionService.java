@@ -16,7 +16,7 @@ import de.jquast.domain.policy.PolicyVisualizer;
 import de.jquast.domain.policy.PolicyVisualizerFactory;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
-import de.jquast.domain.shared.StoredValueInfo;
+import de.jquast.domain.shared.PersistedStoreInfo;
 import de.jquast.utils.di.annotations.Inject;
 import exception.StartAgentTrainingException;
 
@@ -121,7 +121,7 @@ public class ExecutionService {
 
     private ActionValueStore buildStore(int stateSpace, int actionSpace, int resumeFromStore) throws StartAgentTrainingException {
         if (resumeFromStore != -1) {
-            Optional<StoredValueInfo> storedValueInfoOp = actionValueRepository.getInfoById(resumeFromStore);
+            Optional<PersistedStoreInfo> storedValueInfoOp = actionValueRepository.getInfoById(resumeFromStore);
 
             if (storedValueInfoOp.isEmpty())
                 throw new StartAgentTrainingException("ID des Stores ungültig!");

@@ -5,12 +5,12 @@ import java.util.Optional;
 
 public interface ActionValueRepository {
 
-    Collection<StoredValueInfo> getStoredActionValueInfo();
+    Collection<PersistedStoreInfo> getStoredActionValueInfo();
 
-    Optional<StoredValueInfo> getInfoById(int id);
+    Optional<PersistedStoreInfo> getInfoById(int id);
 
-    Optional<ActionValueStore> fetchStoreFromInfo(StoredValueInfo info);
+    Optional<ActionValueStore> fetchStoreFromInfo(PersistedStoreInfo info);
 
-    StoredValueInfo persistActionValueStore(String environment, String agent, ActionValueStore store);
+    PersistedStoreInfo persistActionValueStore(String environment, String agent, ActionValueStore store);
 
 }

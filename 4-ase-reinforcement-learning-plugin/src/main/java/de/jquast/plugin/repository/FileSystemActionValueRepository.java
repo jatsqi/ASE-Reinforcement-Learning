@@ -4,7 +4,7 @@ import de.jquast.application.service.AgentService;
 import de.jquast.application.service.EnvironmentService;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
-import de.jquast.domain.shared.StoredValueInfo;
+import de.jquast.domain.shared.PersistedStoreInfo;
 import de.jquast.utils.di.annotations.Inject;
 import de.jquast.utils.files.CSVReader;
 
@@ -22,7 +22,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     private static final String STORAGE_FILE_EXTENSION = "store";
     private static final String STORAGE_FILE_DELIMITER = ";";
 
-    private Map<Integer, StoredValueInfo> valueInfo = new HashMap();
+    private Map<Integer, PersistedStoreInfo> valueInfo = new HashMap();
 
     private AgentService agentService;
     private EnvironmentService environmentService;
@@ -34,13 +34,13 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     }
 
     @Override
-    public Collection<StoredValueInfo> getStoredActionValueInfo() {
+    public Collection<PersistedStoreInfo> getStoredActionValueInfo() {
         updateValueInfo();
         return valueInfo.values();
     }
 
     @Override
-    public Optional<StoredValueInfo> getInfoById(int id) {
+    public Optional<PersistedStoreInfo> getInfoById(int id) {
         updateValueInfo();
         return Optional.ofNullable(valueInfo.get(id));
     }
@@ -52,14 +52,14 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     }*/
 
     @Override
-    public Optional<ActionValueStore> fetchStoreFromInfo(StoredValueInfo info) {
+    public Optional<ActionValueStore> fetchStoreFromInfo(PersistedStoreInfo info) {
         return readActionValueStore(info);
     }
 
     @Override
-    public StoredValueInfo persistActionValueStore(String agentName, String envName, ActionValueStore store) {
+    public PersistedStoreInfo persistActionValueStore(String agentName, String envName, ActionValueStore store) {
         int id = findNextId(agentName, envName);
-        StoredValueInfo info = new StoredValueInfo(id, agentName, envName);
+        PersistedStoreInfo info = new PersistedStoreInfo(id, agentName, envName);
 
         try(BufferedWriter writer = Files.newBufferedWriter(Path.of(STORAGE_FOLDER_PATH, infoToFileName(info)), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             writer.write("state;action;value\n");
@@ -85,7 +85,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
             valueInfo.clear();
 
             for (Path p : csvFiles) {
-                Optional<StoredValueInfo> info = fileNameToInfo(p.getFileName().toString());
+                Optional<PersistedStoreInfo> info = fileNameToInfo(p.getFileName().toString());
 
                 if (info.isPresent())
                     valueInfo.put(info.get().id(), info.get());
@@ -95,7 +95,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         }
     }
 
-    private Optional<ActionValueStore> readActionValueStore(StoredValueInfo info) {
+    private Optional<ActionValueStore> readActionValueStore(PersistedStoreInfo info) {
         /*
         CSV Aufbau:
             state;action;value
@@ -137,12 +137,12 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         );
     }
 
-    private Optional<StoredValueInfo> fileNameToInfo(String fileName) {
+    private Optional<PersistedStoreInfo> fileNameToInfo(String fileName) {
         String[] parts = fileName.split("\\.")[0].split("_");
         if (parts.length != 3)
             return Optional.empty();
 
-        return Optional.of(new StoredValueInfo(Integer.parseInt(parts[0]), parts[1], parts[2]));
+        return Optional.of(new PersistedStoreInfo(Integer.parseInt(parts[0]), parts[1], parts[2]));
     }
 
     private int findNextId(String agentName, String envName) {
@@ -155,7 +155,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         throw new RuntimeException("This should never happen....");
     }
 
-    private static String infoToFileName(StoredValueInfo info) {
+    private static String infoToFileName(PersistedStoreInfo info) {
         return infoToFileName(info.id(), info.agent(), info.environment());
     }
 
