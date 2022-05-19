@@ -11,6 +11,13 @@ public interface ActionSource {
     int selectAction(int state);
 
     /**
+     *
+     * @param state
+     * @return
+     */
+    int selectBestAction(int state);
+
+    /**
      * Gibt der Action Source Feedback über getroffene Aktion.
      *
      * @param oldState      Der vorherige Zustand vor der Aktion.

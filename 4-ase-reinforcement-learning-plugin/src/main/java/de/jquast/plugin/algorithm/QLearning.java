@@ -17,6 +17,11 @@ public class QLearning extends RLAlgorithm {
     }
 
     @Override
+    public int selectBestAction(int state) {
+        return actionSourceDelegate.selectBestAction(state);
+    }
+
+    @Override
     public void criticiseAction(int oldState, int action, int newState, double reward) {
         actionSourceDelegate.criticiseAction(oldState, action, newState, reward);
 

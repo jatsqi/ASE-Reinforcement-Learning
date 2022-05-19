@@ -18,7 +18,10 @@ public abstract class Policy implements ActionSource {
         this(new ActionValueStore(stateCount, actionCount), settings);
     }
 
-    public abstract int selectAction(int state);
+    @Override
+    public int selectBestAction(int state) {
+        return actionValueStore.getMaxActionValue(state).action();
+    }
 
     public ActionValueStore getActionValueStore() {
         return actionValueStore;
