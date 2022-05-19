@@ -12,6 +12,8 @@ import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyFactory;
+import de.jquast.domain.policy.PolicyVisualizer;
+import de.jquast.domain.policy.PolicyVisualizerFactory;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.utils.di.annotations.Inject;
 import exception.StartAgentTrainingException;
@@ -32,6 +34,7 @@ public class ExecutionService {
     private AgentFactory agentFactory;
     private PolicyFactory policyFactory;
     private AlgorithmFactory algorithmFactory;
+    private PolicyVisualizerFactory policyVisualizerFactory;
 
     @Inject
     public ExecutionService(
@@ -51,9 +54,10 @@ public class ExecutionService {
         this.agentFactory = factoryBundle.getAgentFactory();
         this.policyFactory = factoryBundle.getPolicyFactory();
         this.algorithmFactory = factoryBundle.getAlgorithmFactory();
+        this.policyVisualizerFactory = factoryBundle.getPolicyVisualizerFactory();
     }
 
-    public Agent startAgentTraining(String agentName, String envName, String envOptions, long steps) throws StartAgentTrainingException {
+    public Optional<PolicyVisualizer> startAgentTraining(String agentName, String envName, String envOptions, long steps) throws StartAgentTrainingException {
         Optional<AgentDescriptor> agentDescriptorOp = agentService.getAgent(agentName);
         Optional<EnvironmentDescriptor> environmentDescriptorOp = envService.getEnvironment(envName);
         RLSettings settings = rlSettingsService.getRLSettings();
@@ -92,10 +96,13 @@ public class ExecutionService {
             throw new StartAgentTrainingException("Fehler beim Erstellen des Agenten.");
 
         // Start Training
-        return startTrainLoop(agentOp.get(), environment, steps);
+        startTrainLoop(agentOp.get(), environment, steps);
+
+        // Create Visualization
+        return policyVisualizerFactory.createVisualizer(policyOp.get(), environment);
     }
 
-    private Agent startTrainLoop(Agent agent, Environment environment, long steps) {
+    private void startTrainLoop(Agent agent, Environment environment, long steps) {
         int trainingMessageInterval = Integer.parseInt(configService.getConfigItem(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_MS).value());
         long lastMessage = 0;
 
@@ -109,8 +116,6 @@ public class ExecutionService {
             environment.tick();
             agent.executeNextAction();
         }
-
-        return agent;
     }
 
     private Map<String, String> parseEnvOptions(String envOptions) {
@@ -129,17 +134,20 @@ public class ExecutionService {
         private AgentFactory agentFactory;
         private PolicyFactory policyFactory;
         private AlgorithmFactory algorithmFactory;
+        private PolicyVisualizerFactory policyVisualizerFactory;
 
         @Inject
         public RLFactoryBundle(
                 EnvironmentFactory environmentFactory,
                 AgentFactory agentFactory,
                 PolicyFactory policyFactory,
-                AlgorithmFactory algorithmFactory) {
+                AlgorithmFactory algorithmFactory,
+                PolicyVisualizerFactory policyVisualizerFactory) {
             this.environmentFactory = environmentFactory;
             this.agentFactory = agentFactory;
             this.policyFactory = policyFactory;
             this.algorithmFactory = algorithmFactory;
+            this.policyVisualizerFactory = policyVisualizerFactory;
         }
 
         public AlgorithmFactory getAlgorithmFactory() {
@@ -156,6 +164,10 @@ public class ExecutionService {
 
         public PolicyFactory getPolicyFactory() {
             return policyFactory;
+        }
+
+        public PolicyVisualizerFactory getPolicyVisualizerFactory() {
+            return policyVisualizerFactory;
         }
     }
 }

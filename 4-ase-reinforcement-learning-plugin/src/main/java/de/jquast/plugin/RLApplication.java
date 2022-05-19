@@ -8,11 +8,9 @@ import de.jquast.domain.config.ConfigRepository;
 import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.policy.PolicyFactory;
+import de.jquast.domain.policy.PolicyVisualizerFactory;
 import de.jquast.plugin.commands.*;
-import de.jquast.plugin.factory.SimpleAgentFactory;
-import de.jquast.plugin.factory.SimpleAlgorithmFactory;
-import de.jquast.plugin.factory.SimpleEnvironmentFactory;
-import de.jquast.plugin.factory.SimplePolicyFactory;
+import de.jquast.plugin.factory.*;
 import de.jquast.plugin.repository.InMemoryAgentRepository;
 import de.jquast.plugin.repository.InMemoryAlgorithmRepository;
 import de.jquast.plugin.repository.InMemoryEnvironmentRepository;
@@ -47,6 +45,7 @@ public class RLApplication {
         CONTEXT.mapInterface(AgentFactory.class, SimpleAgentFactory.class);
         CONTEXT.mapInterface(PolicyFactory.class, SimplePolicyFactory.class);
         CONTEXT.mapInterface(AlgorithmFactory.class, SimpleAlgorithmFactory.class);
+        CONTEXT.mapInterface(PolicyVisualizerFactory.class, SimplePolicyVisualizerFactory.class);
     }
 
     public static void main(String[] args) throws InjectionException, CommandException {
