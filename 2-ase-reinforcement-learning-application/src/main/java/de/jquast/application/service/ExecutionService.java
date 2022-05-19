@@ -121,12 +121,12 @@ public class ExecutionService {
 
     private ActionValueStore buildStore(int stateSpace, int actionSpace, int resumeFromStore) throws StartAgentTrainingException {
         if (resumeFromStore != -1) {
-            Optional<StoredValueInfo> storedValueInfoOp = actionValueRepository.getStoredActionValueInfoById(resumeFromStore);
+            Optional<StoredValueInfo> storedValueInfoOp = actionValueRepository.getInfoById(resumeFromStore);
 
             if (storedValueInfoOp.isEmpty())
                 throw new StartAgentTrainingException("ID des Stores ungültig!");
 
-            Optional<ActionValueStore> actionValueStoreOp = actionValueRepository.fetchActionValueInfo(storedValueInfoOp.get());
+            Optional<ActionValueStore> actionValueStoreOp = actionValueRepository.fetchStoreFromInfo(storedValueInfoOp.get());
             if (actionValueStoreOp.isEmpty())
                 throw new StartAgentTrainingException("Fehler beim Lesen des Stores.");
 
@@ -162,7 +162,7 @@ public class ExecutionService {
     }
 
     private void storeTrainedPolicy(String agent, String environment, Policy policy) {
-        actionValueRepository.createActionValueStore(agent, environment, policy.getActionValueStore());
+        actionValueRepository.persistActionValueStore(agent, environment, policy.getActionValueStore());
     }
 
     private Map<String, String> parseEnvOptions(String envOptions) {

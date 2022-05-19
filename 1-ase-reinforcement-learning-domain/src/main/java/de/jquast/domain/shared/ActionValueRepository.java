@@ -7,10 +7,10 @@ public interface ActionValueRepository {
 
     Collection<StoredValueInfo> getStoredActionValueInfo();
 
-    Optional<StoredValueInfo> getStoredActionValueInfoById(int id);
+    Optional<StoredValueInfo> getInfoById(int id);
 
-    Optional<ActionValueStore> fetchActionValueInfo(StoredValueInfo info);
+    Optional<ActionValueStore> fetchStoreFromInfo(StoredValueInfo info);
 
-    StoredValueInfo createActionValueStore(String environment, String agent, ActionValueStore store);
+    StoredValueInfo persistActionValueStore(String environment, String agent, ActionValueStore store);
 
 }

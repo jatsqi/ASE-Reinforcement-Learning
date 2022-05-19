@@ -40,7 +40,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     }
 
     @Override
-    public Optional<StoredValueInfo> getStoredActionValueInfoById(int id) {
+    public Optional<StoredValueInfo> getInfoById(int id) {
         updateValueInfo();
         return Optional.ofNullable(valueInfo.get(id));
     }
@@ -52,12 +52,12 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     }*/
 
     @Override
-    public Optional<ActionValueStore> fetchActionValueInfo(StoredValueInfo info) {
+    public Optional<ActionValueStore> fetchStoreFromInfo(StoredValueInfo info) {
         return readActionValueStore(info);
     }
 
     @Override
-    public StoredValueInfo createActionValueStore(String agentName, String envName, ActionValueStore store) {
+    public StoredValueInfo persistActionValueStore(String agentName, String envName, ActionValueStore store) {
         int id = findNextId(agentName, envName);
         StoredValueInfo info = new StoredValueInfo(id, agentName, envName);
 
