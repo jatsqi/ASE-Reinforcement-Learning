@@ -12,6 +12,10 @@ public interface PolicyRepository {
 
     Optional<PolicyDescriptor> getPolicyInfo(String name);
 
+    PolicyDescriptor getDefaultPolicyInfo();
+
     Policy createPolicyInstance(PolicyDescriptor descriptor, ActionValueStore store) throws PolicyCreationException;
+
+    Policy createMaximizingPolicy(ActionValueStore store) throws PolicyCreationException;
 
 }

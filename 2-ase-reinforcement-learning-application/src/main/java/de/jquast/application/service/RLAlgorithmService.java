@@ -17,10 +17,10 @@ public class RLAlgorithmService {
     }
 
     public Collection<RLAlgorithmDescriptor> getAlgorithms() {
-        return algorithmRepository.getAlgorithms();
+        return algorithmRepository.getAlgorithmInfos();
     }
 
     public Optional<RLAlgorithmDescriptor> getAlgorithm(String name) {
-        return algorithmRepository.getAlgorithm(name);
+        return algorithmRepository.getAlgorithmInfo(name);
     }
 }

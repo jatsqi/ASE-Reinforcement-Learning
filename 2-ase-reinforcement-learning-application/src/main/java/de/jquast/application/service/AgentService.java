@@ -15,10 +15,10 @@ public class AgentService {
     }
 
     public Collection<AgentDescriptor> getAgents() {
-        return repository.getAgents();
+        return repository.getAgentInfos();
     }
 
     public Optional<AgentDescriptor> getAgent(String name) {
-        return repository.getAgent(name);
+        return repository.getAgentInfo(name);
     }
 }

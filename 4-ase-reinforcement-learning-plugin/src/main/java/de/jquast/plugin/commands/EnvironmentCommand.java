@@ -27,7 +27,7 @@ public class EnvironmentCommand implements Runnable {
 
     @Override
     public void run() {
-        Optional<EnvironmentDescriptor> descriptor = service.getEnvironment(name);
+        Optional<EnvironmentDescriptor> descriptor = service.getEnvironmentInfo(name);
 
         if (descriptor.isEmpty()) {
             printEnvironments();
@@ -39,7 +39,7 @@ public class EnvironmentCommand implements Runnable {
     private void printEnvironments() {
         System.out.println("Environments:");
 
-        for (EnvironmentDescriptor descriptor : service.getEnvironments()) {
+        for (EnvironmentDescriptor descriptor : service.getEnvironmentsInfo()) {
             System.out.println(String.format("  %s", descriptor.toString()));
         }
     }

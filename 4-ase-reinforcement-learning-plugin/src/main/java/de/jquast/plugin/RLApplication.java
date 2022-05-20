@@ -9,6 +9,7 @@ import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.factory.*;
 import de.jquast.domain.policy.PolicyFactory;
+import de.jquast.domain.policy.PolicyRepository;
 import de.jquast.domain.policy.visualizer.PolicyVisualizerFactory;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.plugin.commands.*;
@@ -39,6 +40,7 @@ public class RLApplication {
         CONTEXT.mapInterface(EnvironmentRepository.class, InMemoryEnvironmentRepository.class);
         CONTEXT.mapInterface(AgentRepository.class, InMemoryAgentRepository.class);
         CONTEXT.mapInterface(ActionValueRepository.class, FileSystemActionValueRepository.class);
+        CONTEXT.mapInterface(PolicyRepository.class, InMemoryPolicyRepository.class);
 
         CONTEXT.mapInterface(EnvironmentFactory.class, SimpleEnvironmentFactory.class);
         CONTEXT.mapInterface(AgentFactory.class, SimpleAgentFactory.class);

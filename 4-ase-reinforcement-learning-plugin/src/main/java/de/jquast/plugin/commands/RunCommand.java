@@ -50,6 +50,7 @@ public class RunCommand implements Runnable {
 
             Optional<PolicyVisualizer> visualizer;
             if (!evalMode) {
+                System.out.println("Learning");
                 visualizer = executionService.startAgentTraining(
                         agentName,
                         environmentName,
