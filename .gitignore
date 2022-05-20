@@ -78,3 +78,8 @@ fabric.properties
 
 # Build Files
 target/
+
+# ASE Store Files
+*.store
+*.store.bak
+config.properties
