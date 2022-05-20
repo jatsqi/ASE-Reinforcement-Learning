@@ -3,7 +3,7 @@ package de.jquast.plugin.environments;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.shared.Action;
 
-public class GridWorldEnvironment extends Environment {
+public class GridWorldEnvironment implements Environment {
 
     public static final int STATE_NORMAL = 0;
     public static final int STATE_TERMINAL = 1;

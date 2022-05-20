@@ -5,7 +5,7 @@ import de.jquast.domain.shared.Action;
 
 import java.util.Random;
 
-public class KArmedBanditEnvironment extends Environment {
+public class KArmedBanditEnvironment implements Environment {
 
     private static final Random RND = new Random();
 
