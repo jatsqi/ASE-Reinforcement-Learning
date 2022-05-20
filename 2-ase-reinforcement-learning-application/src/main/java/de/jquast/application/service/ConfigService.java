@@ -37,12 +37,12 @@ public class ConfigService {
     }
 
     public Optional<ConfigItem> getConfigItem(String name) {
-        try {
-            DefaultConfigItem item = DefaultConfigItem.valueOf(name);
-            return Optional.ofNullable(getConfigItem(item));
-        } catch (IllegalArgumentException ex) {
+        Optional<DefaultConfigItem> item = DefaultConfigItem.findItem(name);
+        if (item.isEmpty()) {
             return Optional.empty();
         }
+
+        return Optional.of(getConfigItem(item.get()));
     }
 
     public ConfigItem getConfigItem(DefaultConfigItem item) {
