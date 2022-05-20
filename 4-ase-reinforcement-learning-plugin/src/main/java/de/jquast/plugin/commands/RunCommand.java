@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Command(
         name = "run",
-        description = "Training des Agenten starten"
+        description = "Ein bestimmtes Szenario für einen Agenten starten"
 )
 public class RunCommand implements Runnable {
 
@@ -35,6 +35,9 @@ public class RunCommand implements Runnable {
     @Option(names = "--resume", description = "Benutze Values eines vorherigen Trainings", defaultValue = "-1")
     public int resumeFromStoreId;
 
+    @Option(names = "--eval", description = "Schalter, ob der Agent trainiert werden soll, oder ob der übergebene Store nur ausgeführt wird.")
+    public boolean evalMode;
+
     private final ExecutionService executionService;
 
     @Inject
@@ -52,21 +55,32 @@ public class RunCommand implements Runnable {
             System.out.println("    Steps: " + steps);
             System.out.println("    Store-ID: " + (resumeFromStoreId == -1 ? null : resumeFromStoreId));
 
-            Optional<PolicyVisualizer> vis = executionService.startAgentTraining(
-                    agentName,
-                    environmentName,
-                    environmentOptions,
-                    steps,
-                    initFromFile,
-                    resumeFromStoreId);
+            Optional<PolicyVisualizer> visualizer;
+            if (!evalMode) {
+                visualizer = executionService.startAgentTraining(
+                        agentName,
+                        environmentName,
+                        environmentOptions,
+                        steps,
+                        initFromFile,
+                        resumeFromStoreId);
+            } else {
+                visualizer = executionService.startAgentEvaluation(
+                        agentName,
+                        environmentName,
+                        environmentOptions,
+                        steps,
+                        initFromFile,
+                        resumeFromStoreId);
+            }
 
-            if (vis.isEmpty()) {
+            if (visualizer.isEmpty()) {
                 System.out.println("Leider konnte keine Visualisierung für die Trainierte Policy erstellt werden :(");
                 return;
             }
 
             System.out.println();
-            System.out.println(new String(vis.get().visualize(VisualizationFormat.TEXT), StandardCharsets.UTF_8));
+            System.out.println(new String(visualizer.get().visualize(VisualizationFormat.TEXT), StandardCharsets.UTF_8));
         } catch (StartAgentTrainingException e) {
             System.out.println();
             System.out.println(e.getMessage());
