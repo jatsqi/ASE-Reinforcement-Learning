@@ -1,4 +1,6 @@
-package de.jquast.domain.config;
+package config;
+
+import de.jquast.domain.config.ConfigItem;
 
 import java.util.Optional;
 

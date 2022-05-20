@@ -6,7 +6,7 @@ import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.algorithm.AlgorithmFactory;
 import de.jquast.domain.algorithm.RLAlgorithm;
 import de.jquast.domain.algorithm.RLSettings;
-import de.jquast.domain.config.DefaultConfigItem;
+import config.DefaultConfigItem;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentFactory;
