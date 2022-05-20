@@ -10,12 +10,12 @@ public interface PolicyFactory {
     /**
      * Erstellt eine Policy mit Namen {@code name}.
      *
-     * @param name     Der Name der Policy.
-     * @param store    Die Value-Store der Policy.
-     * @param settings Die Reinforcement Learning Einstellungen.
-     * @return Eine Policy mit entsprechendem Name, ein leeres Optional andernfalls.
+     * @param descriptor        Die Beschreibung der Policy.
+     * @param store             Die Value-Store der Policy.
+     * @param settings          Die Reinforcement Learning Einstellungen.
+     * @return                  Eine Policy mit entsprechendem Name, ein leeres Optional andernfalls.
      */
-    Optional<Policy> createPolicy(String name, ActionValueStore store, RLSettings settings);
+    Optional<Policy> createPolicy(PolicyDescriptor descriptor, ActionValueStore store, RLSettings settings);
 
     /**
      * Erstellt eine Policy, die stets versucht, den maximalen Reward zu generieren.
