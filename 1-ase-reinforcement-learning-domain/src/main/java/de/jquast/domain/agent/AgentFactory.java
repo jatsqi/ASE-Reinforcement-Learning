@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface AgentFactory {
 
-    Optional<Agent> createAgent(String name, Environment environment, ActionSource source, RLSettings settings);
+    Optional<Agent> createAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings);
 
 }

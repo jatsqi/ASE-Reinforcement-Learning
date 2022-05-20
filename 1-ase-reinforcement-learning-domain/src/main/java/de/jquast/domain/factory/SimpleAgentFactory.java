@@ -1,6 +1,7 @@
 package de.jquast.domain.factory;
 
 import de.jquast.domain.agent.Agent;
+import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;
@@ -13,8 +14,8 @@ import java.util.Optional;
 public class SimpleAgentFactory implements AgentFactory {
 
     @Override
-    public Optional<Agent> createAgent(String name, Environment environment, ActionSource source, RLSettings settings) {
-        Agent agent = switch (name) {
+    public Optional<Agent> createAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings) {
+        Agent agent = switch (descriptor.name()) {
             case "pull" -> createPullAgent(environment, source, settings);
             case "2d-moving-agent" -> create2DMoveAgent(environment, source, settings);
             default -> null;
