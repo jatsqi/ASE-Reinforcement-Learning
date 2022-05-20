@@ -17,28 +17,21 @@ import java.util.Optional;
 )
 public class RunCommand implements Runnable {
 
+    private final ExecutionService executionService;
     @Option(names = "--envopts", description = "Optionen für das Environment.", defaultValue = "")
     public String environmentOptions;
-
     @Option(names = "--agent", description = "Name des Agenten.", required = true)
     public String agentName;
-
     @Option(names = "--environment", description = "Name des Environment.", required = true)
     public String environmentName;
-
     @Option(names = "--steps", description = "Anzahl der Trainingschritte.", required = true)
     public int steps;
-
     @Option(names = "--init-from", description = "Init Environment from file.")
     public String initFromFile;
-
     @Option(names = "--resume", description = "Benutze Values eines vorherigen Trainings", defaultValue = "-1")
     public int resumeFromStoreId;
-
     @Option(names = "--eval", description = "Schalter, ob der Agent trainiert werden soll, oder ob der übergebene Store nur ausgeführt wird.")
     public boolean evalMode;
-
-    private final ExecutionService executionService;
 
     @Inject
     public RunCommand(ExecutionService executionService) {

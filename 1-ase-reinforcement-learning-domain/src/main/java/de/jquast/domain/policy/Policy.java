@@ -6,8 +6,8 @@ import de.jquast.domain.shared.ActionValueStore;
 
 public abstract class Policy implements ActionSource {
 
-    private ActionValueStore actionValueStore;
     private final RLSettings settings;
+    private ActionValueStore actionValueStore;
 
     public Policy(ActionValueStore actionValueStore, RLSettings settings) {
         this.actionValueStore = actionValueStore;

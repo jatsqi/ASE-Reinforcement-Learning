@@ -1,12 +1,12 @@
 package de.jquast.application.service;
 
+import config.DefaultConfigItem;
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.algorithm.AlgorithmFactory;
 import de.jquast.domain.algorithm.RLAlgorithm;
 import de.jquast.domain.algorithm.RLSettings;
-import config.DefaultConfigItem;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentFactory;
@@ -59,6 +59,12 @@ public class ExecutionService {
         this.policyFactory = factoryBundle.getPolicyFactory();
         this.algorithmFactory = factoryBundle.getAlgorithmFactory();
         this.policyVisualizerFactory = factoryBundle.getPolicyVisualizerFactory();
+    }
+
+    private static Optional<String> makeStringOptional(String str) {
+        return Optional.ofNullable(
+                str == null || str.isEmpty() || str.trim().isEmpty() ? null : str
+        );
     }
 
     public Optional<PolicyVisualizer> startAgentTraining(
@@ -124,7 +130,8 @@ public class ExecutionService {
         // Persist trained policy if learning is enabled
         if (!onlyEvaluate) {
             PersistedStoreInfo info = storeTrainedPolicy(agentName, envName, policy);
-            System.out.printf(Locale.US, "\nPolicy gespeichert, Id: %d, Environment: %s, Agent: %s%n", info.id(), info.environment(), info.agent());;
+            System.out.printf(Locale.US, "\nPolicy gespeichert, Id: %d, Environment: %s, Agent: %s%n", info.id(), info.environment(), info.agent());
+            ;
         }
 
         // Create Visualization
@@ -176,7 +183,7 @@ public class ExecutionService {
             if (actionValueStoreOp.isEmpty())
                 throw new StartAgentTrainingException("Fehler beim Lesen des Stores.");
 
-             return actionValueStoreOp.get();
+            return actionValueStoreOp.get();
         }
 
         return new ActionValueStore(stateSpace, actionSpace);
@@ -244,12 +251,6 @@ public class ExecutionService {
         }
 
         return result;
-    }
-
-    private static Optional<String> makeStringOptional(String str) {
-        return Optional.ofNullable(
-                str == null || str.isEmpty() || str.trim().isEmpty() ? null : str
-        );
     }
 
     public static class RLFactoryBundle {

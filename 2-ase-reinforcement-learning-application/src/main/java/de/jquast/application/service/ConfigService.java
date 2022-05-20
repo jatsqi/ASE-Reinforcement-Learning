@@ -1,8 +1,8 @@
 package de.jquast.application.service;
 
+import config.DefaultConfigItem;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
-import config.DefaultConfigItem;
 import de.jquast.utils.di.annotations.Inject;
 
 import java.util.Arrays;

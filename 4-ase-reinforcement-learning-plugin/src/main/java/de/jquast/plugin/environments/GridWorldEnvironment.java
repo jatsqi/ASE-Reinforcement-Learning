@@ -128,10 +128,13 @@ public class GridWorldEnvironment extends Environment {
         return grid[currX][currY] == STATE_BOMB;
     }
 
-    private boolean isForbiddenState() { return grid[currX][currY] == STATE_FORBIDDEN; }
+    private boolean isForbiddenState() {
+        return grid[currX][currY] == STATE_FORBIDDEN;
+    }
 
     private void locateSpawnPosition() {
-        outer: for (int x = 0; x < width; x++) {
+        outer:
+        for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (grid[x][y] == STATE_SPAWN) {
                     spawnX = x;

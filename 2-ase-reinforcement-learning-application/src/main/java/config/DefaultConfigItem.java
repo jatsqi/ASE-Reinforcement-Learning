@@ -24,6 +24,15 @@ public enum DefaultConfigItem {
         this.defaultValue = defaultValue;
     }
 
+    public static Optional<DefaultConfigItem> findItem(String key) {
+        for (DefaultConfigItem item : values()) {
+            if (item.getKey().equals(key))
+                return Optional.of(item);
+        }
+
+        return Optional.empty();
+    }
+
     public String getKey() {
         return key;
     }
@@ -38,15 +47,6 @@ public enum DefaultConfigItem {
 
     public ConfigItem createNewItem() {
         return new ConfigItem(getKey(), getDefaultValue());
-    }
-
-    public static Optional<DefaultConfigItem> findItem(String key) {
-        for (DefaultConfigItem item : values()) {
-            if (item.getKey().equals(key))
-                return Optional.of(item);
-        }
-
-        return Optional.empty();
     }
 
 }

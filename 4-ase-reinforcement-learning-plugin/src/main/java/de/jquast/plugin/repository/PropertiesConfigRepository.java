@@ -1,8 +1,8 @@
 package de.jquast.plugin.repository;
 
+import config.DefaultConfigItem;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
-import config.DefaultConfigItem;
 
 import java.io.BufferedWriter;
 import java.io.File;

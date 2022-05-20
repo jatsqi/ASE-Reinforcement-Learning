@@ -2,7 +2,6 @@ package de.jquast.domain.agent;
 
 import de.jquast.domain.shared.Action;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public record AgentDescriptor(

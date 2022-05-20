@@ -74,5 +74,6 @@ public abstract class Agent {
         return averageReward;
     }
 
-    public record ActionDataPair(Action action, int data) {}
+    public record ActionDataPair(Action action, int data) {
+    }
 }

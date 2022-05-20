@@ -33,6 +33,18 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         this.environmentService = environmentService;
     }
 
+    private static String infoToFileName(PersistedStoreInfo info) {
+        return infoToFileName(info.id(), info.agent(), info.environment());
+    }
+
+    private static String infoToFileName(int id, String agent, String env) {
+        return String.format("%d_%s_%s.%s",
+                id,
+                agent,
+                env,
+                STORAGE_FILE_EXTENSION);
+    }
+
     @Override
     public Collection<PersistedStoreInfo> getStoredActionValueInfo() {
         updateValueInfo();
@@ -55,7 +67,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         int id = findNextId(agentName, envName);
         PersistedStoreInfo info = new PersistedStoreInfo(id, agentName, envName);
 
-        try(BufferedWriter writer = Files.newBufferedWriter(Path.of(STORAGE_FOLDER_PATH, infoToFileName(info)), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Path.of(STORAGE_FOLDER_PATH, infoToFileName(info)), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             writer.write("state;action;value\n");
 
             for (int i = 0; i < store.getStateCount(); i++) {
@@ -148,18 +160,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         throw new RuntimeException("This should never happen....");
     }
 
-    private static String infoToFileName(PersistedStoreInfo info) {
-        return infoToFileName(info.id(), info.agent(), info.environment());
+    private record StoreCSVEntry(int state, int action, double value) {
     }
-
-    private static String infoToFileName(int id, String agent, String env) {
-        return String.format("%d_%s_%s.%s",
-                id,
-                agent,
-                env,
-                STORAGE_FILE_EXTENSION);
-    }
-
-    private record StoreCSVEntry(int state, int action, double value) { }
 
 }
