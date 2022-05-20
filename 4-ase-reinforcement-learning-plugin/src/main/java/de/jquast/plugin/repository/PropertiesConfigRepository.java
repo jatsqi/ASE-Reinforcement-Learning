@@ -1,6 +1,6 @@
 package de.jquast.plugin.repository;
 
-import config.DefaultConfigItem;
+import de.jquast.application.config.DefaultConfigItem;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
 

@@ -1,4 +1,4 @@
-package config;
+package de.jquast.application.config;
 
 import de.jquast.domain.config.ConfigItem;
 

@@ -6,7 +6,7 @@ import de.jquast.domain.policy.VisualizationFormat;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Option;
 import de.jquast.utils.di.annotations.Inject;
-import exception.StartAgentTrainingException;
+import de.jquast.application.exception.StartAgentTrainingException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;

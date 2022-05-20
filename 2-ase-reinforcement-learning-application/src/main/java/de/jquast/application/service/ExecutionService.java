@@ -1,6 +1,6 @@
 package de.jquast.application.service;
 
-import config.DefaultConfigItem;
+import de.jquast.application.config.DefaultConfigItem;
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentFactory;
@@ -19,7 +19,7 @@ import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.domain.shared.PersistedStoreInfo;
 import de.jquast.utils.di.annotations.Inject;
-import exception.StartAgentTrainingException;
+import de.jquast.application.exception.StartAgentTrainingException;
 
 import java.util.HashMap;
 import java.util.Locale;

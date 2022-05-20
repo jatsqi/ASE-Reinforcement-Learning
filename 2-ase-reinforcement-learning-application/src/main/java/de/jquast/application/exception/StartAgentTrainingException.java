@@ -1,4 +1,4 @@
-package exception;
+package de.jquast.application.exception;
 
 public class StartAgentTrainingException extends Exception {
 

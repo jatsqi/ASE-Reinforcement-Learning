@@ -1,6 +1,6 @@
 package de.jquast.application.service;
 
-import config.DefaultConfigItem;
+import de.jquast.application.config.DefaultConfigItem;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
