@@ -14,6 +14,7 @@ import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyFactory;
 import de.jquast.domain.policy.PolicyVisualizer;
 import de.jquast.domain.policy.PolicyVisualizerFactory;
+import de.jquast.domain.shared.ActionSource;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.domain.shared.PersistedStoreInfo;
@@ -66,24 +67,82 @@ public class ExecutionService {
             String envOptions,
             long steps,
             String initFromFile,
-            int resumeFromStore) throws StartAgentTrainingException {
-        Optional<AgentDescriptor> agentDescriptorOp = agentService.getAgent(agentName);
-        Optional<EnvironmentDescriptor> environmentDescriptorOp = envService.getEnvironment(envName);
+            int resumeFromStoreId) throws StartAgentTrainingException {
+        return startAgentSzenario(agentName, envName, envOptions, steps, initFromFile, resumeFromStoreId, false);
+    }
+
+    public Optional<PolicyVisualizer> startAgentEvaluation(
+            String agentName,
+            String envName,
+            String envOptions,
+            long steps,
+            String initFromFile,
+            int resumeFromStoreId) throws StartAgentTrainingException {
+        return startAgentSzenario(agentName, envName, envOptions, steps, initFromFile, resumeFromStoreId, true);
+    }
+
+    private Optional<PolicyVisualizer> startAgentSzenario(
+            String agentName,
+            String envName,
+            String envOptions,
+            long steps,
+            String initFromFile,
+            int resumeFromStoreId,
+            boolean onlyEvaluate) throws StartAgentTrainingException {
         RLSettings settings = rlSettingsService.getRLSettings();
         System.out.println(settings.toString());
 
-        // Check availability
-        if (agentDescriptorOp.isEmpty() || environmentDescriptorOp.isEmpty())
+        // Get & Check descriptor
+        Optional<AgentDescriptor> agentDescriptorOp = agentService.getAgent(agentName);
+        if (agentDescriptorOp.isEmpty())
             throw new StartAgentTrainingException("Agent oder Environment nicht gefunden!");
-
-        // Unwrap descriptors
         AgentDescriptor agentDescriptor = agentDescriptorOp.get();
+
+        // Create Environment & Store
+        Environment environment = buildEnvironment(envName, makeStringOptional(envOptions), makeStringOptional(initFromFile));
+        ActionValueStore store = buildStore(environment.getStateSpace(), agentDescriptor.actionSpace(), resumeFromStoreId);
+        if (environment.getStateSpace() != store.getStateCount() || agentDescriptor.actionSpace() != store.getActionCount())
+            throw new StartAgentTrainingException("Dieser Value-Store ist nicht mit dem Environment kompatibel!");
+
+        // Build Policy
+        Policy policy = buildPolicy(null, store, settings, onlyEvaluate);
+        ActionSource actionSource = policy;
+
+        // Decorate Policy with Algorithm if learning is enabled
+        if (!onlyEvaluate)
+            actionSource = buildAlgorithm("qlearning", store, policy, settings);
+
+        // Build Agent
+        Agent agent = buildAgent(agentName, environment, actionSource, settings);
+
+        // Start Training & Store result
+        startTrainLoop(agent, environment, steps);
+
+        // Persist trained policy if learning is enabled
+        if (!onlyEvaluate) {
+            PersistedStoreInfo info = storeTrainedPolicy(agentName, envName, policy);
+            System.out.printf(Locale.US, "\nPolicy gespeichert, Id: %d, Environment: %s, Agent: %s%n", info.id(), info.environment(), info.agent());;
+        }
+
+        // Create Visualization
+        return policyVisualizerFactory.createVisualizer(policy, environment);
+    }
+
+    private Environment buildEnvironment(String envName, Optional<String> envOptions, Optional<String> initFromFile) throws StartAgentTrainingException {
+        Optional<EnvironmentDescriptor> environmentDescriptorOp = envService.getEnvironment(envName);
+        if (environmentDescriptorOp.isEmpty())
+            throw new StartAgentTrainingException("Das angegebene Environment konnte nicht gefunden werden.");
+
         EnvironmentDescriptor environmentDescriptor = environmentDescriptorOp.get();
 
         // Create & Check Environment
-        Map<String, String> envOptionsMap = parseEnvOptions(envOptions);
-        if (initFromFile != null && !initFromFile.isEmpty()) {
-            envOptionsMap.put("from", initFromFile);
+        Map<String, String> envOptionsMap = new HashMap<>();
+        if (envOptions.isPresent()) {
+            envOptionsMap = parseEnvOptions(envOptions.get());
+
+            if (initFromFile.isPresent()) {
+                envOptionsMap.put("from", initFromFile.get());
+            }
         }
 
         Optional<Environment> environmentOp = environmentFactory.createEnvironment(environmentDescriptor, envOptionsMap);
@@ -91,36 +150,20 @@ public class ExecutionService {
             throw new StartAgentTrainingException("Beim Erstellen des Environments ist ein Fehler aufgetreten. Bitte Parameter überprüfen!");
 
         // Unwrap Environment
-        Environment environment = environmentOp.get();
-        ActionValueStore store = buildStore(environment.getStateSpace(), agentDescriptor.actionSpace(), resumeFromStore);
-        if (environment.getStateSpace() != store.getStateCount() || agentDescriptor.actionSpace() != store.getActionCount())
-            throw new StartAgentTrainingException("Dieser Value-Store ist nicht mit dem Environment kompatibel!");
+        return environmentOp.get();
+    }
 
-        // Create & Check Policy
-        Optional<Policy> policyOp = policyFactory.createPolicy(null, store, settings);
-        if (policyOp.isEmpty())
-            throw new StartAgentTrainingException("Fehler beim Erstellen der Policy. Das darf nicht passieren hehe.");
-
-        // Create & Check Algorithm
-        Optional<RLAlgorithm> algorithmOp = algorithmFactory.createAlgorithm("qlearning", store, policyOp.get(), settings);
-        if (algorithmOp.isEmpty())
-            throw new StartAgentTrainingException("Fehler beim Erstellen des Algorithmus.");
-
+    private Agent buildAgent(String agentName, Environment environment, ActionSource source, RLSettings settings) throws StartAgentTrainingException {
         // Create & Check Agent
-        Optional<Agent> agentOp = agentFactory.createAgent(agentName, environment, algorithmOp.get(), settings);
+        Optional<Agent> agentOp = agentFactory.createAgent(agentName, environment, source, settings);
         if (agentOp.isEmpty())
             throw new StartAgentTrainingException("Fehler beim Erstellen des Agenten.");
 
-        // Start Training & Store result
-        startTrainLoop(agentOp.get(), environment, steps);
-        storeTrainedPolicy(agentName, envName, policyOp.get());
-
-        // Create Visualization
-        return policyVisualizerFactory.createVisualizer(policyOp.get(), environment);
+        return agentOp.get();
     }
 
     private ActionValueStore buildStore(int stateSpace, int actionSpace, int resumeFromStore) throws StartAgentTrainingException {
-        if (resumeFromStore != -1) {
+        if (resumeFromStore >= 0) {
             Optional<PersistedStoreInfo> storedValueInfoOp = actionValueRepository.getInfoById(resumeFromStore);
 
             if (storedValueInfoOp.isEmpty())
@@ -134,6 +177,27 @@ public class ExecutionService {
         }
 
         return new ActionValueStore(stateSpace, actionSpace);
+    }
+
+    private Policy buildPolicy(String policyName, ActionValueStore store, RLSettings settings, boolean onlyEvaluate) throws StartAgentTrainingException {
+        Optional<Policy> policyOp;
+        if (!onlyEvaluate)
+            policyOp = policyFactory.createPolicy(policyName, store, settings);
+        else
+            policyOp = policyFactory.createMaximizingPolicy(store, settings);
+
+        if (policyOp.isEmpty())
+            throw new StartAgentTrainingException("Fehler beim Erstellen der Policy. Das darf nicht passieren hehe.");
+
+        return policyOp.get();
+    }
+
+    private RLAlgorithm buildAlgorithm(String algoName, ActionValueStore store, ActionSource source, RLSettings settings) throws StartAgentTrainingException {
+        Optional<RLAlgorithm> algorithmOp = algorithmFactory.createAlgorithm(algoName, store, source, settings);
+        if (algorithmOp.isEmpty())
+            throw new StartAgentTrainingException("Fehler beim Erstellen des Algorithmus.");
+
+        return algorithmOp.get();
     }
 
     private void startTrainLoop(Agent agent, Environment environment, long steps) {
@@ -161,8 +225,8 @@ public class ExecutionService {
         }
     }
 
-    private void storeTrainedPolicy(String agent, String environment, Policy policy) {
-        actionValueRepository.persistActionValueStore(agent, environment, policy.getActionValueStore());
+    private PersistedStoreInfo storeTrainedPolicy(String agent, String environment, Policy policy) {
+        return actionValueRepository.persistActionValueStore(agent, environment, policy.getActionValueStore());
     }
 
     private Map<String, String> parseEnvOptions(String envOptions) {
@@ -177,6 +241,12 @@ public class ExecutionService {
         }
 
         return result;
+    }
+
+    private static Optional<String> makeStringOptional(String str) {
+        return Optional.ofNullable(
+                str == null || str.isEmpty() || str.trim().isEmpty() ? null : str
+        );
     }
 
     public static class RLFactoryBundle {
