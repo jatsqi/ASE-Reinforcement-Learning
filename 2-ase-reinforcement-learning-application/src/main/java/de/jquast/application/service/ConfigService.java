@@ -28,6 +28,9 @@ public class ConfigService {
     }
 
     public Optional<ConfigItem> setConfigItem(String key, String value) {
+        if (DefaultConfigItem.findItem(key).isEmpty())
+            return Optional.empty();
+
         ConfigItem item = new ConfigItem(key.toUpperCase(), value);
 
         if (!configRepository.setConfigItem(item)) {
@@ -56,7 +59,7 @@ public class ConfigService {
 
     public RLSettings getRLSettings() {
         RLSettings settings = new RLSettings(
-                getDoubleConfigItem(DefaultConfigItem.ALGORITHM_LEARNING_RARE),
+                getDoubleConfigItem(DefaultConfigItem.ALGORITHM_LEARNING_RATE),
                 getDoubleConfigItem(DefaultConfigItem.ALGORITHM_DISCOUNT_FACTOR),
                 getDoubleConfigItem(DefaultConfigItem.ALGORITHM_EXPLORATION_RATE),
                 getDoubleConfigItem(DefaultConfigItem.AGENT_REWARD_UPDATE_STEP_SIZE)
