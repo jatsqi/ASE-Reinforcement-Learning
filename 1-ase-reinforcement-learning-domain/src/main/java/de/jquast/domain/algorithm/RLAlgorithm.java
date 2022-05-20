@@ -19,11 +19,4 @@ public abstract class RLAlgorithm implements ActionSource {
         return settings;
     }
 
-    public ActionValueStore getActionValueStoreDelegate() {
-        return actionValueStoreDelegate;
-    }
-
-    public ActionSource getActionSourceDelegate() {
-        return actionSourceDelegate;
-    }
 }

@@ -62,18 +62,9 @@ public abstract class Agent {
         updateRewardEstimates(action, receivedReward);
     }
 
-    public Environment getEnvironment() {
-        return environment;
-    }
-
-    public ActionSource getActionSource() {
-        return actionSource;
-    }
-
     public double getCurrentAverageReward() {
         return averageReward;
     }
 
-    public record ActionDataPair(Action action, int data) {
-    }
+    public record ActionDataPair(Action action, int data) { }
 }
