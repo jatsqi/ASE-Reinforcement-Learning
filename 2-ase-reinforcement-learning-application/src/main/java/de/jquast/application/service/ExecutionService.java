@@ -28,30 +28,27 @@ import java.util.Optional;
 
 public class ExecutionService {
 
-    private AgentService agentService;
-    private EnvironmentService envService;
-    private ConfigService configService;
-    private RLSettingsService rlSettingsService;
-    private ActionValueRepository actionValueRepository;
+    private final AgentService agentService;
+    private final EnvironmentService envService;
+    private final ConfigService configService;
+    private final ActionValueRepository actionValueRepository;
 
-    private EnvironmentFactory environmentFactory;
-    private AgentFactory agentFactory;
-    private PolicyFactory policyFactory;
-    private AlgorithmFactory algorithmFactory;
-    private PolicyVisualizerFactory policyVisualizerFactory;
+    private final EnvironmentFactory environmentFactory;
+    private final AgentFactory agentFactory;
+    private final PolicyFactory policyFactory;
+    private final AlgorithmFactory algorithmFactory;
+    private final PolicyVisualizerFactory policyVisualizerFactory;
 
     @Inject
     public ExecutionService(
             AgentService agentService,
             EnvironmentService envService,
             ConfigService configService,
-            RLSettingsService rlSettingsService,
             ActionValueRepository actionValueRepository,
             RLFactoryBundle factoryBundle) {
         this.agentService = agentService;
         this.envService = envService;
         this.configService = configService;
-        this.rlSettingsService = rlSettingsService;
         this.actionValueRepository = actionValueRepository;
 
         this.environmentFactory = factoryBundle.getEnvironmentFactory();
@@ -98,7 +95,7 @@ public class ExecutionService {
             String initFromFile,
             int resumeFromStoreId,
             boolean onlyEvaluate) throws StartAgentTrainingException {
-        RLSettings settings = rlSettingsService.getRLSettings();
+        RLSettings settings = configService.getRLSettings();
         System.out.println(settings.toString());
 
         // Get & Check descriptor
@@ -216,13 +213,13 @@ public class ExecutionService {
         long currStep = 0;
         while (currStep < steps) {
             if (currStep - lastMessage >= trainingMessageInterval) {
-                System.out.println(String.format(
+                System.out.printf(
                         Locale.US,
-                        "Schritt %d/%d (%.2f%%), Durchschnittlicher Reward %f",
+                        "Schritt %d/%d (%.2f%%), Durchschnittlicher Reward %f%n",
                         currStep,
                         steps,
                         (float) currStep / steps * 100,
-                        agent.getCurrentAverageReward()));
+                        agent.getCurrentAverageReward());
 
                 lastMessage = currStep;
             }
@@ -253,11 +250,11 @@ public class ExecutionService {
     }
 
     public static class RLFactoryBundle {
-        private EnvironmentFactory environmentFactory;
-        private AgentFactory agentFactory;
-        private PolicyFactory policyFactory;
-        private AlgorithmFactory algorithmFactory;
-        private PolicyVisualizerFactory policyVisualizerFactory;
+        private final EnvironmentFactory environmentFactory;
+        private final AgentFactory agentFactory;
+        private final PolicyFactory policyFactory;
+        private final AlgorithmFactory algorithmFactory;
+        private final PolicyVisualizerFactory policyVisualizerFactory;
 
         @Inject
         public RLFactoryBundle(

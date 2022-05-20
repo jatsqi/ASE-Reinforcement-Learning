@@ -1,6 +1,7 @@
 package de.jquast.application.service;
 
 import config.DefaultConfigItem;
+import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
 import de.jquast.utils.di.annotations.Inject;
@@ -51,6 +52,24 @@ public class ConfigService {
             return item.createNewItem();
 
         return configItem.get();
+    }
+
+    public RLSettings getRLSettings() {
+        RLSettings settings = new RLSettings(
+                getDoubleConfigItem(DefaultConfigItem.ALGORITHM_LEARNING_RARE),
+                getDoubleConfigItem(DefaultConfigItem.ALGORITHM_DISCOUNT_FACTOR),
+                getDoubleConfigItem(DefaultConfigItem.ALGORITHM_EXPLORATION_RATE),
+                getDoubleConfigItem(DefaultConfigItem.AGENT_REWARD_UPDATE_STEP_SIZE)
+        );
+
+        return settings;
+    }
+
+    private double getDoubleConfigItem(DefaultConfigItem item) {
+        return Double.parseDouble(
+                configRepository.getConfigItem(item.getKey())
+                        .orElse(new ConfigItem("", "0.0"))
+                        .value());
     }
 
 }
