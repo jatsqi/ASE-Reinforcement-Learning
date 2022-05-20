@@ -1,7 +1,10 @@
 package de.jquast.plugin.commands;
 
+import de.jquast.application.config.DefaultConfigItem;
+import de.jquast.application.service.ConfigService;
 import de.jquast.application.service.ExecutionService;
-import de.jquast.domain.policy.visualizer.PolicyVisualizer;
+import de.jquast.application.session.TrainingProgressObserver;
+import de.jquast.application.session.TrainingSession;
 import de.jquast.domain.policy.visualizer.VisualizationFormat;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Option;
@@ -9,7 +12,7 @@ import de.jquast.utils.di.annotations.Inject;
 import de.jquast.application.exception.StartAgentTrainingException;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
+import java.util.Locale;
 
 @Command(
         name = "run",
@@ -18,6 +21,8 @@ import java.util.Optional;
 public class RunCommand implements Runnable {
 
     private final ExecutionService executionService;
+    private final ConfigService configService;
+
     @Option(names = "--envopts", description = "Optionen für das Environment.", defaultValue = "")
     public String environmentOptions;
     @Option(names = "--agent", description = "Name des Agenten.", required = true)
@@ -34,8 +39,9 @@ public class RunCommand implements Runnable {
     public boolean evalMode;
 
     @Inject
-    public RunCommand(ExecutionService executionService) {
+    public RunCommand(ExecutionService executionService, ConfigService configService) {
         this.executionService = executionService;
+        this.configService = configService;
     }
 
     @Override
@@ -48,10 +54,9 @@ public class RunCommand implements Runnable {
             System.out.println("    Steps: " + steps);
             System.out.println("    Store-ID: " + (resumeFromStoreId == -1 ? null : resumeFromStoreId));
 
-            Optional<PolicyVisualizer> visualizer;
+            TrainingSession session;
             if (!evalMode) {
-                System.out.println("Learning");
-                visualizer = executionService.startAgentTraining(
+                session = executionService.createTrainingSession(
                         agentName,
                         environmentName,
                         environmentOptions,
@@ -59,7 +64,7 @@ public class RunCommand implements Runnable {
                         initFromFile,
                         resumeFromStoreId);
             } else {
-                visualizer = executionService.startAgentEvaluation(
+                session = executionService.createEvaluationSession(
                         agentName,
                         environmentName,
                         environmentOptions,
@@ -68,13 +73,44 @@ public class RunCommand implements Runnable {
                         resumeFromStoreId);
             }
 
-            if (visualizer.isEmpty()) {
-                System.out.println("Leider konnte keine Visualisierung für die Trainierte Policy erstellt werden :(");
-                return;
-            }
+            long stepInterval = Long.parseLong(
+                    configService.getConfigItem(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_STEPS).value());
 
-            System.out.println();
-            System.out.println(new String(visualizer.get().visualize(VisualizationFormat.TEXT), StandardCharsets.UTF_8));
+            session.setObserver(new TrainingProgressObserver() {
+                private long lastStep = 0;
+
+                @Override
+                public void onTrainingStart(long currentStep, long maxStep) {
+
+                }
+
+                @Override
+                public void preTrainingStep(long currentStep, long maxStep, double averageReward) {
+
+                }
+
+                @Override
+                public void postTrainingStep(long currentStep, long maxStep, double averageReward) {
+                    if (currentStep - lastStep >= stepInterval) {
+                        lastStep = currentStep;
+                        System.out.printf(
+                                Locale.US,
+                                "Schritt %d/%d (%.2f%%), Durchschnittlicher Reward %f%n",
+                                currentStep,
+                                steps,
+                                (float) currentStep / steps * 100,
+                                averageReward);
+                    }
+                }
+
+                @Override
+                public void onTrainingEnd(long currentStep, long maxStep, double averageReward) {
+
+                }
+            });
+
+            session.start();
+            System.out.println(new String(session.getVisualizer().visualize(VisualizationFormat.TEXT), StandardCharsets.UTF_8));
         } catch (StartAgentTrainingException e) {
             System.out.println();
             System.out.println(e.getMessage());

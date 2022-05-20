@@ -1,6 +1,7 @@
 package de.jquast.application.service;
 
 import de.jquast.application.config.DefaultConfigItem;
+import de.jquast.application.session.TrainingSession;
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentFactory;
@@ -60,17 +61,17 @@ public class ExecutionService {
         );
     }
 
-    public Optional<PolicyVisualizer> startAgentTraining(
+    public TrainingSession createTrainingSession(
             String agentName,
             String envName,
             String envOptions,
             long steps,
             String initFromFile,
             int resumeFromStoreId) throws StartAgentTrainingException {
-        return startAgentSzenario(agentName, envName, envOptions, steps, initFromFile, resumeFromStoreId, false);
+        return createSession(agentName, envName, envOptions, steps, initFromFile, resumeFromStoreId, false);
     }
 
-    public Optional<PolicyVisualizer> startAgentEvaluation(
+    public TrainingSession createEvaluationSession(
             String agentName,
             String envName,
             String envOptions,
@@ -80,10 +81,10 @@ public class ExecutionService {
         if (evalStoreId < 0)
             throw new StartAgentTrainingException("Um das Training einer Policy zu bewerten muss ein entsprechender Store übergeben werden.");
 
-        return startAgentSzenario(agentName, envName, envOptions, steps, initFromFile, evalStoreId, true);
+        return createSession(agentName, envName, envOptions, steps, initFromFile, evalStoreId, true);
     }
 
-    private Optional<PolicyVisualizer> startAgentSzenario(
+    private TrainingSession createSession(
             String agentName,
             String envName,
             String envOptions,
@@ -120,9 +121,6 @@ public class ExecutionService {
             // Build Agent
             Agent agent = agentRepository.createAgentInstance(agentDescriptor, environment, actionSource);
 
-            // Start Training & Store result
-            startTrainLoop(agent, environment, steps);
-
             // Persist trained policy if learning is enabled
             if (!onlyEvaluate) {
                 PersistedStoreInfo info = storeTrainedPolicy(agentName, envName, policy);
@@ -130,7 +128,11 @@ public class ExecutionService {
             }
 
             // Create Visualization
-            return policyVisualizerFactory.createVisualizer(policy, environment);
+            Optional<PolicyVisualizer> visualizer = policyVisualizerFactory.createVisualizer(policy, environment);
+            if (visualizer.isEmpty())
+                throw new StartAgentTrainingException("Visualizer konnte nicht erstellt werden :(");
+
+            return new TrainingSession(agent, environment, visualizer.get(), steps);
         } catch (Exception e) {
             throw new StartAgentTrainingException(e.getMessage());
         }
@@ -151,31 +153,6 @@ public class ExecutionService {
         }
 
         return new ActionValueStore(stateSpace, actionSpace);
-    }
-
-    private void startTrainLoop(Agent agent, Environment environment, long steps) {
-        int trainingMessageInterval = Integer.parseInt(configService.getConfigItem(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_STEPS).value());
-        long lastMessage = 0;
-
-        long currStep = 0;
-        while (currStep < steps) {
-            if (currStep - lastMessage >= trainingMessageInterval) {
-                System.out.printf(
-                        Locale.US,
-                        "Schritt %d/%d (%.2f%%), Durchschnittlicher Reward %f%n",
-                        currStep,
-                        steps,
-                        (float) currStep / steps * 100,
-                        agent.getCurrentAverageReward());
-
-                lastMessage = currStep;
-            }
-
-            environment.tick();
-            agent.executeNextAction();
-
-            currStep++;
-        }
     }
 
     private PersistedStoreInfo storeTrainedPolicy(String agent, String environment, Policy policy) {
