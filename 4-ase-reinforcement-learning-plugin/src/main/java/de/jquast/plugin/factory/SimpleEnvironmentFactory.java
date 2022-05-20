@@ -34,10 +34,10 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
     }
 
     private GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) {
-        Integer height = Integer.parseInt(parameters.get("height"));
-        Integer width = Integer.parseInt(parameters.get("width"));
-
         if (!parameters.containsKey("from")) {
+            Integer height = Integer.parseInt(parameters.get("height"));
+            Integer width = Integer.parseInt(parameters.get("width"));
+
             return new GridWorldEnvironment(height, width);
         }
 
