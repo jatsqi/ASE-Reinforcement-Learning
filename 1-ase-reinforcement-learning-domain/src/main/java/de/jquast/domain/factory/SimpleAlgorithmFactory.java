@@ -1,11 +1,11 @@
-package de.jquast.plugin.factory;
+package de.jquast.domain.factory;
 
 import de.jquast.domain.algorithm.AlgorithmFactory;
 import de.jquast.domain.algorithm.RLAlgorithm;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.shared.ActionSource;
 import de.jquast.domain.shared.ActionValueStore;
-import de.jquast.plugin.algorithm.QLearning;
+import de.jquast.domain.algorithm.impl.QLearning;
 
 import java.util.Optional;
 

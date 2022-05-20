@@ -1,11 +1,11 @@
-package de.jquast.plugin.factory;
+package de.jquast.domain.factory;
 
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyFactory;
 import de.jquast.domain.shared.ActionValueStore;
-import de.jquast.plugin.policy.EpsilonGreedyPolicy;
-import de.jquast.plugin.policy.GreedyPolicy;
+import de.jquast.domain.policy.impl.EpsilonGreedyPolicy;
+import de.jquast.domain.policy.impl.GreedyPolicy;
 
 import java.util.Optional;
 

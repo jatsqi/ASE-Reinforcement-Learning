@@ -1,12 +1,12 @@
-package de.jquast.plugin.factory;
+package de.jquast.domain.factory;
 
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.shared.ActionSource;
-import de.jquast.plugin.agent.MovingAgent2D;
-import de.jquast.plugin.agent.PullAgent;
+import de.jquast.domain.agent.impl.MovingAgent2D;
+import de.jquast.domain.agent.impl.PullAgent;
 
 import java.util.Optional;
 

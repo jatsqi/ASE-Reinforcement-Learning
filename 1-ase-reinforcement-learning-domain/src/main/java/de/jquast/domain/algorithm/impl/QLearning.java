@@ -1,4 +1,4 @@
-package de.jquast.plugin.algorithm;
+package de.jquast.domain.algorithm.impl;
 
 import de.jquast.domain.algorithm.RLAlgorithm;
 import de.jquast.domain.algorithm.RLSettings;

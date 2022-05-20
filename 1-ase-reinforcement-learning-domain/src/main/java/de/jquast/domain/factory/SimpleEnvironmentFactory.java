@@ -1,10 +1,10 @@
-package de.jquast.plugin.factory;
+package de.jquast.domain.factory;
 
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentFactory;
-import de.jquast.plugin.environments.GridWorldEnvironment;
-import de.jquast.plugin.environments.KArmedBanditEnvironment;
+import de.jquast.domain.environment.impl.GridWorldEnvironment;
+import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
 
 import java.io.IOException;
 import java.nio.file.Files;

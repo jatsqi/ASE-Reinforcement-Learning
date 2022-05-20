@@ -1,4 +1,4 @@
-package de.jquast.plugin.policy;
+package de.jquast.domain.policy.impl;
 
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.shared.ActionValueStore;

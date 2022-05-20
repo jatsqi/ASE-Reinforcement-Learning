@@ -3,8 +3,6 @@ package de.jquast.plugin.repository;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.shared.Action;
-import de.jquast.plugin.environments.GridWorldEnvironment;
-import de.jquast.plugin.environments.KArmedBanditEnvironment;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package de.jquast.plugin.environments;
+package de.jquast.domain.environment.impl;
 
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.shared.Action;

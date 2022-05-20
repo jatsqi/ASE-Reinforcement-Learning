@@ -1,4 +1,4 @@
-package de.jquast.plugin.agent;
+package de.jquast.domain.agent.impl;
 
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.algorithm.RLSettings;

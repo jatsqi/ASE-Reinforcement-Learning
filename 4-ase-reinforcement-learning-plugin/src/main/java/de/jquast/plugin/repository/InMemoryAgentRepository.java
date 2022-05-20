@@ -3,8 +3,6 @@ package de.jquast.plugin.repository;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentRepository;
 import de.jquast.domain.shared.Action;
-import de.jquast.plugin.agent.MovingAgent2D;
-import de.jquast.plugin.agent.PullAgent;
 
 import java.util.Collection;
 import java.util.HashMap;

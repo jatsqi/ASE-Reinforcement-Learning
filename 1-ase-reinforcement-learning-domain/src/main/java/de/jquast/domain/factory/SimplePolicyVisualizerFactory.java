@@ -1,11 +1,11 @@
-package de.jquast.plugin.factory;
+package de.jquast.domain.factory;
 
 import de.jquast.domain.environment.Environment;
+import de.jquast.domain.environment.impl.GridWorldEnvironment;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyVisualizer;
 import de.jquast.domain.policy.PolicyVisualizerFactory;
 import de.jquast.domain.policy.VisualizationFormat;
-import de.jquast.plugin.environments.GridWorldEnvironment;
 
 import java.util.HashMap;
 import java.util.Map;
