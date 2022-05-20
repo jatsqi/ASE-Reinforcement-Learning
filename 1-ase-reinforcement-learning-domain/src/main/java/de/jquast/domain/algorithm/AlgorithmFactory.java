@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface AlgorithmFactory {
 
-    Optional<RLAlgorithm> createAlgorithm(String name, ActionValueStore store, ActionSource delegate, RLSettings settings);
+    Optional<RLAlgorithm> createAlgorithm(RLAlgorithmDescriptor descriptor, ActionValueStore store, ActionSource delegate, RLSettings settings);
 
 }
