@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/0-ase-reinforcement-learning-utils/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/0-ase-reinforcement-learning-utils/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/1-ase-reinforcement-learning-domain/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/1-ase-reinforcement-learning-domain/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/2-ase-reinforcement-learning-application/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/2-ase-reinforcement-learning-application/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/3-ase-reinforcement-learning-adapters/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/3-ase-reinforcement-learning-adapters/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/4-ase-reinforcement-learning-plugin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/4-ase-reinforcement-learning-plugin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
