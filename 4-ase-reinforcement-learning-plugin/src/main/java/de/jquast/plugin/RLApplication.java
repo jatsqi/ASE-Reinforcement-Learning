@@ -9,7 +9,7 @@ import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.factory.*;
 import de.jquast.domain.policy.PolicyFactory;
-import de.jquast.domain.policy.PolicyVisualizerFactory;
+import de.jquast.domain.policy.visualizer.PolicyVisualizerFactory;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.plugin.commands.*;
 import de.jquast.plugin.repository.*;

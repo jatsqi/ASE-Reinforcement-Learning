@@ -3,9 +3,9 @@ package de.jquast.domain.factory;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.impl.GridWorldEnvironment;
 import de.jquast.domain.policy.Policy;
-import de.jquast.domain.policy.PolicyVisualizer;
-import de.jquast.domain.policy.PolicyVisualizerFactory;
-import de.jquast.domain.policy.VisualizationFormat;
+import de.jquast.domain.policy.visualizer.PolicyVisualizer;
+import de.jquast.domain.policy.visualizer.PolicyVisualizerFactory;
+import de.jquast.domain.policy.visualizer.VisualizationFormat;
 
 import java.util.HashMap;
 import java.util.Map;

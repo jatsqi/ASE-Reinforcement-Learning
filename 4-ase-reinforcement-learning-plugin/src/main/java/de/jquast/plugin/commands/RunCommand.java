@@ -1,8 +1,8 @@
 package de.jquast.plugin.commands;
 
 import de.jquast.application.service.ExecutionService;
-import de.jquast.domain.policy.PolicyVisualizer;
-import de.jquast.domain.policy.VisualizationFormat;
+import de.jquast.domain.policy.visualizer.PolicyVisualizer;
+import de.jquast.domain.policy.visualizer.VisualizationFormat;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Option;
 import de.jquast.utils.di.annotations.Inject;

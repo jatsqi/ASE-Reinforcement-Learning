@@ -1,6 +1,7 @@
-package de.jquast.domain.policy;
+package de.jquast.domain.policy.visualizer;
 
 import de.jquast.domain.environment.Environment;
+import de.jquast.domain.policy.Policy;
 
 import java.util.Optional;
 
