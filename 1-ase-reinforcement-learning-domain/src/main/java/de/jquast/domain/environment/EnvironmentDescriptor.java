@@ -7,7 +7,6 @@ import java.util.Objects;
 public record EnvironmentDescriptor(
         String name,
         String description,
-        Class<? extends Environment> clazz,
         Action[] supportedCapabilities) {
 
     @Override

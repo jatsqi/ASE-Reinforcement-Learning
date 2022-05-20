@@ -7,7 +7,6 @@ import java.util.Objects;
 public record AgentDescriptor(
         String name,
         String description,
-        Class<? extends Agent> clazz,
         Action[] requiredCapabilities,
         int actionSpace) {
 

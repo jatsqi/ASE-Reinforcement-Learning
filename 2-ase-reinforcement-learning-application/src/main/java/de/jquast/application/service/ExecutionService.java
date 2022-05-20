@@ -131,7 +131,6 @@ public class ExecutionService {
         if (!onlyEvaluate) {
             PersistedStoreInfo info = storeTrainedPolicy(agentName, envName, policy);
             System.out.printf(Locale.US, "\nPolicy gespeichert, Id: %d, Environment: %s, Agent: %s%n", info.id(), info.environment(), info.agent());
-            ;
         }
 
         // Create Visualization

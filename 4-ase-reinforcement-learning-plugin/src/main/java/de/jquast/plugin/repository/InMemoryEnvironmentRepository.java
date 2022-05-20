@@ -22,7 +22,6 @@ public class InMemoryEnvironmentRepository implements EnvironmentRepository {
         ENVIRONMENTS.put(kArmedBandit, new EnvironmentDescriptor(
                 kArmedBandit,
                 "N Spieleautomaten (einarmige Banditen) mit jeweils einem Hebel.",
-                KArmedBanditEnvironment.class,
                 new Action[]{
                         Action.DO_NOTHING,
                         Action.PULL
@@ -33,7 +32,6 @@ public class InMemoryEnvironmentRepository implements EnvironmentRepository {
         ENVIRONMENTS.put(gridWorld, new EnvironmentDescriptor(
                 gridWorld,
                 "Eine Welt bestehend aus Kacheln",
-                GridWorldEnvironment.class,
                 new Action[]{
                         Action.DO_NOTHING,
                         Action.MOVE_X_DOWN, Action.MOVE_X_UP,
