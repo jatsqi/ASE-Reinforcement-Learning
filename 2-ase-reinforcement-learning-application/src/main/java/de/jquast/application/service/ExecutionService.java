@@ -77,8 +77,11 @@ public class ExecutionService {
             String envOptions,
             long steps,
             String initFromFile,
-            int resumeFromStoreId) throws StartAgentTrainingException {
-        return startAgentSzenario(agentName, envName, envOptions, steps, initFromFile, resumeFromStoreId, true);
+            int evalStoreId) throws StartAgentTrainingException {
+        if (evalStoreId < 0)
+            throw new StartAgentTrainingException("Um das Training einer Policy zu bewerten muss ein entsprechender Store übergeben werden.");
+
+        return startAgentSzenario(agentName, envName, envOptions, steps, initFromFile, evalStoreId, true);
     }
 
     private Optional<PolicyVisualizer> startAgentSzenario(
