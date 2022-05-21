@@ -68,10 +68,10 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
         private char actionToDirection(int action) {
             return switch (action) {
                 case 0 -> '-';
-                case 1 -> '→';
-                case 2 -> '←';
-                case 3 -> '↓';
-                case 4 -> '↑';
+                case 1 -> 'E';
+                case 2 -> 'W';
+                case 3 -> 'S';
+                case 4 -> 'N';
                 default -> '?';
             };
         }

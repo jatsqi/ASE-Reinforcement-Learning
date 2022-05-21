@@ -35,6 +35,9 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
 
     private GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) {
         if (!parameters.containsKey("from")) {
+            if (!parameters.containsKey("height") || !parameters.containsKey("width"))
+                throw new RuntimeException("");
+
             Integer height = Integer.parseInt(parameters.get("height"));
             Integer width = Integer.parseInt(parameters.get("width"));
 
