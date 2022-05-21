@@ -8,6 +8,6 @@ public interface SzenarioProgressObserver {
 
     default void postTrainingStep(SzenarioSession session, long currentStep, double averageReward) {};
 
-    default void onTrainingEnd(SzenarioSession session, long currentStep, double averageReward) {};
+    default void onTrainingEnd(SzenarioSession session, double averageReward) {};
 
 }

@@ -7,6 +7,7 @@ import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.visualizer.PolicyVisualizer;
 
 public record Szenario(
+        DescriptorBundle metadata,
         Agent agent,
         Environment environment,
         Policy policy,
