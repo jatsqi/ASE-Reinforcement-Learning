@@ -75,7 +75,7 @@ public class StatelessCommandExecutionEngine implements CommandExecutionEngine {
         builder.append("Liste der zur Verfügung stehenden Befehle: \n");
 
         for (AnalyzedCommand<?> cmd : commandRegistry.values()) {
-            builder.append(String.format("  %-15s%s\n", cmd.command().name(), cmd.command().description()));
+            builder.append(generateCommandNameDescription(cmd));
         }
 
         return builder.toString();
@@ -99,7 +99,16 @@ public class StatelessCommandExecutionEngine implements CommandExecutionEngine {
             builder.append(String.format("    %-15s %-20s %s\n", generateOptionalOrRequired(optionField.optionAnnotation().required()), String.join(", ", option.names()), option.description()));
         }
 
+        builder.append("  Subcommands:\n");
+        for (AnalyzedCommand<?> sub : cmd.analyzedSubCommands()) {
+            builder.append(String.format("    %s", generateCommandNameDescription(sub)));
+        }
+
         return builder.toString();
+    }
+
+    private String generateCommandNameDescription(AnalyzedCommand<?> cmd) {
+        return String.format("  %-15s%s\n", cmd.command().name(), cmd.command().description());
     }
 
     private String generateOptionalOrRequired(boolean required) {

@@ -11,7 +11,7 @@ public record EnvironmentDescriptor(
 
     @Override
     public String toString() {
-        return String.format("%s: %s", name, description);
+        return String.format("%-20s: %s", name, description);
     }
 
     @Override

@@ -84,7 +84,7 @@ public class ConfigCommand {
 
         @Override
         public void run() {
-            if (key == null) {
+            if (key == null || key.isEmpty()) {
                 for (ConfigItem item : configService.getConfigItems()) {
                     System.out.println(item);
                 }
