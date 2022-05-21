@@ -14,7 +14,13 @@ public class SimplePolicyFactory implements PolicyFactory {
 
     @Override
     public Optional<Policy> createPolicy(PolicyDescriptor descriptor, ActionValueStore store, RLSettings settings) {
-        return Optional.of(createEpsilonGreedyPolicy(store, settings)); // Aktuell soll nur eine Policy (ohne Namen) unterstützt werden
+        Policy policy = switch (descriptor.name()) {
+            case "epsilon-greedy" -> createEpsilonGreedyPolicy(store, settings);
+            case "greedy" -> createGreedyPolicy(store, settings);
+            default -> null;
+        };
+
+        return Optional.ofNullable(policy);
     }
 
     @Override
