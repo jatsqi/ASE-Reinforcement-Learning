@@ -6,7 +6,7 @@ import de.jquast.domain.policy.visualizer.PolicyVisualizer;
 
 import java.util.function.Consumer;
 
-public class TrainingSession {
+public class SzenarioSession {
 
     private final Agent agent;
     private final Environment environment;
@@ -15,34 +15,43 @@ public class TrainingSession {
     private int currentStep = 0;
     private final long maxSteps;
 
-    private TrainingProgressObserver observer;
+    private SzenarioProgressObserver observer;
 
-    public TrainingSession(Agent agent, Environment environment, PolicyVisualizer visualizer, long maxSteps) {
+    public SzenarioSession(Agent agent, Environment environment, PolicyVisualizer visualizer, long maxSteps) {
         this.agent = agent;
         this.environment = environment;
         this.maxSteps = maxSteps;
         this.visualizer = visualizer;
     }
 
+    public SzenarioSession(Szenario szenario) {
+        this(
+                szenario.agent(),
+                szenario.environment(),
+                szenario.visualizer(),
+                szenario.maxSteps()
+        );
+    }
+
     public void start() {
         long currStep = 0;
-        execWhenPresent(obs -> obs.onTrainingStart(currentStep, maxSteps));
+        execWhenPresent(obs -> obs.onTrainingStart(this));
 
         while (currStep < maxSteps) {
             final long currentStepCached = currStep;
-            execWhenPresent(obs -> obs.preTrainingStep(currentStepCached, maxSteps, agent.getCurrentAverageReward()));
+            execWhenPresent(obs -> obs.preTrainingStep(this, currentStepCached, agent.getCurrentAverageReward()));
 
             environment.tick();
             agent.executeNextAction();
 
-            execWhenPresent(obs -> obs.postTrainingStep(currentStepCached, maxSteps, agent.getCurrentAverageReward()));
+            execWhenPresent(obs -> obs.postTrainingStep(this, currentStepCached, agent.getCurrentAverageReward()));
             currStep++;
         }
 
-        execWhenPresent(obs -> obs.postTrainingStep(currentStep, maxSteps, agent.getCurrentAverageReward()));
+        execWhenPresent(obs -> obs.postTrainingStep(this, currentStep, agent.getCurrentAverageReward()));
     }
 
-    public void setObserver(TrainingProgressObserver observer) {
+    public void setObserver(SzenarioProgressObserver observer) {
         this.observer = observer;
     }
 
@@ -66,7 +75,7 @@ public class TrainingSession {
         return visualizer;
     }
 
-    private void execWhenPresent(Consumer<TrainingProgressObserver> consumer) {
+    private void execWhenPresent(Consumer<SzenarioProgressObserver> consumer) {
         if (observer != null) {
             consumer.accept(observer);
         }
