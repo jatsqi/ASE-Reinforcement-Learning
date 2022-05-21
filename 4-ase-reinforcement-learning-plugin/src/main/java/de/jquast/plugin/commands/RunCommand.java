@@ -3,8 +3,8 @@ package de.jquast.plugin.commands;
 import de.jquast.application.config.DefaultConfigItem;
 import de.jquast.application.service.ConfigService;
 import de.jquast.application.service.ExecutionService;
-import de.jquast.application.session.TrainingProgressObserver;
-import de.jquast.application.session.TrainingSession;
+import de.jquast.application.session.SzenarioProgressObserver;
+import de.jquast.application.session.SzenarioSession;
 import de.jquast.domain.policy.visualizer.VisualizationFormat;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Option;
@@ -31,8 +31,6 @@ public class RunCommand implements Runnable {
     public String environmentName;
     @Option(names = "--steps", description = "Anzahl der Trainingschritte.", required = true)
     public int steps;
-    @Option(names = "--init-from", description = "Init Environment from file.")
-    public String initFromFile;
     @Option(names = "--resume", description = "Benutze Values eines vorherigen Trainings", defaultValue = "-1")
     public int resumeFromStoreId;
     @Option(names = "--eval", description = "Schalter, ob der Agent trainiert werden soll, oder ob der übergebene Store nur ausgeführt wird.")
@@ -54,14 +52,13 @@ public class RunCommand implements Runnable {
             System.out.println("    Steps: " + steps);
             System.out.println("    Store-ID: " + (resumeFromStoreId == -1 ? null : resumeFromStoreId));
 
-            TrainingSession session;
+            SzenarioSession session;
             if (!evalMode) {
                 session = executionService.createTrainingSession(
                         agentName,
                         environmentName,
                         environmentOptions,
                         steps,
-                        initFromFile,
                         resumeFromStoreId);
             } else {
                 session = executionService.createEvaluationSession(
@@ -69,28 +66,17 @@ public class RunCommand implements Runnable {
                         environmentName,
                         environmentOptions,
                         steps,
-                        initFromFile,
                         resumeFromStoreId);
             }
 
             long stepInterval = Long.parseLong(
                     configService.getConfigItem(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_STEPS).value());
 
-            session.setObserver(new TrainingProgressObserver() {
+            session.setObserver(new SzenarioProgressObserver() {
                 private long lastStep = 0;
 
                 @Override
-                public void onTrainingStart(long currentStep, long maxStep) {
-
-                }
-
-                @Override
-                public void preTrainingStep(long currentStep, long maxStep, double averageReward) {
-
-                }
-
-                @Override
-                public void postTrainingStep(long currentStep, long maxStep, double averageReward) {
+                public void postTrainingStep(SzenarioSession session, long currentStep, double averageReward) {
                     if (currentStep - lastStep >= stepInterval) {
                         lastStep = currentStep;
                         System.out.printf(
@@ -101,11 +87,6 @@ public class RunCommand implements Runnable {
                                 (float) currentStep / steps * 100,
                                 averageReward);
                     }
-                }
-
-                @Override
-                public void onTrainingEnd(long currentStep, long maxStep, double averageReward) {
-
                 }
             });
 
