@@ -54,7 +54,7 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
                 }
 
                 if (gridWorld.getGrid()[i % gridWorld.getWidth()][i / gridWorld.getWidth()] == GridWorldEnvironment.STATE_TERMINAL) {
-                    builder.append("⚐ ");
+                    builder.append("G ");
                     continue;
                 }
 
