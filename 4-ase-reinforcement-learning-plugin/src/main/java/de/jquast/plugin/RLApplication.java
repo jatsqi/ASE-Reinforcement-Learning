@@ -49,15 +49,25 @@ public class RLApplication {
         CONTEXT.mapInterface(PolicyVisualizerFactory.class, SimplePolicyVisualizerFactory.class);
     }
 
-    public static void main(String[] args) throws InjectionException, CommandException {
-        CommandExecutionEngine engine = CONTEXT.createNewInstance(CommandExecutionEngine.class);
+    public static void main(String[] args) {
+        CommandExecutionEngine engine = null;
+        try {
+            engine = CONTEXT.createNewInstance(CommandExecutionEngine.class);
+        } catch (InjectionException e) {
+            System.out.println("Beim Erstellen der Engine für das Ausführung von Befehlen ist ein kritischer Fehler aufgetreten.");
+            return;
+        }
         engine.registerTopLevelCommand(ConfigCommand.class);
         engine.registerTopLevelCommand(AlgorithmCommand.class);
         engine.registerTopLevelCommand(EnvironmentCommand.class);
         engine.registerTopLevelCommand(AgentCommand.class);
         engine.registerTopLevelCommand(RunCommand.class);
 
-        engine.execute(String.join(" ", args));
+        try {
+            engine.execute(String.join(" ", args));
+        } catch (CommandException e) {
+            System.out.printf(e.getMessage());
+        }
     }
 
 }
