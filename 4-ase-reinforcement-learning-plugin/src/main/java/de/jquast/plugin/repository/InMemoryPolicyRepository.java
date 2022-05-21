@@ -57,6 +57,11 @@ public class InMemoryPolicyRepository implements PolicyRepository {
     }
 
     @Override
+    public PolicyDescriptor getMaximizingPolicyInfo() {
+        return POLICIES.get("greedy");
+    }
+
+    @Override
     public Policy createPolicyInstance(PolicyDescriptor descriptor, ActionValueStore store) throws PolicyCreationException {
         Optional<Policy> policy = factory.createPolicy(descriptor, store, configService.getRLSettings());
         if (policy.isEmpty())
@@ -65,8 +70,4 @@ public class InMemoryPolicyRepository implements PolicyRepository {
         return policy.get();
     }
 
-    @Override
-    public Policy createMaximizingPolicy(ActionValueStore store) throws PolicyCreationException {
-        return createPolicyInstance(POLICIES.get("greedy"), store);
-    }
 }

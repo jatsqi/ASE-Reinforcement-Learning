@@ -14,8 +14,7 @@ public interface PolicyRepository {
 
     PolicyDescriptor getDefaultPolicyInfo();
 
+    PolicyDescriptor getMaximizingPolicyInfo();
+
     Policy createPolicyInstance(PolicyDescriptor descriptor, ActionValueStore store) throws PolicyCreationException;
-
-    Policy createMaximizingPolicy(ActionValueStore store) throws PolicyCreationException;
-
 }
