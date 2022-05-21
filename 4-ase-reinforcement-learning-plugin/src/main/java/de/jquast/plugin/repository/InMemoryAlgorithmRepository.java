@@ -49,6 +49,11 @@ public class InMemoryAlgorithmRepository implements RLAlgorithmRepository {
     }
 
     @Override
+    public RLAlgorithmDescriptor getDefaultAlgorithmInfo() {
+        return ALGORITHMS.get("qlearning");
+    }
+
+    @Override
     public RLAlgorithm createAlgorithmInstance(RLAlgorithmDescriptor descriptor, ActionValueStore store, ActionSource source) throws AlgorithmCreationException {
         Optional<RLAlgorithm> algorithm = factory.createAlgorithm(descriptor, store, source, configService.getRLSettings());
         if (algorithm.isEmpty())

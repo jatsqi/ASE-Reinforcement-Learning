@@ -13,6 +13,8 @@ public interface RLAlgorithmRepository {
 
     Optional<RLAlgorithmDescriptor> getAlgorithmInfo(String name);
 
+    RLAlgorithmDescriptor getDefaultAlgorithmInfo();
+
     RLAlgorithm createAlgorithmInstance(RLAlgorithmDescriptor descriptor, ActionValueStore store, ActionSource source) throws AlgorithmCreationException;
 
 }
