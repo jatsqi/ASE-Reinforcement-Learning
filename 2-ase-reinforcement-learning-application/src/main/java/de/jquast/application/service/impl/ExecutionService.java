@@ -27,6 +27,9 @@ import de.jquast.application.exception.StartAgentTrainingException;
 
 import java.util.Optional;
 
+/**
+ * Primärer Service, der mit dem Training bzw. der Evaluation der Agenten beschäftigt
+ */
 public class ExecutionService {
 
     private final AgentRepository agentRepository;
@@ -61,6 +64,17 @@ public class ExecutionService {
         );
     }
 
+    /**
+     * Startet ein Training für einen Agenten.
+     *
+     * @param agentName                     Name des Agenten.
+     * @param envName                       Name des Environment.
+     * @param envOptions                    Optionen für das Erstellen des Environments.
+     * @param steps                         Maximale Schritte, die das Training benötigen darf.
+     * @param storeId                       ID des Action Value Stores, mit denen das Training initialisiert wird.
+     * @param observer                      Externer Beobachter, um das Training zu beobachten.
+     * @throws StartAgentTrainingException  Wird geworfen, sofern etwas beim Starten des Trainings fehlgeschlagen ist.
+     */
     public void startTraining(
             String agentName,
             String envName,
@@ -97,6 +111,18 @@ public class ExecutionService {
         }
     }
 
+    /**
+     * Startet eine Evaluation für einen Agenten.
+     * Unterscheidet sich strukturell nur minimal vom Training, da hier kein Algorithmus als Decorator genutzt wird.
+     *
+     * @param agentName                     Name des Agenten.
+     * @param envName                       Name des Environment.
+     * @param envOptions                    Optionen für das Erstellen des Environments.
+     * @param steps                         Maximale Schritte, die das Training benötigen darf.
+     * @param storeId                       ID des Action Value Stores, mit denen das Training initialisiert wird.
+     * @param observer                      Externer Beobachter, um das Training zu beobachten.
+     * @throws StartAgentTrainingException  Wird geworfen, sofern etwas beim Starten des Trainings fehlgeschlagen ist.
+    */
     public void startEvaluation(
             String agentName,
             String envName,
