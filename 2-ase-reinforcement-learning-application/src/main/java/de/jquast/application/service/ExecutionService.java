@@ -1,6 +1,8 @@
 package de.jquast.application.service;
 
+import de.jquast.application.session.DescriptorBundle;
 import de.jquast.application.session.Szenario;
+import de.jquast.application.session.SzenarioProgressObserver;
 import de.jquast.application.session.SzenarioSession;
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
@@ -58,12 +60,13 @@ public class ExecutionService {
         );
     }
 
-    public SzenarioSession createTrainingSession(
+    public void startTraining(
             String agentName,
             String envName,
             String envOptions,
             long steps,
-            int storeId) throws StartAgentTrainingException {
+            int storeId,
+            Optional<SzenarioExecutionObserver> observer) throws StartAgentTrainingException {
         AgentDescriptor agentDescriptor = agentRepository
                 .getAgentInfo(agentName)
                 .orElseThrow(() -> new StartAgentTrainingException("Der Agent konnte nicht gefunden werden."));
@@ -75,7 +78,8 @@ public class ExecutionService {
         try {
             RLAlgorithm algorithm = algorithmRepository.createAlgorithmInstance(algorithmRepository.getDefaultAlgorithmInfo(), store, szenario.policy());
 
-            return new SzenarioSession(new Szenario(
+            SzenarioSession session = new SzenarioSession(new Szenario(
+                    szenario.metadata(),
                     agentRepository.createAgentInstance(agentDescriptor, szenario.environment(), algorithm),
                     szenario.environment(),
                     szenario.policy(),
@@ -83,23 +87,32 @@ public class ExecutionService {
                     steps,
                     szenario.settings()
             ));
+            session.addObserver(createWrappedTrainingObserver(observer));
+
+            session.start();
         } catch (Exception e) {
             e.printStackTrace();
             throw new StartAgentTrainingException(e.getMessage());
         }
     }
 
-    public SzenarioSession createEvaluationSession(
+    public void startEvaluation(
             String agentName,
             String envName,
             String envOptions,
             long steps,
-            int storeId) throws StartAgentTrainingException {
+            int storeId,
+            Optional<SzenarioExecutionObserver> observer) throws StartAgentTrainingException {
         if (storeId < 0)
             throw new StartAgentTrainingException("Um das Training einer Policy zu bewerten muss ein entsprechender Store übergeben werden.");
 
         Szenario szenario = createSzenario(agentName, envName, policyRepository.getMaximizingPolicyInfo().name(), envOptions, steps, storeId);
-        return new SzenarioSession(szenario);
+        SzenarioSession session = new SzenarioSession(szenario);
+
+        if (observer.isPresent())
+            session.addObserver(observer.get());
+
+        session.start();
     }
 
     private Szenario createSzenario(
@@ -142,7 +155,9 @@ public class ExecutionService {
                     .createVisualizer(policy, environment)
                     .orElseThrow(() -> new StartAgentTrainingException("Visualizer konnte nicht erstellt werden :("));
 
-            return new Szenario(agent, environment, policy, visualizer, maxSteps, settings);
+            return new Szenario(
+                    new DescriptorBundle(agentDescriptor, envDescriptor, policyDescriptor),
+                    agent, environment, policy, visualizer, maxSteps, settings);
         } catch (Exception e) {
             throw new StartAgentTrainingException(e.getMessage());
         }
@@ -167,6 +182,48 @@ public class ExecutionService {
 
     private PersistedStoreInfo storeTrainedPolicy(String agent, String environment, Policy policy) {
         return actionValueRepository.persistActionValueStore(agent, environment, policy.getActionValueStore());
+    }
+
+    private SzenarioExecutionObserver createWrappedTrainingObserver(Optional<SzenarioExecutionObserver> progressObserver) {
+        return new SzenarioExecutionObserver() {
+            @Override
+            public void onTrainingEnd(SzenarioSession session, double averageReward) {
+                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.onTrainingEnd(session, averageReward));
+
+                DescriptorBundle bundle = session.getSzenario().metadata();
+                PersistedStoreInfo info = storeTrainedPolicy(
+                        bundle.agentDescriptor().name(),
+                        bundle.environmentDescriptor().name(),
+                        session.getSzenario().policy());
+
+                onActionStorePersisted(info);
+            }
+
+            @Override
+            public void onActionStorePersisted(PersistedStoreInfo info) {
+                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.onActionStorePersisted(info));
+            }
+
+            @Override
+            public void onTrainingStart(SzenarioSession session) {
+                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.onTrainingStart(session));
+            }
+
+            @Override
+            public void preTrainingStep(SzenarioSession session, long currentStep, double averageReward) {
+                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.preTrainingStep(session, currentStep, averageReward));
+            }
+
+            @Override
+            public void postTrainingStep(SzenarioSession session, long currentStep, double averageReward) {
+                if (progressObserver.isPresent())
+                    progressObserver.get().postTrainingStep(session, currentStep, averageReward);
+            }
+        };
+    }
+
+    public interface SzenarioExecutionObserver extends SzenarioProgressObserver {
+        default void onActionStorePersisted(PersistedStoreInfo info) {}
     }
 
 }
