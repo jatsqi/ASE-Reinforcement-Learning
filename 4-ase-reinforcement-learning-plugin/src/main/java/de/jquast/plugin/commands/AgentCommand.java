@@ -37,7 +37,7 @@ public class AgentCommand implements Runnable {
     }
 
     private void printAgents() {
-        System.out.println("Environments:");
+        System.out.println("Agenten:");
 
         for (AgentDescriptor descriptor : service.getAgents()) {
             System.out.println(String.format("  %s", descriptor.toString()));

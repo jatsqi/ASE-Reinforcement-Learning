@@ -40,7 +40,6 @@ public class StatelessCommandExecutionEngine implements CommandExecutionEngine {
 
         String topLevelCommand = parts[0];
         if (!commandRegistry.containsKey(topLevelCommand)) {
-            System.out.println(generateCommandList());
             throw new CommandException(topLevelCommand, String.format("Der angegebene Befehl wurde nicht gefunden. \n%s", generateCommandList()));
         }
 
@@ -90,17 +89,23 @@ public class StatelessCommandExecutionEngine implements CommandExecutionEngine {
         for (ParameterField paraField : cmd.parameters()) {
             Parameter parameter = paraField.parameterAnnotation();
 
-            builder.append(String.format("    [#%d] %s\n", parameter.index(), parameter.description()));
+            builder.append(String.format("    %-10s [#%d] %s\n", generateOptionalOrRequired(paraField.parameterAnnotation().required()), parameter.index(), parameter.description()));
         }
 
         builder.append("  Optionen:\n");
         for (OptionField optionField : cmd.options()) {
             Option option = optionField.optionAnnotation();
 
-            builder.append(String.format("    %-20s %s\n", String.join(", ", option.names()), option.description()));
+            builder.append(String.format("    %-15s %-20s %s\n", generateOptionalOrRequired(optionField.optionAnnotation().required()), String.join(", ", option.names()), option.description()));
         }
 
         return builder.toString();
+    }
+
+    private String generateOptionalOrRequired(boolean required) {
+        return required ?
+                "[ERFORDERLICH]" :
+                "";
     }
 
     @Command(

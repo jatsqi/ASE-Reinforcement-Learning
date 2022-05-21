@@ -70,7 +70,6 @@ public class InjectingCommandFactory implements CommandFactory {
                 injectArguments(newInstance, parsedArguments, current);
                 injectParameters(newInstance, parsedArguments, current);
             } catch (Exception e) {
-                e.printStackTrace();
                 throw new CommandCreationException(e.getMessage(), current);
             }
 
@@ -90,7 +89,6 @@ public class InjectingCommandFactory implements CommandFactory {
         });
 
         for (OptionField optionField : commandMetadata.options()) {
-            System.out.println(optionField.optionAnnotation());
             Option annotation = optionField.optionAnnotation();
 
             Object foundOption = null;
