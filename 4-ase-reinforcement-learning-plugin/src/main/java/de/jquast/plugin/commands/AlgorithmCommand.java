@@ -1,6 +1,6 @@
 package de.jquast.plugin.commands;
 
-import de.jquast.application.service.RLAlgorithmService;
+import de.jquast.application.service.impl.RLAlgorithmService;
 import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;

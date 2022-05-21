@@ -1,7 +1,7 @@
 package de.jquast.plugin.repository;
 
-import de.jquast.application.service.AgentService;
-import de.jquast.application.service.EnvironmentService;
+import de.jquast.application.service.impl.AgentService;
+import de.jquast.application.service.impl.EnvironmentService;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.domain.shared.PersistedStoreInfo;

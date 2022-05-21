@@ -1,6 +1,6 @@
 package de.jquast.plugin.repository;
 
-import de.jquast.application.service.ConfigService;
+import de.jquast.application.service.impl.ConfigService;
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentFactory;

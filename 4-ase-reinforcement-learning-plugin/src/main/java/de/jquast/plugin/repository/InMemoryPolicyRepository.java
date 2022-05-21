@@ -1,6 +1,6 @@
 package de.jquast.plugin.repository;
 
-import de.jquast.application.service.ConfigService;
+import de.jquast.application.service.impl.ConfigService;
 import de.jquast.domain.exception.PolicyCreationException;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyDescriptor;
