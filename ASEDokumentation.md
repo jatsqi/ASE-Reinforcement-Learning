@@ -246,6 +246,14 @@ _[2 unterschiedliche Refactorings aus der Vorlesung anwenden, begründen, sowie 
 
 _[2 unterschiedliche Entwurfsmuster aus der Vorlesung (oder nach Absprache auch andere) jeweils sinnvoll einsetzen, begründen und UML-Diagramm]_
 
-### ​Entwurfsmuster: [Name]
+### Entwurfsmuster 1: Factory Pattern
 
-### ​Entwurfsmuster: [Name]
+Wird genutzt, um z.B konkrete Visualizer zu erstellen, die eine Policy, abhängig vom Environment, visualisieren.
+Da die Logik zum Erzeugen in diesem Fall recht umfangreich ist, wird diese Logik in einer eigenen Klasse gekapselt.
+Somit ruft beispielsweise eine Repository nur noch die Factory über das Interface auf und die konkrete Implementierung kümmert
+sich um das Erzeugen.
+
+![Factory Pattern](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/factoryPattern.puml)
+
+
+### Entwurfsmuster: [Name]

@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class PolicyVisualizer {
+#Policy policy
+#Environment environment
+
++{abstract} byte[] visualize(VisualizationFormat format)
++void saveToFile(Path path, VisualizationFormat format)
++Policy getPolicy()
++Environment getEnvironment()
+}
+
+class GridWorldVisualizer {
++byte[] visualize(VisualizationFormat format)
+}
+
+interface PolicyVisualizerFactory {
++{abstract} Optional<PolicyVisualizer> createVisualizer(Policy policy, Environment environment)
+}
+
+class SimplePolicyVisualizerFactory {
++Optional<PolicyVisualizer> createVisualizer(Policy policy, Environment environment)
+}
+
+class GridWorldVisualizer {
+}
+
+PolicyVisualizerFactory         <|-- SimplePolicyVisualizerFactory
+SimplePolicyVisualizerFactory  .l> GridWorldVisualizer
+PolicyVisualizer                <|-- GridWorldVisualizer
+
+@enduml
