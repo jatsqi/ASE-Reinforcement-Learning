@@ -21,8 +21,11 @@ public class ArgumentParser {
                 if (i + 1 < args.length) {
                     String optionVar = args[i + 1];
 
-                    if (optionVar.startsWith("--"))
-                        throw new RuntimeException(String.format("Invalid option var!"));
+                    if (optionVar.startsWith("--")) {
+                        options.put(part, null);
+                        continue;
+                    }
+                        //throw new RuntimeException(String.format("Invalid option var!"));
 
                     options.put(part, optionVar);
                 } else {
