@@ -1,0 +1,13 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface SzenarioProgressObserver {
+
++{abstract} void onSzenarioStart(SzenarioSession session)
++{abstract} void preSzenarioStep(SzenarioSession session, long currentStep, double averageReward)
++{abstract} void postSzenarioStep(SzenarioSession session, long currentStep, double averageReward)
++{abstract} void onSzenarioEnd(SzenarioSession session, double averageReward)
+
+}
+
+@enduml

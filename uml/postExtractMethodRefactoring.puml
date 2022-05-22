@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Runnable {
++{abstract} void run()
+}
+
+class RunCommand {
+-ExecutionService executionService
+-ConfigService configService
++String environmentOptions
++String agentName
++String environmentName
++long Steps
++int resumeFromStoreId
++boolean evalMode
+
++void run()
+-ExecutionService.SzenarioExecutionObserver createObserver(long stepInterval)
+}
+
+note right of RunCommand::run
+    ...
+    executionService.startTraining(
+        ...,
+        createObserver(stepInterval))
+    ...
+end note
+
+Runnable <|-- RunCommand
+
+@enduml

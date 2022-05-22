@@ -3,10 +3,10 @@
 
 interface SzenarioProgressObserver {
 
-+{abstract} void onTrainingStart(SzenarioSession session)
-+{abstract} void preTrainingStep(SzenarioSession session, long currentStep, double averageReward)
-+{abstract} void postTrainingStep(SzenarioSession session, long currentStep, double averageReward)
-+{abstract} void onTrainingEnd(SzenarioSession session, double averageReward)
++{abstract} void onSzenarioStart(SzenarioSession session)
++{abstract} void preSzenarioStep(SzenarioSession session, long currentStep, double averageReward)
++{abstract} void postSzenarioStep(SzenarioSession session, long currentStep, double averageReward)
++{abstract} void onSzenarioEnd(SzenarioSession session, double averageReward)
 
 }
 
