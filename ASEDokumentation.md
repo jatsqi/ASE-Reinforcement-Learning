@@ -61,9 +61,11 @@ Die JAR hat standardmäßig den Namen `4-ase-reinforcement-learning-plugin-1.0-S
 
 ### ​Wie testet man die Applikation?
 
-tbd
+```shell
+mvn test
+```
 
-# ​Kapitel 2: Clean Archite **cture**
+​Kapitel 2: Clean Archite **cture**
 
 ### ​Was ist Clean Architecture?
 
@@ -142,34 +144,7 @@ _[Nennung von 10 Unit-Tests und Beschreibung, was getestet wird]_
 | Unit Test | Beschreibung |
 | ---       | --- |
 | _Klasse#Methode_ |
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
+
 
 ### ​ATRIP: Automatic
 
@@ -199,22 +174,6 @@ _[4 Beispiele für die Ubiquitous Language; jeweils Bezeichung, Bedeutung und ku
 
 | **Bezeichung** | **Bedeutung** | **Begründung** |
 | --- | --- | --- |
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
 
 ### ​Entities
 
@@ -235,6 +194,40 @@ _[UML, Beschreibung und Begründung des Einsatzes eines Aggregates; falls kein A
 # ​Kapitel 7: Refactoring
 
 ### ​Code Smells
+
+#### Code-Smell 1: Duplicated Code
+
+Commit-ID: 28d6e5b4b81c28e6eb989d5d95b44936ac9e6813
+
+Dieser Code Smell ist während der Einführung der Klasse `ActionValueStore` aufgefallen.
+An zwei Stellen im Code wurde für einen gegebenen Zustand die Aktion mit dem maximalen Value benötigt.
+Diese Funktionalität war davor separat an zwei Stellen zu finden (Klasse `QLearning` + `EpislonGreedyPolicy`).
+Behoben durch das verschieden des Codes in eine gemeinsame Methode in der Klasse `ActionValueStore`.
+
+Vorher, an beiden Stellen:
+```java
+double highestValue = Double.MIN_VALUE;
+int bestAction = 0;
+double[] values = store.getActionValues(newState);
+
+// Suche höchsten Wert
+for (int i = 0; i < values.length; ++i) {
+    // Wert größer als vorher?
+    if (values[i] > highestValue) {
+        highestValue = values[i];
+        bestAction = i;
+    }
+}
+```
+
+Nachher, ausgelagert in externe Methode:
+```java
+ActionValueStore.ActionValueEntry maxEntry = store.getMaxActionValue(newState);
+int bestAction = maxEntry.action();
+int bestValue = maxEntry.value();
+```
+
+#### Code-Smell 2: TBD
 
 _[jeweils 1 Code-Beispiel zu 2 Code Smells aus der Vorlesung; jeweils Code-Beispiel und einen möglichen Lösungsweg bzw. den genommen Lösungsweg beschreiben (inkl.__(Pseudo-)Code)]_
 
@@ -263,7 +256,7 @@ _[2 unterschiedliche Entwurfsmuster aus der Vorlesung (oder nach Absprache auch 
 
 ### Entwurfsmuster 1: Factory Pattern
 
-Wird genutzt, um z.B konkrete Visualizer zu erstellen, die eine Policy, abhängig vom Environment, visualisieren.
+Wird genutzt, um z.B. konkrete Visualizer zu erstellen, die eine Policy, abhängig vom Environment, visualisieren.
 Da die Logik zum Erzeugen in diesem Fall recht umfangreich ist, wird diese Logik in einer eigenen Klasse gekapselt.
 Somit ruft beispielsweise eine Repository nur noch die Factory über das Interface auf und die konkrete Implementierung kümmert
 sich um das Erzeugen.
