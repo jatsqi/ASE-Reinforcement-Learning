@@ -17,20 +17,20 @@ public class SzenarioSession {
 
     public void start() {
         long currStep = 0;
-        execWhenPresent(obs -> obs.onTrainingStart(this));
+        execWhenPresent(obs -> obs.onSzenarioStart(this));
 
         while (currStep < szenario.maxSteps()) {
             final long currentStepCached = currStep;
-            execWhenPresent(obs -> obs.preTrainingStep(this, currentStepCached, szenario.agent().getCurrentAverageReward()));
+            execWhenPresent(obs -> obs.preSzenarioStep(this, currentStepCached, szenario.agent().getCurrentAverageReward()));
 
             szenario.environment().tick();
             szenario.agent().executeNextAction();
 
-            execWhenPresent(obs -> obs.postTrainingStep(this, currentStepCached, szenario.agent().getCurrentAverageReward()));
+            execWhenPresent(obs -> obs.postSzenarioStep(this, currentStepCached, szenario.agent().getCurrentAverageReward()));
             currStep++;
         }
 
-        execWhenPresent(obs -> obs.onTrainingEnd(this, szenario.agent().getCurrentAverageReward()));
+        execWhenPresent(obs -> obs.onSzenarioEnd(this, szenario.agent().getCurrentAverageReward()));
     }
 
     public SzenarioSession addObserver(SzenarioProgressObserver observer) {

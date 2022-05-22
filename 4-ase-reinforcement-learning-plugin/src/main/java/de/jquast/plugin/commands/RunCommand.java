@@ -90,14 +90,14 @@ public class RunCommand implements Runnable {
             private long lastStep = 0;
 
             @Override
-            public void onTrainingStart(SzenarioSession session) {
+            public void onSzenarioStart(SzenarioSession session) {
                 System.out.println();
                 System.out.println(session.getSzenario().settings());
                 System.out.println();
             }
 
             @Override
-            public void postTrainingStep(SzenarioSession session, long currentStep, double averageReward) {
+            public void postSzenarioStep(SzenarioSession session, long currentStep, double averageReward) {
                 if (currentStep - lastStep >= stepInterval) {
                     lastStep = currentStep;
                     System.out.printf(
@@ -111,7 +111,7 @@ public class RunCommand implements Runnable {
             }
 
             @Override
-            public void onTrainingEnd(SzenarioSession session, double averageReward) {
+            public void onSzenarioEnd(SzenarioSession session, double averageReward) {
                 System.out.println();
                 System.out.println(
                         new String(session.getSzenario().visualizer().visualize(VisualizationFormat.TEXT), StandardCharsets.UTF_8)

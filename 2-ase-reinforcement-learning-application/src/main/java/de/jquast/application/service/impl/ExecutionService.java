@@ -219,8 +219,8 @@ public class ExecutionService {
     private SzenarioExecutionObserver createWrappedTrainingObserver(Optional<SzenarioExecutionObserver> progressObserver) {
         return new SzenarioExecutionObserver() {
             @Override
-            public void onTrainingEnd(SzenarioSession session, double averageReward) {
-                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.onTrainingEnd(session, averageReward));
+            public void onSzenarioEnd(SzenarioSession session, double averageReward) {
+                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.onSzenarioEnd(session, averageReward));
 
                 DescriptorBundle bundle = session.getSzenario().metadata();
                 PersistedStoreInfo info = storeTrainedPolicy(
@@ -237,19 +237,19 @@ public class ExecutionService {
             }
 
             @Override
-            public void onTrainingStart(SzenarioSession session) {
-                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.onTrainingStart(session));
+            public void onSzenarioStart(SzenarioSession session) {
+                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.onSzenarioStart(session));
             }
 
             @Override
-            public void preTrainingStep(SzenarioSession session, long currentStep, double averageReward) {
-                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.preTrainingStep(session, currentStep, averageReward));
+            public void preSzenarioStep(SzenarioSession session, long currentStep, double averageReward) {
+                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.preSzenarioStep(session, currentStep, averageReward));
             }
 
             @Override
-            public void postTrainingStep(SzenarioSession session, long currentStep, double averageReward) {
+            public void postSzenarioStep(SzenarioSession session, long currentStep, double averageReward) {
                 if (progressObserver.isPresent())
-                    progressObserver.get().postTrainingStep(session, currentStep, averageReward);
+                    progressObserver.get().postSzenarioStep(session, currentStep, averageReward);
             }
         };
     }
