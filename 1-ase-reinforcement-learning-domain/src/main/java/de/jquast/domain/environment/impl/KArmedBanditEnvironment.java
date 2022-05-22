@@ -63,6 +63,14 @@ public class KArmedBanditEnvironment implements Environment {
         return 0.0;
     }
 
+    public int getBanditCount() {
+        return banditCount;
+    }
+
+    public double[] getPrecomputedBanditRewards() {
+        return precomputedBanditRewards;
+    }
+
     private void recomputeRewards() {
         for (int i = 0; i < banditCount; ++i) {
             precomputedBanditRewards[i] = -1 + 2 * RND.nextDouble(); // Werte im Bereich [-1, 1]

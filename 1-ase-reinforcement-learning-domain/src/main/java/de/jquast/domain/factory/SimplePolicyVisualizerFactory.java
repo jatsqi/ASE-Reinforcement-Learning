@@ -2,12 +2,14 @@ package de.jquast.domain.factory;
 
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.impl.GridWorldEnvironment;
+import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.visualizer.PolicyVisualizer;
 import de.jquast.domain.policy.visualizer.PolicyVisualizerFactory;
 import de.jquast.domain.policy.visualizer.VisualizationFormat;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,6 +21,7 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
         CONSTRUCTORS = new HashMap<>();
 
         CONSTRUCTORS.put(GridWorldEnvironment.class, GridWorldVisualizer::new);
+        CONSTRUCTORS.put(KArmedBanditEnvironment.class, KArmedBanditVisualizer::new);
     }
 
     @Override
@@ -32,6 +35,37 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
 
     private interface VisualizerConstructor {
         PolicyVisualizer constructVisualizer(Policy policy, Environment environment);
+    }
+
+    public static class KArmedBanditVisualizer extends PolicyVisualizer {
+
+        public KArmedBanditVisualizer(Policy policy, Environment environment) {
+            super(policy, environment);
+        }
+
+        @Override
+        public byte[] visualize(VisualizationFormat format) {
+            if (!format.equals(VisualizationFormat.TEXT))
+                throw new UnsupportedOperationException("Dieses Format wird momentan nicht unterstützt!");
+
+            StringBuilder pullBuilder = new StringBuilder();
+            StringBuilder rewardBuilder = new StringBuilder();
+            KArmedBanditEnvironment environment = (KArmedBanditEnvironment) getEnvironment();
+
+            for (int i = 0; i < environment.getBanditCount(); i++) {
+                if (policy.selectBestAction(i) == 3) {
+                    pullBuilder.append(String.format("%-10s", "[X]"));
+                } else {
+                    pullBuilder.append(String.format("%-10s", "[ ]"));
+                }
+
+                rewardBuilder.append(String.format(Locale.US, "%-10.2f", environment.getPrecomputedBanditRewards()[i]));
+            }
+            pullBuilder.append("\n");
+            pullBuilder.append(rewardBuilder.toString());
+
+            return pullBuilder.toString().getBytes();
+        }
     }
 
     public static class GridWorldVisualizer extends PolicyVisualizer {
