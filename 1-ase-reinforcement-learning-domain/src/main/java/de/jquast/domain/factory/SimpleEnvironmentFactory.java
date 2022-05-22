@@ -5,6 +5,7 @@ import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.environment.impl.GridWorldEnvironment;
 import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
+import de.jquast.domain.exception.EnvironmentCreationException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +18,7 @@ import java.util.Optional;
 public class SimpleEnvironmentFactory implements EnvironmentFactory {
 
     @Override
-    public Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters) {
+    public Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters) throws EnvironmentCreationException {
         Environment environment = switch (descriptor.name().toLowerCase()) {
             case "k-armed-bandit" -> createKArmedBanditEnvironment(parameters);
             case "grid-world" -> createGridWorldEnvironment(parameters);
@@ -27,21 +28,28 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
         return Optional.ofNullable(environment);
     }
 
-    private KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters) {
-        Integer k = Integer.parseInt(parameters.get("bandits"));
-
-        return new KArmedBanditEnvironment(k);
+    private KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
+        try {
+            Integer k = Integer.parseInt(parameters.get("bandits"));
+            return new KArmedBanditEnvironment(k);
+        } catch (NumberFormatException e) {
+            throw new EnvironmentCreationException("Die Anzahl der Bandits konnte nicht gelesen werden!", "k-armed-bandit");
+        }
     }
 
-    private GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) {
+    private GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
         if (!parameters.containsKey("from")) {
             if (!parameters.containsKey("height") || !parameters.containsKey("width"))
                 throw new RuntimeException("");
 
-            Integer height = Integer.parseInt(parameters.get("height"));
-            Integer width = Integer.parseInt(parameters.get("width"));
+            try {
+                Integer height = Integer.parseInt(parameters.get("height"));
+                Integer width = Integer.parseInt(parameters.get("width"));
 
-            return new GridWorldEnvironment(height, width);
+                return new GridWorldEnvironment(height, width);
+            } catch (NumberFormatException e) {
+                throw new EnvironmentCreationException("Höhe oder Breite konnten nicht gelesen werden!", "grid-world");
+            }
         }
 
         // Das Parsen könnte man noch in eine eigene Klasse auslagern und über Interface in dieses Objekt injecten,
@@ -64,7 +72,8 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
 
             return new GridWorldEnvironment(grid);
         } catch (IOException e) {
-            return null;
+            throw new EnvironmentCreationException(
+                    String.format("Die Datei '%s' konnte nicht korrekt gelesen werden!", from), "grid-world");
         }
     }
 }
