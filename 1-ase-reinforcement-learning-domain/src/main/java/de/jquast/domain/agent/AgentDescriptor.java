@@ -10,8 +10,6 @@ public record AgentDescriptor(
         Action[] requiredCapabilities,
         int actionSpace) {
 
-    public static int AGENT_ACTION_SPACE_MATCHES_STATE_SPACE = -1;
-
     @Override
     public String toString() {
         return String.format("%-20s: %s", name, description);

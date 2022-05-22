@@ -92,7 +92,7 @@ public class ExecutionServiceImpl implements ExecutionService {
             Szenario szenario = createSzenario(agentName, envName, policyRepository.getDefaultPolicyInfo().name(), envOptions, steps, storeId);
             ActionValueStore store = szenario.policy().getActionValueStore();
 
-            // Decorate Policy with Algorithm
+            // Decorate Policy with Algorithm and recreate Agent
             RLAlgorithm algorithm = algorithmRepository.createAlgorithmInstance(algorithmRepository.getDefaultAlgorithmInfo(), store, szenario.policy());
             Agent agent = agentRepository.createAgentInstance(agentDescriptor, szenario.environment(), algorithm);
 

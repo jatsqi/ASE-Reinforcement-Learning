@@ -4,7 +4,7 @@ import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.agent.impl.MovingAgent2D;
-import de.jquast.domain.agent.impl.PullAgent;
+import de.jquast.domain.agent.impl.FlatMovingPullAgent;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.shared.ActionSource;
@@ -24,8 +24,8 @@ public class SimpleAgentFactory implements AgentFactory {
         return Optional.ofNullable(agent);
     }
 
-    private PullAgent createPullAgent(Environment environment, ActionSource source, RLSettings settings) {
-        return new PullAgent(environment, source, settings);
+    private FlatMovingPullAgent createPullAgent(Environment environment, ActionSource source, RLSettings settings) {
+        return new FlatMovingPullAgent(environment, source, settings);
     }
 
     private MovingAgent2D create2DMoveAgent(Environment environment, ActionSource source, RLSettings settings) {

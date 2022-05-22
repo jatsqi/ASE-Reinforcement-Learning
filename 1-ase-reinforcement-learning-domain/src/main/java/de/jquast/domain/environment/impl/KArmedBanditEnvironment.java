@@ -9,7 +9,7 @@ public class KArmedBanditEnvironment implements Environment {
 
     private static final Random RND = new Random();
 
-    private int lastTriggeredBandit = 0;
+    private int currentBandit = 0;
     private int banditCount;
     private int currentState;
     private double[] precomputedBanditRewards;
@@ -24,16 +24,18 @@ public class KArmedBanditEnvironment implements Environment {
 
     @Override
     public boolean executeAction(Action action, int data) {
-        if (!action.equals(Action.PULL)) {
-            return false;
+        if (action.equals(Action.MOVE_X_DOWN) && currentBandit - 1 >= 0)
+            currentBandit -= 1;
+
+        if (action.equals(Action.MOVE_X_UP) && currentBandit + 1 < banditCount)
+            currentBandit += 1;
+
+        if (action.equals(Action.PULL)) {
+            currentState = currentBandit + banditCount;
+        } else {
+            currentState = currentBandit;
         }
 
-        if (data >= banditCount || data < 0) {
-            return false;
-        }
-
-        lastTriggeredBandit = data;
-        currentState = 1;
         return true;
     }
 
@@ -44,17 +46,21 @@ public class KArmedBanditEnvironment implements Environment {
 
     @Override
     public int getStateSpace() {
-        return 2;
+        return banditCount * 2;
     }
 
     @Override
     public void tick() {
-        currentState = 0;
+        currentState = currentBandit;
     }
 
     @Override
     public double getReward() {
-        return precomputedBanditRewards[lastTriggeredBandit];
+        if (currentState >= banditCount) {
+            return precomputedBanditRewards[currentState - banditCount];
+        }
+
+        return 0.0;
     }
 
     private void recomputeRewards() {

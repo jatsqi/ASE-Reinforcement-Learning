@@ -27,15 +27,15 @@ public class InMemoryAgentRepository implements AgentRepository {
         AGENTS.put(pullAgent, new AgentDescriptor(
                 pullAgent,
                 "Agent, der an Hebeln ziehen kann",
-                new Action[]{Action.DO_NOTHING, Action.PULL},
-                AgentDescriptor.AGENT_ACTION_SPACE_MATCHES_STATE_SPACE
+                new Action[]{Action.MOVE_X_UP, Action.MOVE_X_UP, Action.PULL, Action.DO_NOTHING},
+                4
         ));
 
         String movingAgent2d = "2d-moving-agent";
         AGENTS.put(movingAgent2d, new AgentDescriptor(
                 movingAgent2d,
                 "Agent, der sich auf einer 2D-Ebene fortbewegen kann",
-                new Action[]{Action.DO_NOTHING, Action.PULL},
+                new Action[]{Action.MOVE_X_UP, Action.MOVE_X_UP, Action.MOVE_Y_UP, Action.MOVE_Y_DOWN, Action.DO_NOTHING},
                 5
         ));
     }
