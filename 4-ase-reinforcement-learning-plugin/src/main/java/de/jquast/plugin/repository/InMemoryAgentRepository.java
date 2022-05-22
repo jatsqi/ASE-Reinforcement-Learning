@@ -1,6 +1,6 @@
 package de.jquast.plugin.repository;
 
-import de.jquast.application.service.impl.ConfigServiceImpl;
+import de.jquast.application.service.ConfigService;
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentFactory;
@@ -40,11 +40,11 @@ public class InMemoryAgentRepository implements AgentRepository {
         ));
     }
 
-    private final ConfigServiceImpl configService;
+    private final ConfigService configService;
     private final AgentFactory agentFactory;
 
     @Inject
-    public InMemoryAgentRepository(ConfigServiceImpl configService, AgentFactory agentFactory) {
+    public InMemoryAgentRepository(ConfigService configService, AgentFactory agentFactory) {
         this.configService = configService;
         this.agentFactory = agentFactory;
     }
