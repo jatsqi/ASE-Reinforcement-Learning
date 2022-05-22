@@ -28,7 +28,7 @@ public class MovingAgent2D extends Agent {
     }
 
     @Override
-    protected ActionDataPair transformAction(int action) {
+    public ActionDataPair transformAction(int action) {
         return new ActionDataPair(ACTION_INT_TO_ACTION_MAPPING.get(action), 1);
     }
 }

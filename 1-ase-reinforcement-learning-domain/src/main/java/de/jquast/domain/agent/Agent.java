@@ -23,7 +23,7 @@ public abstract class Agent {
         this.averageReward = 0.0;
     }
 
-    protected abstract ActionDataPair transformAction(int action);
+    public abstract ActionDataPair transformAction(int action);
 
     protected int collectActionFromSource() {
         return actionSource.selectAction(environment.getCurrentState());

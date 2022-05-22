@@ -1,5 +1,6 @@
 package de.jquast.domain.policy.visualizer;
 
+import de.jquast.domain.agent.Agent;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.policy.Policy;
 
@@ -10,10 +11,12 @@ import java.nio.file.StandardOpenOption;
 
 public abstract class PolicyVisualizer {
 
+    protected final Agent agent;
     protected final Policy policy;
     protected final Environment environment;
 
-    public PolicyVisualizer(Policy policy, Environment environment) {
+    public PolicyVisualizer(Agent agent, Policy policy, Environment environment) {
+        this.agent = agent;
         this.policy = policy;
         this.environment = environment;
     }
@@ -22,6 +25,10 @@ public abstract class PolicyVisualizer {
 
     public void saveToFile(Path path, VisualizationFormat format) throws IOException {
         Files.write(path, visualize(format), StandardOpenOption.WRITE);
+    }
+
+    public Agent getAgent() {
+        return agent;
     }
 
     public Policy getPolicy() {

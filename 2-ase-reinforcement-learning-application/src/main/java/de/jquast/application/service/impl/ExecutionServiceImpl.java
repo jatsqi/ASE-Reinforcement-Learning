@@ -186,7 +186,7 @@ public class ExecutionServiceImpl implements ExecutionService {
 
             // Create Visualization
             PolicyVisualizer visualizer = policyVisualizerFactory
-                    .createVisualizer(policy, environment)
+                    .createVisualizer(agent, policy, environment)
                     .orElseThrow(() -> new SzenarioCreationException("Visualizer konnte nicht erstellt werden :("));
 
             return new Szenario(

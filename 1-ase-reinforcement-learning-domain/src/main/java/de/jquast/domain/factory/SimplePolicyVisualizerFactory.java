@@ -1,5 +1,6 @@
 package de.jquast.domain.factory;
 
+import de.jquast.domain.agent.Agent;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.impl.GridWorldEnvironment;
 import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
@@ -7,6 +8,7 @@ import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.visualizer.PolicyVisualizer;
 import de.jquast.domain.policy.visualizer.PolicyVisualizerFactory;
 import de.jquast.domain.policy.visualizer.VisualizationFormat;
+import de.jquast.domain.shared.Action;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -25,22 +27,22 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
     }
 
     @Override
-    public Optional<PolicyVisualizer> createVisualizer(Policy policy, Environment environment) {
+    public Optional<PolicyVisualizer> createVisualizer(Agent agent, Policy policy, Environment environment) {
         Optional<VisualizerConstructor> constructor = Optional.ofNullable(CONSTRUCTORS.get(environment.getClass()));
         if (constructor.isEmpty())
             return Optional.empty();
 
-        return Optional.ofNullable(constructor.get().constructVisualizer(policy, environment));
+        return Optional.ofNullable(constructor.get().constructVisualizer(agent, policy, environment));
     }
 
     private interface VisualizerConstructor {
-        PolicyVisualizer constructVisualizer(Policy policy, Environment environment);
+        PolicyVisualizer constructVisualizer(Agent agent, Policy policy, Environment environment);
     }
 
     public static class KArmedBanditVisualizer extends PolicyVisualizer {
 
-        public KArmedBanditVisualizer(Policy policy, Environment environment) {
-            super(policy, environment);
+        public KArmedBanditVisualizer(Agent agent, Policy policy, Environment environment) {
+            super(agent, policy, environment);
         }
 
         @Override
@@ -53,7 +55,7 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
             KArmedBanditEnvironment environment = (KArmedBanditEnvironment) getEnvironment();
 
             for (int i = 0; i < environment.getBanditCount(); i++) {
-                if (policy.selectBestAction(i) == 3) {
+                if (agent.transformAction(policy.selectBestAction(i)).action().equals(Action.PULL)) {
                     pullBuilder.append(String.format("%-10s", "[X]"));
                 } else {
                     pullBuilder.append(String.format("%-10s", "[ ]"));
@@ -70,8 +72,8 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
 
     public static class GridWorldVisualizer extends PolicyVisualizer {
 
-        public GridWorldVisualizer(Policy policy, Environment environment) {
-            super(policy, environment);
+        public GridWorldVisualizer(Agent agent, Policy policy, Environment environment) {
+            super(agent, policy, environment);
         }
 
         @Override
@@ -92,20 +94,20 @@ public class SimplePolicyVisualizerFactory implements PolicyVisualizerFactory {
                     continue;
                 }
 
-                builder.append(actionToDirection(policy.selectBestAction(i)));
+                builder.append(actionToDirection(agent.transformAction(policy.selectBestAction(i)).action()));
                 builder.append(" ");
             }
 
             return builder.toString().getBytes();
         }
 
-        private char actionToDirection(int action) {
+        private char actionToDirection(Action action) {
             return switch (action) {
-                case 0 -> '-';
-                case 1 -> 'E';
-                case 2 -> 'W';
-                case 3 -> 'S';
-                case 4 -> 'N';
+                case DO_NOTHING -> '-';
+                case MOVE_X_UP -> 'E';
+                case MOVE_X_DOWN -> 'W';
+                case MOVE_Y_UP -> 'S';
+                case MOVE_Y_DOWN -> 'N';
                 default -> '?';
             };
         }
