@@ -39,6 +39,7 @@ Auch können, basierend auf bestehenden Beispielen, eigene Beispiele erstellt we
 Requirements:
 * Java 16+
 * Maven
+* Im Verzeichnis der JAR den Ordner `stored_values` erstellen
 
 #### Projekt herunterladen
 
