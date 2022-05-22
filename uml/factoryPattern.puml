@@ -23,8 +23,6 @@ class SimplePolicyVisualizerFactory {
 +Optional<PolicyVisualizer> createVisualizer(Policy policy, Environment environment)
 }
 
-class GridWorldVisualizer {
-}
 
 PolicyVisualizerFactory         <|-- SimplePolicyVisualizerFactory
 SimplePolicyVisualizerFactory  .l> GridWorldVisualizer

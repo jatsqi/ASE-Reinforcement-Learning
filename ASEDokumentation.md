@@ -255,5 +255,27 @@ sich um das Erzeugen.
 
 ![Factory Pattern](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/factoryPattern.puml)
 
+### Entwurfsmuster 2: Observer
 
-### Entwurfsmuster: [Name]
+Da das Training bzw. die Evaluation eines Agenten mitunter länger dauern kann und der Nutzer über den Fortschritt
+informiert werden soll, wird in diesem Projekt ein Observer eingesetzt.
+Der Nutzer startet ein Szenario über den Service und spezifiziert einen Observer vom Typ `SzenarioExecutionObserver`. 
+Der Observer wird danach in einen anderen Observer gewrapped.
+Der Grund dafür ist recht simpel: Aus Sicht des UI möchte man sich nicht um das Speichern der Trainierten Policy kümmern,
+sondern nur darüber informiert werden, sobald diese gespeichert wurde. Der Wrapper wartet auf den Aufruf von `onTrainingEnd`
+, speichert daraufhin den `ActionValueStore` und ruft vom gewrappten die Methode `onActionStorePersisted` auf und übergibt die
+Info des gespeicherten Stores. Alle übrigen aufrufe werden ebenfalls an den gewrappten durchgeleitet.
+Damit sich die `SzenarioSession` nicht um das Speichern in irgendeiner Form kümmern muss, werden auch zwei verschiedene Observer genutzt.
+Die Session kümmert sich *ausschließlich* um das Training und muss gar nicht wissen, dass die Policy später gespeichert wird, während der Service den Rest bearbeitet.
+
+das Szenario übergeben, welche den Observer bei folgenden Ereignissen informiert:
+
+* Vor dem Beginn des Szenarios.
+* Vor jedem Schritt, der innerhalb des Szenarios ausgeführt wird.
+* Nach jedem Schritt, der innerhalb des Szenarios ausgeführt wird.
+* Nach dem Ende des Szenarios.
+
+Der im UML Diagramm zu sehende Observer ist nicht der, der vom User erstellt wird.
+
+
+![Observer Pattern](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/observerPattern.puml)
