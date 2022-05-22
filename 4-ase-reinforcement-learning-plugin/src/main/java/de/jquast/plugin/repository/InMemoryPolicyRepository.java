@@ -1,6 +1,6 @@
 package de.jquast.plugin.repository;
 
-import de.jquast.application.service.impl.ConfigService;
+import de.jquast.application.service.impl.ConfigServiceImpl;
 import de.jquast.domain.exception.PolicyCreationException;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyDescriptor;
@@ -33,10 +33,10 @@ public class InMemoryPolicyRepository implements PolicyRepository {
     }
 
     private final PolicyFactory factory;
-    private final ConfigService configService;
+    private final ConfigServiceImpl configService;
 
     @Inject
-    public InMemoryPolicyRepository(PolicyFactory factory, ConfigService configService) {
+    public InMemoryPolicyRepository(PolicyFactory factory, ConfigServiceImpl configService) {
         this.factory = factory;
         this.configService = configService;
     }

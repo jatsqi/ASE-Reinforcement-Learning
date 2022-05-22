@@ -1,6 +1,6 @@
 package de.jquast.plugin.commands;
 
-import de.jquast.application.service.impl.AgentService;
+import de.jquast.application.service.impl.AgentServiceImpl;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;
@@ -18,10 +18,10 @@ public class AgentCommand implements Runnable {
     @Parameter(index = 0, description = "Name des Agenten", required = false)
     public String name;
 
-    private AgentService service;
+    private AgentServiceImpl service;
 
     @Inject
-    public AgentCommand(AgentService service) {
+    public AgentCommand(AgentServiceImpl service) {
         this.service = service;
     }
 

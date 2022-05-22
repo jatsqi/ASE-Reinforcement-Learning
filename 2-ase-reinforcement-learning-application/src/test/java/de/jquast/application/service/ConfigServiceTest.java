@@ -1,7 +1,7 @@
 package de.jquast.application.service;
 
 import de.jquast.application.config.DefaultConfigItem;
-import de.jquast.application.service.impl.ConfigService;
+import de.jquast.application.service.impl.ConfigServiceImpl;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
 import org.junit.Before;
@@ -26,7 +26,7 @@ public class ConfigServiceTest {
     ConfigRepository repository;
 
     @InjectMocks
-    ConfigService service;
+    ConfigServiceImpl service;
 
     @Before
     public void setupMocks() {

@@ -1,6 +1,6 @@
 package de.jquast.plugin.commands;
 
-import de.jquast.application.service.impl.RLAlgorithmService;
+import de.jquast.application.service.impl.RLAlgorithmServiceImpl;
 import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;
@@ -14,13 +14,13 @@ import java.util.Optional;
 )
 public class AlgorithmCommand implements Runnable {
 
-    private final RLAlgorithmService algorithmService;
+    private final RLAlgorithmServiceImpl algorithmService;
 
     @Parameter(index = 0, description = "Name eines Algorithmus.", required = false)
     public String algorithm;
 
     @Inject
-    public AlgorithmCommand(RLAlgorithmService algorithmService) {
+    public AlgorithmCommand(RLAlgorithmServiceImpl algorithmService) {
         this.algorithmService = algorithmService;
     }
 

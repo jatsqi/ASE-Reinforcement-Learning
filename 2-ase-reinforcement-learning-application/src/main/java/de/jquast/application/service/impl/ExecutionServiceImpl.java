@@ -1,6 +1,9 @@
 package de.jquast.application.service.impl;
 
 import de.jquast.application.exception.SzenarioCreationException;
+import de.jquast.application.service.ConfigService;
+import de.jquast.application.service.ExecutionService;
+import de.jquast.application.service.SzenarioExecutionObserver;
 import de.jquast.application.session.DescriptorBundle;
 import de.jquast.application.session.Szenario;
 import de.jquast.application.session.SzenarioProgressObserver;
@@ -30,7 +33,7 @@ import java.util.Optional;
 /**
  * Primärer Service, der mit dem Training bzw. der Evaluation der Agenten beschäftigt
  */
-public class ExecutionService {
+public class ExecutionServiceImpl implements ExecutionService {
 
     private final AgentRepository agentRepository;
     private final PolicyRepository policyRepository;
@@ -41,7 +44,7 @@ public class ExecutionService {
     private final PolicyVisualizerFactory policyVisualizerFactory;
 
     @Inject
-    public ExecutionService(
+    public ExecutionServiceImpl(
             AgentRepository agentRepository,
             PolicyRepository policyRepository,
             EnvironmentRepository environmentRepository,
@@ -253,9 +256,4 @@ public class ExecutionService {
             }
         };
     }
-
-    public interface SzenarioExecutionObserver extends SzenarioProgressObserver {
-        default void onActionStorePersisted(PersistedStoreInfo info) {}
-    }
-
 }

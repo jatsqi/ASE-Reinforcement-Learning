@@ -1,8 +1,9 @@
 package de.jquast.plugin.commands;
 
 import de.jquast.application.config.DefaultConfigItem;
-import de.jquast.application.service.impl.ConfigService;
-import de.jquast.application.service.impl.ExecutionService;
+import de.jquast.application.service.SzenarioExecutionObserver;
+import de.jquast.application.service.impl.ConfigServiceImpl;
+import de.jquast.application.service.impl.ExecutionServiceImpl;
 import de.jquast.application.session.SzenarioSession;
 import de.jquast.domain.policy.visualizer.VisualizationFormat;
 import de.jquast.domain.shared.PersistedStoreInfo;
@@ -21,8 +22,8 @@ import java.util.Optional;
 )
 public class RunCommand implements Runnable {
 
-    private final ExecutionService executionService;
-    private final ConfigService configService;
+    private final ExecutionServiceImpl executionService;
+    private final ConfigServiceImpl configService;
 
     @Option(names = "--envopts", description = "Optionen für das Environment.", defaultValue = "")
     public String environmentOptions;
@@ -38,7 +39,7 @@ public class RunCommand implements Runnable {
     public boolean evalMode;
 
     @Inject
-    public RunCommand(ExecutionService executionService, ConfigService configService) {
+    public RunCommand(ExecutionServiceImpl executionService, ConfigServiceImpl configService) {
         this.executionService = executionService;
         this.configService = configService;
     }
@@ -55,7 +56,7 @@ public class RunCommand implements Runnable {
 
             long stepInterval = Long.parseLong(
                     configService.getConfigItem(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_STEPS).value());
-            ExecutionService.SzenarioExecutionObserver observer = createObserver(stepInterval);
+            SzenarioExecutionObserver observer = createObserver(stepInterval);
 
             if (!evalMode) {
                 executionService.startTraining(
@@ -85,8 +86,8 @@ public class RunCommand implements Runnable {
      * @param stepInterval  Anzahl der Schritte, nach dem eine neue Nachricht ausgegeben wird.
      * @return              Ersteller Observer.
      */
-    private ExecutionService.SzenarioExecutionObserver createObserver(final long stepInterval) {
-        return new ExecutionService.SzenarioExecutionObserver() {
+    private SzenarioExecutionObserver createObserver(final long stepInterval) {
+        return new SzenarioExecutionObserver() {
             private long lastStep = 0;
 
             @Override

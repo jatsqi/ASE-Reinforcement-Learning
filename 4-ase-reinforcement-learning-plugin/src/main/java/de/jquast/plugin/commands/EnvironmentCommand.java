@@ -1,6 +1,6 @@
 package de.jquast.plugin.commands;
 
-import de.jquast.application.service.impl.EnvironmentService;
+import de.jquast.application.service.impl.EnvironmentServiceImpl;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;
@@ -18,10 +18,10 @@ public class EnvironmentCommand implements Runnable {
     @Parameter(index = 0, description = "Name des Environments", required = false)
     public String name;
 
-    private EnvironmentService service;
+    private EnvironmentServiceImpl service;
 
     @Inject
-    public EnvironmentCommand(EnvironmentService service) {
+    public EnvironmentCommand(EnvironmentServiceImpl service) {
         this.service = service;
     }
 

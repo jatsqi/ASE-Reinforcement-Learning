@@ -1,7 +1,7 @@
 package de.jquast.plugin.repository;
 
-import de.jquast.application.service.impl.AgentService;
-import de.jquast.application.service.impl.EnvironmentService;
+import de.jquast.application.service.impl.AgentServiceImpl;
+import de.jquast.application.service.impl.EnvironmentServiceImpl;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.domain.shared.PersistedStoreInfo;
@@ -24,11 +24,11 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
 
     private Map<Integer, PersistedStoreInfo> valueInfo = new HashMap();
 
-    private AgentService agentService;
-    private EnvironmentService environmentService;
+    private AgentServiceImpl agentService;
+    private EnvironmentServiceImpl environmentService;
 
     @Inject
-    public FileSystemActionValueRepository(AgentService agentService, EnvironmentService environmentService) {
+    public FileSystemActionValueRepository(AgentServiceImpl agentService, EnvironmentServiceImpl environmentService) {
         this.agentService = agentService;
         this.environmentService = environmentService;
     }

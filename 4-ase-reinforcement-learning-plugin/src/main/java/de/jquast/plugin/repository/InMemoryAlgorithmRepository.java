@@ -1,6 +1,6 @@
 package de.jquast.plugin.repository;
 
-import de.jquast.application.service.impl.ConfigService;
+import de.jquast.application.service.impl.ConfigServiceImpl;
 import de.jquast.domain.algorithm.AlgorithmFactory;
 import de.jquast.domain.algorithm.RLAlgorithm;
 import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
@@ -31,9 +31,9 @@ public class InMemoryAlgorithmRepository implements RLAlgorithmRepository {
     }
 
     private final AlgorithmFactory factory;
-    private final ConfigService configService;
+    private final ConfigServiceImpl configService;
 
-    public InMemoryAlgorithmRepository(AlgorithmFactory factory, ConfigService configService) {
+    public InMemoryAlgorithmRepository(AlgorithmFactory factory, ConfigServiceImpl configService) {
         this.factory = factory;
         this.configService = configService;
     }

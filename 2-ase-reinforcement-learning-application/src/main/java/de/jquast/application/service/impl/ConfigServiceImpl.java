@@ -1,6 +1,7 @@
 package de.jquast.application.service.impl;
 
 import de.jquast.application.config.DefaultConfigItem;
+import de.jquast.application.service.ConfigService;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
@@ -10,12 +11,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
-public class ConfigService {
+public class ConfigServiceImpl implements ConfigService {
 
     private final ConfigRepository configRepository;
 
     @Inject
-    public ConfigService(ConfigRepository configRepository) {
+    public ConfigServiceImpl(ConfigRepository configRepository) {
         this.configRepository = configRepository;
     }
 
