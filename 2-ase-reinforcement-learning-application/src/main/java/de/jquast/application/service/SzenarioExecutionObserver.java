@@ -4,5 +4,6 @@ import de.jquast.application.session.SzenarioProgressObserver;
 import de.jquast.domain.shared.PersistedStoreInfo;
 
 public interface SzenarioExecutionObserver extends SzenarioProgressObserver {
-    default void onActionStorePersisted(PersistedStoreInfo info) {}
+    default void onActionStorePersisted(PersistedStoreInfo info) {
+    }
 }

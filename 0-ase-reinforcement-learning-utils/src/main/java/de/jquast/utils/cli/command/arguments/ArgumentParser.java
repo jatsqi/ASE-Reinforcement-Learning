@@ -25,7 +25,7 @@ public class ArgumentParser {
                         options.put(part, null);
                         continue;
                     }
-                        //throw new RuntimeException(String.format("Invalid option var!"));
+                    //throw new RuntimeException(String.format("Invalid option var!"));
 
                     options.put(part, optionVar);
                 } else {

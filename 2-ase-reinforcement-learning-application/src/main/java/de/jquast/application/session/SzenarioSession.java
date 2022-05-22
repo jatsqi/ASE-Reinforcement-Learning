@@ -6,9 +6,8 @@ import java.util.function.Consumer;
 
 public class SzenarioSession {
 
-    private int currentStep = 0;
     private final Szenario szenario;
-
+    private int currentStep = 0;
     private List<SzenarioProgressObserver> observer = new ArrayList<>();
 
     public SzenarioSession(Szenario szenario) {

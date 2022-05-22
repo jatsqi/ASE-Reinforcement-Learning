@@ -3,6 +3,7 @@ package de.jquast.plugin.commands;
 import de.jquast.adapters.facade.ConfigServiceFacade;
 import de.jquast.adapters.facade.ExecutionServiceFacade;
 import de.jquast.application.config.DefaultConfigItem;
+import de.jquast.application.exception.StartSzenarioException;
 import de.jquast.application.service.SzenarioExecutionObserver;
 import de.jquast.application.session.SzenarioSession;
 import de.jquast.domain.policy.visualizer.VisualizationFormat;
@@ -10,7 +11,6 @@ import de.jquast.domain.shared.PersistedStoreInfo;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Option;
 import de.jquast.utils.di.annotations.Inject;
-import de.jquast.application.exception.StartSzenarioException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -83,8 +83,9 @@ public class RunCommand implements Runnable {
 
     /**
      * Erstellt Observer, um Trainingsfortschritt zu beobachten und Konsolenausgaben zu tätigen.
-     * @param stepInterval  Anzahl der Schritte, nach dem eine neue Nachricht ausgegeben wird.
-     * @return              Ersteller Observer.
+     *
+     * @param stepInterval Anzahl der Schritte, nach dem eine neue Nachricht ausgegeben wird.
+     * @return Ersteller Observer.
      */
     private SzenarioExecutionObserver createObserver(final long stepInterval) {
         return new SzenarioExecutionObserver() {

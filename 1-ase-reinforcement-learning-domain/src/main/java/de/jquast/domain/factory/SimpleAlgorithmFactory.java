@@ -4,9 +4,9 @@ import de.jquast.domain.algorithm.AlgorithmFactory;
 import de.jquast.domain.algorithm.RLAlgorithm;
 import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.domain.algorithm.RLSettings;
+import de.jquast.domain.algorithm.impl.QLearning;
 import de.jquast.domain.shared.ActionSource;
 import de.jquast.domain.shared.ActionValueStore;
-import de.jquast.domain.algorithm.impl.QLearning;
 
 import java.util.Optional;
 

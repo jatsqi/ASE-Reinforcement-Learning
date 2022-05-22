@@ -11,10 +11,10 @@ public interface PolicyFactory {
     /**
      * Erstellt eine Policy mit Namen {@code name}.
      *
-     * @param descriptor        Die Beschreibung der Policy.
-     * @param store             Die Value-Store der Policy.
-     * @param settings          Die Reinforcement Learning Einstellungen.
-     * @return                  Eine Policy mit entsprechendem Name, ein leeres Optional andernfalls.
+     * @param descriptor Die Beschreibung der Policy.
+     * @param store      Die Value-Store der Policy.
+     * @param settings   Die Reinforcement Learning Einstellungen.
+     * @return Eine Policy mit entsprechendem Name, ein leeres Optional andernfalls.
      */
     Optional<Policy> createPolicy(PolicyDescriptor descriptor, ActionValueStore store, RLSettings settings) throws PolicyCreationException;
 

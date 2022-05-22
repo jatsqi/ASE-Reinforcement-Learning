@@ -14,7 +14,7 @@ public class AgentMapper {
                 descriptor.description(),
                 Arrays.stream(descriptor.requiredCapabilities()).map(Enum::name).toList().toArray(new String[0]),
                 descriptor.actionSpace()
-            );
+        );
     }
 
     public Optional<AgentDescriptorDto> toDto(Optional<AgentDescriptor> descriptorOptional) {

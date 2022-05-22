@@ -1,7 +1,6 @@
 package de.jquast.plugin.repository;
 
 import de.jquast.application.service.ConfigService;
-import de.jquast.application.service.impl.ConfigServiceImpl;
 import de.jquast.domain.algorithm.AlgorithmFactory;
 import de.jquast.domain.algorithm.RLAlgorithm;
 import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
