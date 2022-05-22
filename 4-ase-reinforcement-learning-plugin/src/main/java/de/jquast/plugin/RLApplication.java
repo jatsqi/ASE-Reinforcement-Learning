@@ -1,5 +1,9 @@
 package de.jquast.plugin;
 
+import de.jquast.adapters.facade.*;
+import de.jquast.adapters.facade.impl.*;
+import de.jquast.application.service.*;
+import de.jquast.application.service.impl.*;
 import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.agent.AgentRepository;
 import de.jquast.domain.algorithm.AlgorithmFactory;
@@ -41,6 +45,18 @@ public class RLApplication {
         CONTEXT.mapInterface(AgentRepository.class, InMemoryAgentRepository.class);
         CONTEXT.mapInterface(ActionValueRepository.class, FileSystemActionValueRepository.class);
         CONTEXT.mapInterface(PolicyRepository.class, InMemoryPolicyRepository.class);
+
+        CONTEXT.mapInterface(AgentService.class, AgentServiceImpl.class);
+        CONTEXT.mapInterface(ConfigService.class, ConfigServiceImpl.class);
+        CONTEXT.mapInterface(EnvironmentService.class, EnvironmentServiceImpl.class);
+        CONTEXT.mapInterface(RLAlgorithmService.class, RLAlgorithmServiceImpl.class);
+        CONTEXT.mapInterface(ExecutionService.class, ExecutionServiceImpl.class);
+
+        CONTEXT.mapInterface(AgentServiceFacade.class, AgentServiceFacadeImpl.class);
+        CONTEXT.mapInterface(ConfigServiceFacade.class, ConfigServiceFacadeImpl.class);
+        CONTEXT.mapInterface(EnvironmentServiceFacade.class, EnvironmentServiceFacadeImpl.class);
+        CONTEXT.mapInterface(ExecutionServiceFacade.class, ExecutionServiceFacadeImpl.class);
+        CONTEXT.mapInterface(RLAlgorithmServiceFacade.class, RLAlgorithmServiceFacadeImpl.class);
 
         CONTEXT.mapInterface(EnvironmentFactory.class, SimpleEnvironmentFactory.class);
         CONTEXT.mapInterface(AgentFactory.class, SimpleAgentFactory.class);
