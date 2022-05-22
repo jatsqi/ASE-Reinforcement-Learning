@@ -1,7 +1,7 @@
 package de.jquast.plugin.commands;
 
-import de.jquast.application.service.impl.EnvironmentServiceImpl;
-import de.jquast.domain.environment.EnvironmentDescriptor;
+import de.jquast.adapters.facade.EnvironmentServiceFacade;
+import de.jquast.adapters.facade.dto.EnvironmentDescriptorDto;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;
 import de.jquast.utils.di.annotations.Inject;
@@ -18,16 +18,16 @@ public class EnvironmentCommand implements Runnable {
     @Parameter(index = 0, description = "Name des Environments", required = false)
     public String name;
 
-    private EnvironmentServiceImpl service;
+    private EnvironmentServiceFacade service;
 
     @Inject
-    public EnvironmentCommand(EnvironmentServiceImpl service) {
+    public EnvironmentCommand(EnvironmentServiceFacade service) {
         this.service = service;
     }
 
     @Override
     public void run() {
-        Optional<EnvironmentDescriptor> descriptor = service.getEnvironmentInfo(name);
+        Optional<EnvironmentDescriptorDto> descriptor = service.getEnvironmentInfo(name);
 
         if (descriptor.isEmpty()) {
             printEnvironments();
@@ -39,7 +39,7 @@ public class EnvironmentCommand implements Runnable {
     private void printEnvironments() {
         System.out.println("Environments:");
 
-        for (EnvironmentDescriptor descriptor : service.getEnvironmentsInfo()) {
+        for (EnvironmentDescriptorDto descriptor : service.getEnvironmentInfos()) {
             System.out.println(String.format("  %s", descriptor.toString()));
         }
     }

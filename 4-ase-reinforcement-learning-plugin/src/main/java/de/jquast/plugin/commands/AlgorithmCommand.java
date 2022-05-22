@@ -1,7 +1,7 @@
 package de.jquast.plugin.commands;
 
-import de.jquast.application.service.impl.RLAlgorithmServiceImpl;
-import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
+import de.jquast.adapters.facade.RLAlgorithmServiceFacade;
+import de.jquast.adapters.facade.dto.RLAlgorithmDescriptorDto;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Parameter;
 import de.jquast.utils.di.annotations.Inject;
@@ -14,23 +14,23 @@ import java.util.Optional;
 )
 public class AlgorithmCommand implements Runnable {
 
-    private final RLAlgorithmServiceImpl algorithmService;
+    private final RLAlgorithmServiceFacade algorithmService;
 
     @Parameter(index = 0, description = "Name eines Algorithmus.", required = false)
     public String algorithm;
 
     @Inject
-    public AlgorithmCommand(RLAlgorithmServiceImpl algorithmService) {
+    public AlgorithmCommand(RLAlgorithmServiceFacade algorithmService) {
         this.algorithmService = algorithmService;
     }
 
-    private static void printAlgorithm(RLAlgorithmDescriptor descriptor) {
+    private static void printAlgorithm(RLAlgorithmDescriptorDto descriptor) {
         System.out.println(String.format("  %s: %s", descriptor.name(), descriptor.description()));
     }
 
     @Override
     public void run() {
-        Optional<RLAlgorithmDescriptor> toPrint = algorithmService.getAlgorithm(algorithm);
+        Optional<RLAlgorithmDescriptorDto> toPrint = algorithmService.getAlgorithm(algorithm);
 
         if (toPrint.isEmpty()) {
             printAlgorithms();

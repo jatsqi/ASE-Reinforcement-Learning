@@ -1,5 +1,7 @@
 package de.jquast.plugin.commands;
 
+import de.jquast.adapters.facade.ConfigServiceFacade;
+import de.jquast.adapters.facade.ExecutionServiceFacade;
 import de.jquast.application.config.DefaultConfigItem;
 import de.jquast.application.service.SzenarioExecutionObserver;
 import de.jquast.application.service.impl.ConfigServiceImpl;
@@ -22,8 +24,8 @@ import java.util.Optional;
 )
 public class RunCommand implements Runnable {
 
-    private final ExecutionServiceImpl executionService;
-    private final ConfigServiceImpl configService;
+    private final ExecutionServiceFacade executionService;
+    private final ConfigServiceFacade configService;
 
     @Option(names = "--envopts", description = "Optionen für das Environment.", defaultValue = "")
     public String environmentOptions;
@@ -39,7 +41,7 @@ public class RunCommand implements Runnable {
     public boolean evalMode;
 
     @Inject
-    public RunCommand(ExecutionServiceImpl executionService, ConfigServiceImpl configService) {
+    public RunCommand(ExecutionServiceFacade executionService, ConfigServiceFacade configService) {
         this.executionService = executionService;
         this.configService = configService;
     }
