@@ -1,6 +1,6 @@
 package de.jquast.application.service;
 
-import de.jquast.application.exception.StartAgentTrainingException;
+import de.jquast.application.exception.StartSzenarioException;
 
 import java.util.Optional;
 
@@ -12,7 +12,7 @@ public interface ExecutionService {
             String envOptions,
             long steps,
             int storeId,
-            Optional<SzenarioExecutionObserver> observer) throws StartAgentTrainingException;
+            Optional<SzenarioExecutionObserver> observer) throws StartSzenarioException;
 
     void startEvaluation(
             String agentName,
@@ -20,6 +20,6 @@ public interface ExecutionService {
             String envOptions,
             long steps,
             int storeId,
-            Optional<SzenarioExecutionObserver> observer) throws StartAgentTrainingException;
+            Optional<SzenarioExecutionObserver> observer) throws StartSzenarioException;
 
 }

@@ -4,15 +4,13 @@ import de.jquast.adapters.facade.ConfigServiceFacade;
 import de.jquast.adapters.facade.ExecutionServiceFacade;
 import de.jquast.application.config.DefaultConfigItem;
 import de.jquast.application.service.SzenarioExecutionObserver;
-import de.jquast.application.service.impl.ConfigServiceImpl;
-import de.jquast.application.service.impl.ExecutionServiceImpl;
 import de.jquast.application.session.SzenarioSession;
 import de.jquast.domain.policy.visualizer.VisualizationFormat;
 import de.jquast.domain.shared.PersistedStoreInfo;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Option;
 import de.jquast.utils.di.annotations.Inject;
-import de.jquast.application.exception.StartAgentTrainingException;
+import de.jquast.application.exception.StartSzenarioException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -77,7 +75,7 @@ public class RunCommand implements Runnable {
                         resumeFromStoreId,
                         Optional.of(observer));
             }
-        } catch (StartAgentTrainingException e) {
+        } catch (StartSzenarioException e) {
             System.out.println();
             System.out.println(e.getMessage());
         }

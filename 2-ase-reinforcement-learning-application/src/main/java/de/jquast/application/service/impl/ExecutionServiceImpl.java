@@ -6,7 +6,6 @@ import de.jquast.application.service.ExecutionService;
 import de.jquast.application.service.SzenarioExecutionObserver;
 import de.jquast.application.session.DescriptorBundle;
 import de.jquast.application.session.Szenario;
-import de.jquast.application.session.SzenarioProgressObserver;
 import de.jquast.application.session.SzenarioSession;
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
@@ -26,7 +25,7 @@ import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.domain.shared.PersistedStoreInfo;
 import de.jquast.utils.di.annotations.Inject;
-import de.jquast.application.exception.StartAgentTrainingException;
+import de.jquast.application.exception.StartSzenarioException;
 
 import java.util.Optional;
 
@@ -76,7 +75,7 @@ public class ExecutionServiceImpl implements ExecutionService {
      * @param steps                         Maximale Schritte, die das Training benötigen darf.
      * @param storeId                       ID des Action Value Stores, mit denen das Training initialisiert wird.
      * @param observer                      Externer Beobachter, um das Training zu beobachten.
-     * @throws StartAgentTrainingException  Wird geworfen, sofern etwas beim Starten des Trainings fehlgeschlagen ist.
+     * @throws StartSzenarioException  Wird geworfen, sofern etwas beim Starten des Trainings fehlgeschlagen ist.
      */
     public void startTraining(
             String agentName,
@@ -84,10 +83,10 @@ public class ExecutionServiceImpl implements ExecutionService {
             String envOptions,
             long steps,
             int storeId,
-            Optional<SzenarioExecutionObserver> observer) throws StartAgentTrainingException {
+            Optional<SzenarioExecutionObserver> observer) throws StartSzenarioException {
         AgentDescriptor agentDescriptor = agentRepository
                 .getAgentInfo(agentName)
-                .orElseThrow(() -> new StartAgentTrainingException("Der Agent konnte nicht gefunden werden."));
+                .orElseThrow(() -> new StartSzenarioException("Der Agent konnte nicht gefunden werden."));
 
         try {
             Szenario szenario = createSzenario(agentName, envName, policyRepository.getDefaultPolicyInfo().name(), envOptions, steps, storeId);
@@ -110,7 +109,7 @@ public class ExecutionServiceImpl implements ExecutionService {
 
             session.start();
         } catch (Exception e) {
-            throw new StartAgentTrainingException(e.getMessage());
+            throw new StartSzenarioException(e.getMessage());
         }
     }
 
@@ -124,7 +123,7 @@ public class ExecutionServiceImpl implements ExecutionService {
      * @param steps                         Maximale Schritte, die das Training benötigen darf.
      * @param storeId                       ID des Action Value Stores, mit denen das Training initialisiert wird.
      * @param observer                      Externer Beobachter, um das Training zu beobachten.
-     * @throws StartAgentTrainingException  Wird geworfen, sofern etwas beim Starten des Trainings fehlgeschlagen ist.
+     * @throws StartSzenarioException  Wird geworfen, sofern etwas beim Starten des Trainings fehlgeschlagen ist.
     */
     public void startEvaluation(
             String agentName,
@@ -132,9 +131,9 @@ public class ExecutionServiceImpl implements ExecutionService {
             String envOptions,
             long steps,
             int storeId,
-            Optional<SzenarioExecutionObserver> observer) throws StartAgentTrainingException {
+            Optional<SzenarioExecutionObserver> observer) throws StartSzenarioException {
         if (storeId < 0)
-            throw new StartAgentTrainingException("Um das Training einer Policy zu bewerten muss ein entsprechender Store übergeben werden.");
+            throw new StartSzenarioException("Um das Training einer Policy zu bewerten muss ein entsprechender Store übergeben werden.");
 
         try {
             Szenario szenario = createSzenario(agentName, envName, policyRepository.getMaximizingPolicyInfo().name(), envOptions, steps, storeId);
@@ -146,7 +145,7 @@ public class ExecutionServiceImpl implements ExecutionService {
 
             session.start();
         } catch (SzenarioCreationException e) {
-            throw new StartAgentTrainingException(e.getMessage());
+            throw new StartSzenarioException(e.getMessage());
         }
     }
 
@@ -198,16 +197,16 @@ public class ExecutionServiceImpl implements ExecutionService {
         }
     }
 
-    private ActionValueStore queryStore(int stateSpace, int actionSpace, int resumeFromStore) throws StartAgentTrainingException {
+    private ActionValueStore queryStore(int stateSpace, int actionSpace, int resumeFromStore) throws StartSzenarioException {
         if (resumeFromStore >= 0) {
             Optional<PersistedStoreInfo> storedValueInfoOp = actionValueRepository.getInfoById(resumeFromStore);
 
             if (storedValueInfoOp.isEmpty())
-                throw new StartAgentTrainingException("ID des Stores ungültig!");
+                throw new StartSzenarioException("ID des Stores ungültig!");
 
             Optional<ActionValueStore> actionValueStoreOp = actionValueRepository.fetchStoreFromInfo(storedValueInfoOp.get());
             if (actionValueStoreOp.isEmpty())
-                throw new StartAgentTrainingException("Fehler beim Lesen des Stores.");
+                throw new StartSzenarioException("Fehler beim Lesen des Stores.");
 
             return actionValueStoreOp.get();
         }

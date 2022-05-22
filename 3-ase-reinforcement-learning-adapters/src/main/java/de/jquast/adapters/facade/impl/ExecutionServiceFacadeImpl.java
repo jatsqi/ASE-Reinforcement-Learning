@@ -1,7 +1,7 @@
 package de.jquast.adapters.facade.impl;
 
 import de.jquast.adapters.facade.ExecutionServiceFacade;
-import de.jquast.application.exception.StartAgentTrainingException;
+import de.jquast.application.exception.StartSzenarioException;
 import de.jquast.application.service.ExecutionService;
 import de.jquast.application.service.SzenarioExecutionObserver;
 
@@ -16,7 +16,7 @@ public class ExecutionServiceFacadeImpl implements ExecutionServiceFacade {
     }
 
     @Override
-    public void startTraining(String agentName, String envName, String envOptions, long steps, int storeId, Optional<SzenarioExecutionObserver> observer) throws StartAgentTrainingException {
+    public void startTraining(String agentName, String envName, String envOptions, long steps, int storeId, Optional<SzenarioExecutionObserver> observer) throws StartSzenarioException {
         service.startTraining(
                 agentName,
                 envName,
@@ -28,7 +28,7 @@ public class ExecutionServiceFacadeImpl implements ExecutionServiceFacade {
     }
 
     @Override
-    public void startEvaluation(String agentName, String envName, String envOptions, long steps, int storeId, Optional<SzenarioExecutionObserver> observer) throws StartAgentTrainingException {
+    public void startEvaluation(String agentName, String envName, String envOptions, long steps, int storeId, Optional<SzenarioExecutionObserver> observer) throws StartSzenarioException {
         service.startEvaluation(
                 agentName,
                 envName,
