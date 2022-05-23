@@ -1,0 +1,75 @@
+@startuml
+
+package Domain <<Rectangle>> {
+
+    interface ConfigRepository {
+        +{abstract}Collection<ConfigItem> getConfigItems()
+        +{abstract}Optional<ConfigItem> getConfigItem(String name)
+        +{abstract}boolean isConfigItemPresent(String name)
+        +{abstract}boolean setConfigItem(ConfigItem item)
+    }
+
+    class RLSettings {
+        +double learningRate
+        +double discountFactor
+        +double explorationRate
+        +double agentRewardStepSize
+    }
+
+     class ConfigItem {
+        +String name
+        +String value
+    }
+
+}
+
+package Application <<Rectangle>> {
+    enum DefaultConfigItem {
+        MODEL_OUTPUT_FORMAT
+        MODEL_OUTPUT_DIRECTORY
+        ALGORITHM_TIME_STEPS
+        ALGORITHM_EXPLORATION_RATE
+        ALGORITHM_DISCOUNT_FACTOR
+        ALGORITHM_LEARNING_RATE
+        AGENT_REWARD_UPDATE_STEP_SIZE
+        MESSAGE_TRAINING_AVERAGE_REWARD_STEPS
+    }
+
+    class ConfigServiceImpl {
+        -ConfigRepository configRepository
+
+        +Collection<ConfigItem> getConfigItems()
+        +Collection<String> getAvailableConfigKeys()
+        +Optional<ConfigItem> setConfigItem(String key, String value)
+        +Optional<ConfigItem> getConfigItem(String name)
+        +ConfigItem getConfigItem(DefaultConfigItem item)
+        +RLSettings getRLSettings()
+        -getDoubleConfigItem(DefaultConfigItem item)
+    }
+}
+
+package Plugin <<Rectangle>> {
+    class PropertiesConfigRepository {
+        -{static}String FILE_NAME
+        -Map<String, ConfigItem> configItems
+        +Collection<ConfigItem> getConfigItems()
+        +Optional<ConfigItem> getConfigItem(String name)
+        +boolean isConfigItemPresent(String name)
+        +void setConfigItem(ConfigItem item)
+        -void refreshConfigItems()
+        -void saveConfigItems()
+    }
+}
+
+RLSettings -[hidden]> ConfigItem
+
+RLSettings <.. ConfigServiceImpl
+ConfigItem <.. ConfigRepository
+'ConfigItem <.. ConfigServiceImpl
+'ConfigItem <.. PropertiesConfigRepository
+ConfigRepository <|-- PropertiesConfigRepository
+ConfigRepository --o ConfigServiceImpl
+PropertiesConfigRepository -> ConfigServiceImpl : injected in
+ConfigServiceImpl ..> DefaultConfigItem
+
+@enduml

@@ -1,0 +1,92 @@
+@startuml
+
+package Domain <<Rectangle>> {
+    interface AgentFactory {
+        +{abstract}Optional<Agent> createAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings)
+
+    }
+
+    class AgentDescriptor {
+        +String name
+        +String description
+        +Action[] requiredCapabilities
+        +int actionSpace
+    }
+
+    interface ActionSource {
+        +{abstract}int selectAction(int state)
+        +{abstract}int selectBestAction(int state)
+        +{abstract}void criticiseAction(int oldState, int action, int newState, double reward)
+    }
+
+    interface Environment {
+        +{abstract}boolean executeAction(Action action, int data);
+        +{abstract}int getCurrentState();
+        +{abstract}int getStateSpace();
+        +{abstract}void tick();
+    }
+
+    class RLSettings {
+        +double learningRate
+        +double discountFactor
+        +double explorationRate
+        +double agentRewardStepSize
+    }
+
+    interface AgentRepository {
+        +{abstract}Collection<AgentDescriptor> getAgentInfos()
+        +{abstract}Optional<AgentDescriptor> getAgentInfo(String name)
+        +{abstract}Agent createAgentInstance(AgentDescriptor descriptor, Environment environment, ActionSource source)
+    }
+}
+
+package Application <<Rectangle>> {
+    interface AgentService {
+        +{abstract}Collection<AgentDescriptor> getAgents()
+        +{abstract}Optional<AgentDescriptor> getAgent(String name)
+    }
+
+    class AgentServiceImpl {
+        -AgentRepository repository
+        +Collection<AgentDescriptor> getAgents()
+        +Optional<AgentDescriptor> getAgent(String name)
+    }
+}
+
+package Adapters {
+    class AgentDescriptorDto {
+        +String name
+        +String description
+        +String[] requiredCapabilities
+        +int actionSpace
+    }
+
+    interface AgentServiceFacade {
+        +{abstract}Collection<AgentDescriptorDto> getAgents()
+        +{abstract}Optional<AgentDescriptorDto> getAgent(String name)
+    }
+
+    class AgentServiceFacadeImpl {
+        -AgentService service
+        +Collection<AgentDescriptorDto> getAgents()
+        +Optional<AgentDescriptorDto> getAgent(String name)
+    }
+}
+
+AgentFactory --- AgentDescriptor
+AgentFactory --- RLSettings
+AgentFactory --- Environment
+AgentFactory --- ActionSource
+
+AgentServiceImpl o-- AgentRepository
+AgentService <|-- AgentServiceImpl
+
+AgentRepository --- Environment
+AgentRepository --- AgentDescriptor
+AgentRepository --- ActionSource
+
+AgentDescriptorDto <.. AgentServiceFacade
+AgentServiceFacade <|-- AgentServiceFacadeImpl
+AgentServiceFacadeImpl o--right AgentService
+
+@enduml
