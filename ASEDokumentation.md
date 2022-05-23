@@ -15,7 +15,7 @@ Abgabedatum: [DATUM]
   Anpassung der schriftlichen Aufgaben erinnern!)_
 - _alles muss ins Repository (Code, Ausarbeitung und alles was damit zusammenhängt)_
 - _die Beispiele sollten wenn möglich vom aktuellen Stand genommen werden_
-    - _finden sich dort keine entsprechenden Beispiele, dürfen auch ältere Commits unter Verweis auf den Commit
+    - _finden sich dort keine entsprechenden Beispiele, dürfenl auch ältere Commits unter Verweis auf den Commit
       verwendet werden_
     - _Ausnahme: beim Kapitel &quot;Refactoring&quot; darf von vorne herein aus allen Ständen frei gewählt werden (mit
       Verweis auf den entsprechenden Commit)_
@@ -74,27 +74,68 @@ Die JAR hat standardmäßig den Namen `4-ase-reinforcement-learning-plugin-1.0-S
 mvn test
 ```
 
-​Kapitel 2: Clean Archite **cture**
+# Kapitel 2: Clean Architecture
 
 ### ​Was ist Clean Architecture?
 
 _[allgemeine Beschreibung der Clean Architecture in eigenen Worten]_
 
+Als Clean-Architecture wird eine etrem vielseitige und anapssungsfähige Architektur bezeichnet, 
+deren Aufbau häufig mit einer Zwiebel verglichen wird, da sich die verschiedenen Schichten ummanteln.
+Primäres Ziel ist es, eine technologisch unabhängigen Kern vom Rest der Applikation zu trennen, damit
+Abhängigkeiten nach außen schnell ausgetauscht werden bzw. verändert werden können und die eigentliche
+Business-Logik bzw. Modellierung der Domäne keine Rücksicht auf konkrete technische Details nehmen muss.
+
 ### ​Analyse der Dependency Rule
 
 _[(1 Klasse, die die Dependency Rule einhält und eine Klasse, die die Dependency Rule verletzt); jeweils UML der Klasse und Analyse der Abhängigkeiten in beide Richtungen (d.h., von wem hängt die Klasse ab und wer hängt von der Klasse ab) in Bezug auf die Dependency Rule]_
 
-#### ​Positiv-Beispiel: Dependency Rule
+In dieser Applikation halten prinzipiell alle Klassen die Dependency-Rule hinsichtlich dem "Fluss" der Abhängigkeiten ein.
+Klassen innerer Schichten besitzen <ins>keine</ins> Abhängigkeiten nach Außen.
+Beispielsweise werden Repositories in der Domain-Schicht als Interface deklariert und erst außen konkret implementiert.
 
-#### ​Negativ-Beispiel: Dependency Rule
+#### 1. Positiv-Beispiel: Dependency Rule
 
+![Dependency Rule Config](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyRulePositiv.puml)
+
+Wie im UML Diagramm zu sehen ist besitzt das Interface `ConfigRepository` selbst nur Dependencies innerhalb der eigenen Schicht,
+wird aber in der Application schicht genutzt und von `PropertiesConfigRepository` in der PluginSchicht implementiert.
+Die Klasse `ConfigServiceImpl` ist ebenfalls nicht abhängig von der Klasse aus der Plugin-Schicht, was eine Verletztung der Dependency-Rule
+darstellen würde, sondern stattdessen abhängig vom Interface. 
+
+#### 2. Positiv-Beispiel: Dependency Rule
+
+![Dependency Rule Adapters](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyRulePositiv2.puml)
+
+Selbiges gilt für den `AgentService`. Dieser hat ausschließlich Abhängigkeiten in Richtung Domain-Layer bzw. eine Vererbung auf derselben Ebene.
+Nach außen Richtung Adapter bzw. Plugin Schicht besteht keinerlei Abhängigkeit.
+In der Adapter-Schicht ist einzig und allein die `AgentServiceFacadeImpl` vom Service abhängig.
 ### ​ **Analyse der Schichten**
 
 _[jeweils 1 Klasse zu 2 unterschiedlichen Schichten der Clean-Architecture: jeweils UML der Klasse (ggf. auch zusammenspielenden Klassen), Beschreibung der Aufgabe, Einordnung mit Begründung in die Clean-Architecture]_
 
-#### ​Schicht: [Name]
+#### Schicht: Domain
 
-#### ​Schicht: [Name]
+![Clean Arch Domain Layer](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/layerDomain.puml)
+
+Die abstrakte Klasse `Agent` ist eines der Kernstücke der Domain. Der Agent kann Aktionen in einer Umgebung 
+ausführen.
+Die Klasse ist hier angesiedelt, da sie
+
+1. nur das "Verhalten" definiert und keine technischen Details berücksichtigt
+2. im Allgemeinen zur Domäne des Reinforcement Learnings gehört
+
+Konkrete Agenten erben von dieser Klasse und mappen die Aktionen (Integer), die sie von der Aktion Source bekommen, auf konkrete
+Aktionen `Action`, die die Umgebung versteht.
+
+#### ​Schicht: Adapter
+
+![Clean Arch Adapter Layer](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/layerAdapter.puml)
+
+Die Klasse `EnvironmentServiceFacade` dient als Einstiegspunkt für das UI, wenn es um das Abrufen von Environment geht.
+Das UI greift dabei nicht direkt auf die Services zu und arbeit damit mit Domain Objekten, sondern benutzt mehrere Facetten.
+Diese sind im Adapter-Layer platziert und wandeln die Domain Objekte, die sich mitunter ändern können, in eine speziell für UI
+vorgesehen Repräsentation um. Somit kann sich das Domain-Modell ändern, allerdings könnte durch das Mapping das UI unverändert bleiben.
 
 # ​Kapitel 3: SOLID
 
@@ -104,15 +145,54 @@ _[jeweils eine Klasse als positives und negatives Beispiel für SRP; jeweils UML
 
 #### ​Positiv-Beispiel
 
+Das SRP wird durch so gut wie jede Repository Implementierung erfüllt. Als Beispiel wurde hier die `ConfigRepository`
+mit der konkreten Implementierung `PropertiesConfigRepository` gewählt.
+Die Repository hat die Aufgabe, Config Einträge aus der `.properties` Datei auszulesen und in diese zu speichern.
+
+![SRP Positiv](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/srpPositiv.puml)
+
 #### ​Negativ-Beispiel
+
+Als eventuelles negativ-Beispiel habe ich die Klasse `SimpleEnvironmentFactory` gewählt.
+Obwohl es für dieses kleine Projekt in Ordnung sein mag, ist dennoch das SRP verletzt. Die Klassen kümmert sich beispielsweise
+nicht nur um das Erstellen einer Grid-World Umgebung, sondern auch um das Parsen der Datei, aus der eine Grid-World initialisiert werden könnte.
+Zur Lösung könnte das Parsing in eine eigene Klasse ausgelagert werden und an die Factory könnte ein Interface übergeben werden.
+
+![SRP Negativ](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/srpNegativ.puml)
 
 ### ​Analyse Open-Closed-Principle (OCP)
 
 _[jeweils eine Klasse als positives und negatives Beispiel für OCP; jeweils UML der Klasse und Analyse mit Begründung, warum das OCP erfüllt/nicht erfüllt wurde – falls erfüllt: warum hier sinnvoll/welches Problem gab es? Falls nicht erfüllt: wie könnte man es lösen (inkl. UML)?]_
 
-#### ​Positiv-Beispiel
+#### Negativ-Beispiel:
 
-#### ​_Negativ-Beispiel_
+![OCP Negativ](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/openClosedNegative.puml)
+
+Als klassisches Negativbeispiel für die Verletzung dieses Prinzips kann eine solche Factory genommen werden.
+Diese entscheidet in diesem Fall, je nach Name des Agenten, welcher Agent erzeugt werden muss.
+Wird ein neuer Agent im Code hinzugefügt, so muss entweder
+
+* Die Methode `createAgent` selbst angepasst werden -> direkte Verletzung OCP
+* Eine abgeleitete Klasse erstellt werden, die für alle bestehenden Agenten `super.createAgent()` aufruft. In diesem Fall muss auch die neue bzw. erweiterte Factory in die Dependency Injection oder ähnliches aufgenommen werden.
+
+Abhilfe würde hier ein etwas dynamischeres Konzept schaffen. Über eine zentrale Registry könnte man für jeden Agenten-Namen
+bestimmte `Provider` registrieren, die sich um das Erstellen eines bestimmten Agenten kümmern.
+Die Factory greift auf diese Registry zu und holt sich den entsprechenden `Provider` aus der Map.
+So müsste die Factory nicht angepasst werden.
+In meinem Fall habe ich mich allerdings bewusst bei **allen** Factories dagegen entschieden, da mir bei dieser Projektgrö0e
+**KISS** wichtiger war.
+
+#### Positiv-Beispiel:
+
+![OCP Positiv](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/openClosedPositive.puml)
+
+Obwohl die Factory das OCP verletzt, ist der Agent selbst ein gutes Beispiel für die Nutzung dessen.
+Die abstrakte Basisklasse `Agent` stellt die abstrakte Methode `transformAction` bereit und abgeleitete Klasse bzw. konkrete Agenten implementieren diese.
+Die Methode wandelt den Integer der Aktion, der von der Action Source kommt in eine für das Environment verständliche Aktion um.
+Die Methode `executeNextAction()`, die bereits in der Basisklasse implementiert ist und die für **alle** Agenten gleiche Logik zum Ausführen einer Aktion beinhaltet, 
+ruft diese dann auf, um die konkrete Aktion zu holen.
+Sämtliche Logik, die zum Trainieren des Agenten genutzt wird, bleibt unverändert, sobald ein neuer Agent hinzugefügt wird,
+da diese Klassen alle entweder `transformAction` aufrufen oder `executeNextAction` direkt (siehe dazu Klasse `SzenarioSession` für konkretes Beispiel).
 
 ### ​Analyse Liskov-Substitution- (LSP), Interface-Segreggation- (ISP), Dependency-Inversion-Principle (DIP)
 
@@ -185,6 +265,7 @@ _[4 Beispiele für die Ubiquitous Language; jeweils Bezeichung, Bedeutung und ku
 | Umgebung/Environment | Eine Umgebung bzw. Environment stellt ein Umfeld für Agenten zur Verfügung. Jede Umgebung erlaubt dabei ein bestimmtes Subset an Aktionen.                                           |     |
 | Agent                | Ein Agent ist ein Akteur innerhalb einer Umgebung. Der Agent kann verschiedene Aktionen ausführem. die die Umgebung auf eine bestimmte Beweise beinflussen und ihren Zustand ändern. |     |
 | Policy               | Eine Policy ist prinzipiell nur ein Hinweisgeber, der einem Agenten sagt, welche Aktion in welchem Zustand wie sinnvoll ist.                                                         |     |
+| Algorithmus          | Ein Algorithmus modifiziert eine Policy, damit diese bessere Ergebnisse erzielt. Der Algorithmus macht einen Agenten somit lernfähig.                                                |     |
 
 ### ​Entities
 
@@ -198,13 +279,17 @@ Ein häufig eingesetztes Value Object sind Objekte der Klasse `ConfigItem`.
 Das ConfigItem repräsentiert ein einfaches, identitätsloses Key-Value Paar in der Config.
 Ist read-Only. Sollte eine Änderung über die Repository geschehen, so wird ein neues erstellt.
 
-![Post Extract Method](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/valueObjectConfig.puml)
+![Config Value Object](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/valueObjectConfig.puml)
 
 
 ### ​Repositories
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Repositories; falls kein Repository vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
+Abgeleitete Klasse des Interfaces ConfigRepository sind dafür zuständig, die gespeicherten Einträge der Config zu verwalten.
+Die Aufgaben sind sowohl das Einlesen als auch das Modifizieren (Hinzufügen).
+
+![Config Repo](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/repositoryConfig.puml)
 
 
 ### ​Aggregates
