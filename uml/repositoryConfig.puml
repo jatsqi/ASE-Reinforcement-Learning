@@ -1,0 +1,10 @@
+@startuml
+
+class ConfigRepository {
++{abstract}Collection<ConfigItem> getConfigItems()
++{abstract}Optional<ConfigItem> getConfigItem(String name)
++{abstract}boolean isConfigItemPresent(String name)
++{abstract}boolean setConfigItem(ConfigItem item)
+}
+
+@enduml
