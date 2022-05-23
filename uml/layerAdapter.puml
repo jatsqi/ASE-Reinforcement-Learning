@@ -1,0 +1,48 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface EnvironmentServiceFacade {
+     +{abstract}Collection<EnvironmentDescriptorDto> getEnvironmentInfos()
+     +{abstract}Optional<EnvironmentDescriptorDto> getEnvironmentInfo(String name)
+}
+
+class EnvironmentServiceFacadeImpl {
+    -{static}EnvironmentMapper MAPPER
+    -EnvironmentService service
+
+    +Collection<EnvironmentDescriptorDto> getEnvironmentInfos()
+    +Optional<EnvironmentDescriptorDto> getEnvironmentInfo(String name)
+}
+
+class EnvironmentDescriptorDto {
+    +String name,
+    +String description
+    +ActionDto[] supportedCapabilities
+}
+
+class ActionDto {
+    int id
+    +String name
+    +String description
+}
+
+class EnvironmentMapper {
+    -{static}ActionMapper MAPPER
+
+    +EnvironmentDescriptorDto toDto(EnvironmentDescriptor descriptor)
+    +Optional<EnvironmentDescriptorDto> toDto(Optional<EnvironmentDescriptor> descriptor)
+}
+
+class ActionMapper {
+    +ActionDto toDto(Action action)
+}
+
+EnvironmentMapper o-- ActionMapper
+ActionMapper --- ActionDto
+
+EnvironmentServiceFacadeImpl o-- EnvironmentMapper
+EnvironmentServiceFacadeImpl <|-- EnvironmentServiceFacade
+EnvironmentServiceFacade --- EnvironmentDescriptorDto
+EnvironmentDescriptorDto *-- ActionDto
+
+@enduml

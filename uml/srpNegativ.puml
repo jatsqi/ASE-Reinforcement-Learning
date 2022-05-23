@@ -11,6 +11,14 @@ class SimpleEnvironmentFactory {
 -int[][] parseGridWorldFile(Path fromPath)
 }
 
+note left of SimpleEnvironmentFactory::parseGridWorldFile
+    Open file
+    foreach line in file do
+        parse line
+        fill grid array with content
+    return grid
+end note
+
 EnvironmentFactory <|-- SimpleEnvironmentFactory
 
 @enduml
