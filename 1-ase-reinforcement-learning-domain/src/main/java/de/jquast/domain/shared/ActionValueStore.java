@@ -29,7 +29,7 @@ public class ActionValueStore {
     }
 
     public ActionValueEntry getMaxActionValue(int state) {
-        double maxValue = Double.MIN_VALUE;
+        double maxValue = -Double.MAX_VALUE;
         int maxAction = 0;
 
         for (int i = 0; i < actionValueEstimates[state].length; ++i) {
