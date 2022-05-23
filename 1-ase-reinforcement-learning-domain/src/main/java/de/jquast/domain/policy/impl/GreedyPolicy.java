@@ -15,6 +15,8 @@ public class GreedyPolicy extends EpsilonGreedyPolicy {
     }
 
     public GreedyPolicy(int stateCount, int actionCount, RLSettings settings) {
-        super(stateCount, actionCount, settings);
+        this(new ActionValueStore(
+                stateCount, actionCount
+        ), settings);
     }
 }
