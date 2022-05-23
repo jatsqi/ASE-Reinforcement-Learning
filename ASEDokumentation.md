@@ -180,8 +180,11 @@ _[Analyse und Begründung des Einsatzes von 2 Fake/Mock-Objekten; zusätzlich je
 
 _[4 Beispiele für die Ubiquitous Language; jeweils Bezeichung, Bedeutung und kurze Begründung, warum es zur Ubiquitous Language gehört]_
 
-| **Bezeichung** | **Bedeutung** | **Begründung** |
-| --- | --- | --- |
+| **Bezeichung**       | **Bedeutung**                                                                                                                                                                        | **Begründung** |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --- |
+| Umgebung/Environment | Eine Umgebung bzw. Environment stellt ein Umfeld für Agenten zur Verfügung. Jede Umgebung erlaubt dabei ein bestimmtes Subset an Aktionen.                                           |     |
+| Agent                | Ein Agent ist ein Akteur innerhalb einer Umgebung. Der Agent kann verschiedene Aktionen ausführem. die die Umgebung auf eine bestimmte Beweise beinflussen und ihren Zustand ändern. |     |
+| Policy               | Eine Policy ist prinzipiell nur ein Hinweisgeber, der einem Agenten sagt, welche Aktion in welchem Zustand wie sinnvoll ist.                                                         |     |
 
 ### ​Entities
 
@@ -191,9 +194,18 @@ _[UML, Beschreibung und Begründung des Einsatzes einer Entity; falls keine Enti
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Value Objects; falls kein Value Object vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
+Ein häufig eingesetztes Value Object sind Objekte der Klasse `ConfigItem`.
+Das ConfigItem repräsentiert ein einfaches, identitätsloses Key-Value Paar in der Config.
+Ist read-Only. Sollte eine Änderung über die Repository geschehen, so wird ein neues erstellt.
+
+![Post Extract Method](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/valueObjectConfig.puml)
+
+
 ### ​Repositories
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Repositories; falls kein Repository vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
+
+
 
 ### ​Aggregates
 
