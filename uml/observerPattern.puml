@@ -59,5 +59,6 @@ end note
 SzenarioSession o-- SzenarioProgressObserver
 SzenarioProgressObserver <|-- SzenarioExecutionObserver
 SzenarioExecutionObserver <..ExecutionService
+SzenarioSession <.. ExecutionService
 
 @enduml

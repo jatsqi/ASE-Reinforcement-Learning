@@ -200,9 +200,27 @@ _[jeweils eine Klasse als positives und negatives Beispiel für entweder LSP ode
 
 _[Anm.: es darf nur ein Prinzip ausgewählt werden; es darf NICHT z.B. ein positives Beispiel für LSP und ein negatives Beispiel für ISP genommen werden]_
 
-#### ​Positiv-Beispiel
+#### Positiv-Beispiel
+
+![DI Config](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyRulePositiv.puml)
+
+Wie im UML Diagramm zu sehen ist, ist die Klasse `ConfigServiceImpl` aus dem Application-Layer nicht von der konkreten Implementierung der
+Repository `PropertiesConfigRepository`, welche in der Plugin-Schicht implementiert ist, abhängig, sondern von dem deklarierten Interface `ConfigRepository`, welches
+eine einheitliche und technologisch unabhängige Schnittstelle definiert.
+Somit kann, in diesem Fall der Service, mit beliebigen Ausprägungen der `ConfigRepository` genutzt werden.
+Würde `ConfigServiceImpl` die konkrete Implementierung nutzen, wäre zusötzlich die Depdendency Rule verletzt.
 
 #### ​Negativ-Beispiel
+
+![DI Exec Service](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyInversionNegative.puml)
+
+Die Klasse `SzenarioSession`, die die Logik für das Ausführen des Trainings bzw. der Evaluation beinhaltet,
+ist eine direkte Abhängigkeit des `ExecutionService`.
+Sollte das Verhalten, wie das Training durchlaufen werden soll, später angepasst werden, muss zuerst die Struktur umgebaut werden.
+In diesem einfachen Projekt ist dies nicht der Fall, weswegen es auf diese Weise gelöst wurde.
+Gelöst werden könnte dies genauso wie bei den Repositories, indem ein Interface eingeführt wird und eine äußere Schicht
+sich um die Details kümmert. Für diesen konkreten Fall wäre unter Umständen eine weitere Factory nötig, damit der Service die
+verschiedenen Ausprägungen der Sessions auch erstellen kann bzw. die Factory beauftragen kann, diese zu erstellen.
 
 # ​Kapitel 4: Weitere Prinzipien
 

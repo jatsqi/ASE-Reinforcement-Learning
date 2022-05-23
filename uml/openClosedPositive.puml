@@ -33,6 +33,28 @@ interface Environment {
     +{abstract}void tick();
 }
 
+class SzenarioSession {
+-int currentStep
+-Szenario szenario
+-List<SzenarioProgressObserver> observer
+--
++void start()
++SzenarioSession addObserver(SzenarioProgressObserver observer)
++Szenario getSzenario()
++int getCurrentStep()
+--
+-void execWhenPresent(Consumer<SzenarioProgressObserver> consumer)
+}
+
+note left of SzenarioSession::start
+    ...
+    while(remainingSteps > 0) do
+        environment.tick()
+        agent.executeNextAction()
+    endwhile
+    ...
+end note
+
 note left of Agent::executeNextAction
     Definiert Verhalten, welches für
     JEDEN Agenten gleich ist.
@@ -46,6 +68,8 @@ note left of Agent::executeNextAction
     Aktualisiere interne Belohnungsschätzung
 end note
 
+Environment --o SzenarioSession : Teil über Szenario Klasse
+Agent --o SzenarioSession : Teil über Szenario Klasse
 Agent ..> ActionDataPair
 Agent *-- Environment
 Agent *-- ActionSource

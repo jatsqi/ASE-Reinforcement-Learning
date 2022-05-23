@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class SzenarioSession {
+    -int currentStep
+    -Szenario szenario
+    -List<SzenarioProgressObserver> observer
+    --
+    +void start()
+    +SzenarioSession addObserver(SzenarioProgressObserver observer)
+    +Szenario getSzenario()
+    +int getCurrentStep()
+    --
+    -void execWhenPresent(Consumer<SzenarioProgressObserver> consumer)
+}
+
+class ExecutionService {
+    - AgentRepository agentRepository
+    - PolicyRepository policyRepository
+    - EnvironmentRepository environmentRepository
+    - ConfigService configService
+    - ActionValueRepository actionValueRepository
+    - RLAlgorithmRepository algorithmRepository
+    - PolicyVisualizerFactory policyVisualizerFactory
+
+    + startTraining()
+    + startEvaluation()
+    - createSzenario()
+    - queryStore()
+    - storeTrainedPolicy()
+    - createWrappedTrainingObserver()
+    - {static} Optional<String> makeStringOptional()
+}
+
+SzenarioSession <.. ExecutionService
+
+@enduml
