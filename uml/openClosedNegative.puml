@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class AgentFactory {
+    +{abstract}Optional<Agent> createAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings)
+}
+
+class SimpleAgentFactory {
+    +Optional<Agent> createAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings)
+    -FlatMovingPullAgent createPullAgent(Environment environment, ActionSource source, RLSettings settings)
+    -MovingAgent2D create2DMoveAgent(Environment environment, ActionSource source, RLSettings settings)
+}
+
+note right of SimpleAgentFactory::createAgent
+    Agent agent = switch (nameOfAgent) {
+        case "pull" -> createPullAgent(...);
+        case "2d-moving-agent" -> create2DMoveAgent(...);
+        default -> null;
+    };
+
+    Return created Agent
+end note
+
+AgentFactory <|-- SimpleAgentFactory
+
+@enduml

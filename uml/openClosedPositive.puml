@@ -1,0 +1,53 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Agent {
+    #Environment environment
+    #ActionSource actionSource
+    #RLSettings settings
+    #double averageReward
+    #int totalActionsTaken
+    --
+    +{abstract} ActionDataPair transformAction(int action)
+    ---
+    +void executeNextAction()
+    +double getCurrentAverageReward()
+    #int collectActionFromSource()
+}
+
+class ActionDataPair {
+    +Action action
+    +int data
+}
+
+interface ActionSource {
+    +{abstract}int selectAction(int state)
+    +{abstract}int selectBestAction(int state)
+    +{abstract}void criticiseAction(int oldState, int action, int newState, double reward)
+}
+
+interface Environment {
+    +{abstract}boolean executeAction(Action action, int data);
+    +{abstract}int getCurrentState();
+    +{abstract}int getStateSpace();
+    +{abstract}void tick();
+}
+
+note left of Agent::executeNextAction
+    Definiert Verhalten, welches für
+    JEDEN Agenten gleich ist.
+
+    Cache alten Zustand der Umgebung
+    Hole Aktion von ActionSource
+    Transformiere Aktion über "transformAction"
+    Führe Aktion aus
+    Beobachte neuen Zustand der Umgebung
+    Gib Reward an ActionSource weiter
+    Aktualisiere interne Belohnungsschätzung
+end note
+
+Agent ..> ActionDataPair
+Agent *-- Environment
+Agent *-- ActionSource
+
+@enduml
