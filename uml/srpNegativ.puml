@@ -1,0 +1,16 @@
+@startuml
+
+interface EnvironmentFactory {
++{abstract}Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters)
+}
+
+class SimpleEnvironmentFactory {
++Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters)
+-KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters)
+-GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters)
+-int[][] parseGridWorldFile(Path fromPath)
+}
+
+EnvironmentFactory <|-- SimpleEnvironmentFactory
+
+@enduml
