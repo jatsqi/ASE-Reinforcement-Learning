@@ -144,5 +144,8 @@ public class GridWorldEnvironment implements Environment {
                 }
             }
         }
+
+        currX = spawnX;
+        currY = spawnY;
     }
 }

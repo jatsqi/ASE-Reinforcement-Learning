@@ -52,28 +52,29 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
             }
         }
 
-        // Das Parsen könnte man noch in eine eigene Klasse auslagern und über Interface in dieses Objekt injecten,
-        // aber für dieses einfache Beispiel ist es denke ich so O.K.
-
         String from = parameters.get("from");
         Path fromPath = Paths.get(from);
         try {
-            List<String> lines = Files.readAllLines(fromPath);
-            int[][] grid = new int[lines.get(0).length()][lines.size()];
-
-            for (int i = 0; i < lines.size(); i++) {
-                char[] chars = lines.get(i).toCharArray();
-
-                for (int j = 0; j < chars.length; j++) {
-                    int num = chars[j] - '0';
-                    grid[j][i] = num;
-                }
-            }
-
-            return new GridWorldEnvironment(grid);
+            return new GridWorldEnvironment(parseGridWorldFile(fromPath));
         } catch (IOException e) {
             throw new EnvironmentCreationException(
                     String.format("Die Datei '%s' konnte nicht korrekt gelesen werden!", from), "grid-world");
         }
+    }
+
+    private int[][] parseGridWorldFile(Path fromPath) throws IOException {
+        List<String> lines = Files.readAllLines(fromPath);
+        int[][] grid = new int[lines.get(0).length()][lines.size()];
+
+        for (int i = 0; i < lines.size(); i++) {
+            char[] chars = lines.get(i).toCharArray();
+
+            for (int j = 0; j < chars.length; j++) {
+                int num = chars[j] - '0';
+                grid[j][i] = num;
+            }
+        }
+
+        return grid;
     }
 }
