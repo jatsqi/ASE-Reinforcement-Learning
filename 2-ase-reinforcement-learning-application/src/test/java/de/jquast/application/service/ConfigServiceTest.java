@@ -4,23 +4,21 @@ import de.jquast.application.config.DefaultConfigItem;
 import de.jquast.application.service.impl.ConfigServiceImpl;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ConfigServiceTest {
 
     @Mock
@@ -29,8 +27,10 @@ public class ConfigServiceTest {
     @InjectMocks
     ConfigServiceImpl service;
 
-    @Before
+    @BeforeEach
     public void setupMocks() {
+        MockitoAnnotations.openMocks(this);
+
         Collection<ConfigItem> items = Arrays.asList(
                 new ConfigItem(DefaultConfigItem.ALGORITHM_LEARNING_RATE.getKey(), DefaultConfigItem.ALGORITHM_LEARNING_RATE.getDefaultValue())
         );
