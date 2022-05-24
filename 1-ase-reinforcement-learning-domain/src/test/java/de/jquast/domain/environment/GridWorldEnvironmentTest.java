@@ -39,7 +39,7 @@ class GridWorldEnvironmentTest {
     }
 
     @Test
-    void actionsShouldMoveAgent() {
+    void actionsShouldTransitionEnvironmentToNewState() {
         environment.executeAction(Action.MOVE_X_DOWN, 1);
         assertEquals(0, environment.getCurrentState());
 

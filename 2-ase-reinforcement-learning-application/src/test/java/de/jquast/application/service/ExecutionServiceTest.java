@@ -59,6 +59,7 @@ class ExecutionServiceTest {
     @Mock
     private ActionSource source;
 
+    private RLSettings settings;
     private AgentDescriptor agentDescriptor;
     private PolicyDescriptor policyDescriptor;
     private EnvironmentDescriptor environmentDescriptor;
@@ -66,6 +67,43 @@ class ExecutionServiceTest {
 
     @BeforeEach
     void prepare() throws AgentCreationException, PolicyCreationException, EnvironmentCreationException, AlgorithmCreationException, VisualizerCreationException {
+        MockitoAnnotations.openMocks(this);
+
+        settings = new RLSettings(
+                0.0, 0.0, 0.0, 0.0
+        );
+
+        setupDescriptors();
+        setupActionValueRepository();
+        setupAgentRepository();
+        setupPolicyRepository();
+
+        when(environment.getStateSpace()).thenReturn(10);
+
+        when(environmentRepository.getEnvironment("best-environment")).thenReturn(Optional.of(environmentDescriptor));
+        when(environmentRepository.createEnvironmentInstance(
+                eq(environmentDescriptor),
+                any()
+        )).thenReturn(environment);
+
+        when(configService.getRLSettings()).thenReturn(settings);
+
+        when(policyVisualizerFactory.createVisualizer(any(), any(), any())).thenReturn(
+                Optional.of(new FakeBestVisualizer(null, null, null))
+        );
+
+        executionService = new ExecutionServiceImpl(
+                agentRepository,
+                policyRepository,
+                environmentRepository,
+                configService,
+                actionValueRepository,
+                algorithmRepository,
+                policyVisualizerFactory
+        );
+    }
+
+    private void setupDescriptors() {
         agentDescriptor = new AgentDescriptor(
                 "best-agent", "cool agent",
                 new Action[]{ Action.DO_NOTHING }, 10
@@ -83,35 +121,25 @@ class ExecutionServiceTest {
                 "cool algorithm",
                 FakeBestAlgorithm.class
         );
+    }
 
-        MockitoAnnotations.openMocks(this);
-
-        RLSettings settings = new RLSettings(
-                0.0, 0.0, 0.0, 0.0
-        );
-
-        when(environment.getStateSpace()).thenReturn(10);
-
+    private void setupAgentRepository() throws AgentCreationException {
         when(agentRepository.getAgentInfo("best-agent")).thenReturn(Optional.of(agentDescriptor));
         when(agentRepository.createAgentInstance(eq(agentDescriptor), any(), any())).thenReturn(
                 new FakeBestAgent(environment, source, settings)
         );
+    }
 
+    private void setupPolicyRepository() throws PolicyCreationException {
         when(policyRepository.getPolicyInfo("best-policy")).thenReturn(Optional.of(policyDescriptor));
         when(policyRepository.getDefaultPolicyInfo()).thenReturn(policyDescriptor);
         when(policyRepository.getMaximizingPolicyInfo()).thenReturn(policyDescriptor);
         when(policyRepository.createPolicyInstance(eq(policyDescriptor), any())).thenReturn(
                 new FakeBestPolicy(new ActionValueStore(10, 10), settings)
         );
+    }
 
-        when(environmentRepository.getEnvironment("best-environment")).thenReturn(Optional.of(environmentDescriptor));
-        when(environmentRepository.createEnvironmentInstance(
-                eq(environmentDescriptor),
-                any()
-        )).thenReturn(environment);
-
-        when(configService.getRLSettings()).thenReturn(settings);
-
+    private void setupActionValueRepository() throws AlgorithmCreationException {
         PersistedStoreInfo bestInfo = new PersistedStoreInfo(0, "best-agent", "best-environment");
         when(actionValueRepository.persistActionValueStore(
                 eq("best-environment"),
@@ -132,20 +160,6 @@ class ExecutionServiceTest {
 
         when(algorithmRepository.getDefaultAlgorithmInfo()).thenReturn(algorithmDescriptor);
         when(algorithmRepository.createAlgorithmInstance(eq(algorithmDescriptor), any(), any())).thenReturn(new FakeBestAlgorithm(new ActionValueStore(10, 10), source, settings));
-
-        when(policyVisualizerFactory.createVisualizer(any(), any(), any())).thenReturn(
-                Optional.of(new FakeBestVisualizer(null, null, null))
-        );
-
-        executionService = new ExecutionServiceImpl(
-                agentRepository,
-                policyRepository,
-                environmentRepository,
-                configService,
-                actionValueRepository,
-                algorithmRepository,
-                policyVisualizerFactory
-        );
     }
 
     @Test
@@ -231,6 +245,7 @@ class ExecutionServiceTest {
         verify(observer, times(10)).preSzenarioStep(any(), anyLong(), anyDouble());
         verify(observer, times(10)).postSzenarioStep(any(), anyLong(), anyDouble());
         verify(observer, times(0)).onActionStorePersisted(any());
+        verify(actionValueRepository, times(0)).persistActionValueStore(anyString(), any(), any());
     }
 
     @Test
