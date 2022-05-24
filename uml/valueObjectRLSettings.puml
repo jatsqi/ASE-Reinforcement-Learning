@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class RLSettings {
+    +double learningRate
+    +double discountFactor
+    +double explorationRate
+    +double agentRewardStepSize
+}
+
+@enduml

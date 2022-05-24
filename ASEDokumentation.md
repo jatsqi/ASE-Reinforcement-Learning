@@ -248,21 +248,119 @@ _[ein Commit angeben, bei dem duplizierter Code/duplizierte Logik aufgelöst wur
 
 _[Nennung von 10 Unit-Tests und Beschreibung, was getestet wird]_
 
-| Unit Test | Beschreibung |
-| ---       | --- |
-| _Klasse#Methode_ |
+In der folgenden Tabelle ist eine kleine Auswahl aus unterschiedelichen Unit-Tests zusammengefasst:
+
+| Unit Test                                                                 | Beschreibung                                                                                                                                                                                                |
+|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ExecutionServiceTest#startSzenarioShouldCallAllObserverMethods            | Testet, ob die beiden Methoden der Klasse `ExecutionServiceImpl` alle Observer Methoden häufig gebug aufrufen bzw. ob die Anzahl der Aufrufe stimmen.                                                       |
+| ExecutionServiceTest#startEvaluationShouldNotCallPersistStore             | Testet, ob die Methode `startEvaulation` den evaulierten ActionValueStore auch tatsächlich **nicht** speichert.                                                                                             |
+| ExecutionServiceTest#startSzenarioWithUnknownDescriptorsShouldThrow       | Testet, ob die korrekten Fehlermeldungen als Exception geworfen werden, sofern Eingaben nicht korrekt sind.                                                                                                 |
+| EnvironmentMapperTest#dtoAttributesShouldHaveSameValue                    | Testet, ob das Mapping zwischen dem Domain-Objekt `EnvironmentDescriptor` und dem DTO `EnvironmentDescriptorDto` korrekt funktioniert.                                                                      |
+| ActionValueStoreTest#getMaxActionValueShouldReturnMaximumEntryOfState     | Testet, ob die `getMaxActionValue` der Klasse `ActionValueStore` immer korrekt die aktuell Beste Aktion für den übergebenen Zustand findet. **Diese Funktion bildet den Grundstein für viele Algorithmen**. |
+| GridWorldEnvironmentTest#environmentShouldNotBeAbleToMoveToForbiddenState | Testet, ob das Environment in einen Zustand tranferiert werden kann, in dem der Agent auf einem verbotenen Zustand steht, sofern er sich bewegt.                                                            |
+| GridWorldEnvironmentTest#positionShouldResetOnTerminalOrBombState         | Testet, ob die Umgebung in einen Zustand tranferiert werden kann, in dem der Agent das Grid verlässt.                                                                                                       |
+| GridWorldEnvironmentTest#actionsShouldMoveAgent                           | Testet, ob die Umgebung für alle unterstützten Aktionen den korrekten Zustand annimmt.                                                                                                                      |
+| KArmedBanditEnvironmentTest#environmentMoveActionShouldNotLeaveBoundary   | Testet, ob die Umgebung mit Bewegungsbefehlen nach rechts/links in einen Zustand überführt werden kann, der außerhalb der Anzahl an zu verfügung stehenden Bandits liegt.                                   |
+| KArmedBanditEnvironmentTest#getRewardShouldMatchPrecomputedArray          | Testet, ob die `getReward` Methode des `KArmedBanditEnvironment` je nach gezogenem Hebel den korrekt Reward zurückgibt.                                                                                     |
 
 ### ​ATRIP: Automatic
 
 _[Begründung/Erläuterung, wie &#39;Automatic&#39; realisiert wurde]_
 
+**Automatic** wurde über die Testing-Bibliothek JUnit realisiert, die automatisch alle Testklassen sucht und alle darin befindlichen Tests ausführt.
+Die Tests selber können über `mvn test` automatisch ausgeführt werden und der Nutzer wird entsprechend benachrichtigt, sofern Tests fehlgeschlagen sind.
+Über GitHub Action können zusätzlich, nach jedem Commit, die Tests ausgeführt werden. So ist gewährleistet, dass bei Änderungen schnell erkannt werden kann, dass
+die Änderungen eventuell unerwünschte Effekte hatten.
+
 ### ​ATRIP: Thorough
 
 _[jeweils 1 positives und negatives Beispiel zu &#39;Thorough&#39;; jeweils Code-Beispiel, Analyse und Begründung, was professionell/nicht professionell ist]_
 
+#### Positiv Thorough:
+
+#### Negativ Thorough:
+
 ### ​ATRIP: Professional
 
 _[jeweils 1 positives und negatives Beispiel zu &#39;Professional&#39;; jeweils Code-Beispiel, Analyse und Begründung, was professionell/nicht professionell ist]_
+
+#### Professional Positiv:
+```java
+@Test
+void actionsShouldTransitionEnvironmentToNewState() {
+    environment.executeAction(Action.MOVE_X_DOWN, 1);
+    assertEquals(0, environment.getCurrentState());
+
+    environment.executeAction(Action.MOVE_Y_UP, 1);
+    assertEquals(2, environment.getCurrentState());
+
+    environment.executeAction(Action.MOVE_Y_DOWN, 1);
+    assertEquals(0, environment.getCurrentState());
+
+    environment.executeAction(Action.MOVE_X_UP, 1);
+    assertEquals(1, environment.getCurrentState());
+
+    environment.executeAction(Action.DO_NOTHING, 1);
+    assertEquals(1, environment.getCurrentState());
+}
+```
+
+Positiv an diesem Beispiel ist der klare Name des Tests `actionsShouldTransitionEnvironmentToNewState`.
+Sobald man den Namen liest und die Zusammenhänge in der Domäne verstanden hat, sollte klar sein, dass hier
+die verschiedenen Aktionen getestet werden, die das Environment unterstützt.
+Als Konsequenz auf jede Aktion geht die Umgebung in einen neuen Zustand über, den es zu prüfen gilt.
+Genutzt werden wohlbekannte Assertions von JUnit wie z.B. `assertEquals`, in dem der erwartete Zustand mit dem aktuellen
+Zustand der Umgang nach der Aktion verglichen wird.
+
+#### Professional Negativ:
+
+Ein unter Umständen wenig problematisches, allerdings dennoch vorhandene Negativbeispiel ist ein klassisches Beispiel
+der Code-Duplication (hier an zwei Beispielen, taucht allerdings noch öfters auf):
+
+_GreedyPolicy.java_
+
+```java
+@BeforeEach
+void prepare() {
+    ActionValueStore store = new ActionValueStore(
+            new double[][]{
+                    { 0.0, 1.0, 2.0 },
+                    { 0.0, 3.0, 1.0 },
+                    { -1.0, -2.0, -4.0 }
+            }
+    );
+
+    policy = new GreedyPolicy(store, new RLSettings(
+            0.0, 0.0, 1000, 0.0
+    ));
+}
+```
+
+_PolicyTest.java_
+
+```java
+@BeforeEach
+void prepare() {
+    store = new ActionValueStore(new double[][]{
+            { 0.0, 1.0, 2.0 },
+            { 0.0, 3.0, 1.0 },
+            { -1.0, -2.0, -4.0 }
+    });
+
+    settings = new RLSettings(
+            0.0, 0.0, 0.0, 0.0
+    );
+
+    policy = new FakePolicy(store, settings);
+}
+```
+
+In beiden Beispielen werden sehr ähnliche Code-Abschnitte genutzt, vor allem wenn es um das Initialisieren
+des `RLSettings` Objektes geht.
+Auch wird zwei bzw. mehrmals derselbe oder ein ähnlicher ActionValueStore genutzt.
+Gelöst werden könnte dies über eine separate Klasse mit statischen Methoden, die solche "Default" Objekte bereitstellt (z.B. eine leeres `RLSettings` Objekt).
+Auch könnten unter Umständen das _Builder_-Pattern genutzt werden, um die Erstellung von solchen Objekten abzukürzen, damit diese
+nicht mehr Platz einnehmen als nötig.
 
 ### ​Code Coverage
 
@@ -271,6 +369,46 @@ _[Code Coverage im Projekt analysieren und begründen]_
 ### ​Fakes und Mocks
 
 _[Analyse und Begründung des Einsatzes von 2 Fake/Mock-Objekten; zusätzlich jeweils UML Diagramm der Klasse]_
+
+#### Mock 1:
+
+![Mock Environment](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/mockEnvironment.puml)
+
+Ein Interface, welches häufig gemockt wird, damit keine konkrete Implementierung erforderlich ist, ist das Interface `Environment`.
+Den Gettern werden dabei spezifische Rückgabewerte zugewiesen, die teilweise von den übergebenen Parametern an die Methoden abhängig sind.
+Zusätzlich dazu ist das Mocken dieses Interfaces recht einfach, da es sehr simpel aufgebaut ist und keine komplizierten Eingaben bzw. Ausgaben besitzt.
+Beispielsweise wird dieser Mock in der Klasse `SimpleAgentFactoryTest` genutzt, um die `SimpleAgentFactory` zu testen.
+Für die Funktionalität ist zunächst kein konkretes Environment erforderlich, allerdings sollte es, auch im Zuge späterer Erweiterungen auch nicht
+NULL sein.
+
+#### Mock 2:
+
+![Mock Observer](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/mockObserver.puml)
+
+Ein weiteres gemocktes Interface ist `SzenarioExecutionObserver` welches in der Klasse `ExecutionServiceTest` dazu genutzt wird genau zu überprüfen,
+wie oft die verschiedenen Methoden aufgerufen werden.
+Beispielsweise sollte die Methoden `onSzenarioStart` und `onSzenarioEnd`, per Definition, nur einmal aufgerufen werden.
+Genauso verhält es sich mit den Methoden `preSzenarioStep` und `postSzenarioStep`, die so oft wie die Anzahl der Szenarioschritte aufgerufen werden sollten. 
+Mockito bietet dafür die Methoden `verify()` und `times()` an, mit denen sich die genaue Anzahl der Aufrufe ermitteln lässt, wie unten am Codebeispiel zu erkennen ist.
+
+```java
+ @Test
+void startSzenarioShouldCallAllObserverMethods() throws StartSzenarioException {
+    executionService.startTraining(
+            "best-agent",
+            "best-environment",
+            "",
+            10,
+            0,
+            Optional.of(observer));
+
+    verify(observer, times(1)).onSzenarioStart(any());
+    verify(observer, times(1)).onSzenarioEnd(any(), anyDouble());
+    verify(observer, times(10)).preSzenarioStep(any(), anyLong(), anyDouble());
+    verify(observer, times(10)).postSzenarioStep(any(), anyLong(), anyDouble());
+    verify(observer, times(1)).onActionStorePersisted(any());
+}
+```
 
 # ​Kapitel 6: Domain Driven Design
 
@@ -293,11 +431,11 @@ _[UML, Beschreibung und Begründung des Einsatzes einer Entity; falls keine Enti
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Value Objects; falls kein Value Object vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
-Ein häufig eingesetztes Value Object sind Objekte der Klasse `ConfigItem`.
-Das ConfigItem repräsentiert ein einfaches, identitätsloses Key-Value Paar in der Config.
-Ist read-Only. Sollte eine Änderung über die Repository geschehen, so wird ein neues erstellt.
+Ein häufig eingesetztes Value Object sind Objekte der Klasse `RLSettings`.
+Objekte der Klassen repräsentieren eine einfache, identitätslose Instanz, welche globale Einstellungen zum Reinforcement Learning beinhaltet.
+Jedes Objekt ist Read-Only. Sollte eine Änderung nötig sein, so wird ein neues erstellt.
 
-![Config Value Object](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/valueObjectConfig.puml)
+![Settings Value Object](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/valueObjectRLSettings.puml)
 
 
 ### ​Repositories

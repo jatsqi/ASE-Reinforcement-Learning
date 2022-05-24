@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Environment {
+    +{abstract}boolean executeAction(Action action, int data);
+    +{abstract}int getCurrentState();
+    +{abstract}int getStateSpace();
+    +{abstract}void tick();
+}
+
+@enduml
