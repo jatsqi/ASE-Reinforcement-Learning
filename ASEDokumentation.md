@@ -427,6 +427,18 @@ _[4 Beispiele für die Ubiquitous Language; jeweils Bezeichung, Bedeutung und ku
 
 _[UML, Beschreibung und Begründung des Einsatzes einer Entity; falls keine Entity vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
+Innerhalb dieses Projektes gibt es leider keine Entities im klassischen Sinne, die einen typischen Lifecycle aufweisen.
+Die einzigen Objekte die eine wirkliche "Identität" besitzen und auch über diese Abgerufen bzw. abgespeichert werden können,
+sind die Descriptoren, wie am Beispiel der Klasse `AgentDescriptor` dargestellt.
+Alle Descriptoren beinhalten Metadaten über einen anderen Typ.
+In diesem Fall beschreibt ein `AgentDescriptor`, dass ein bestimmter Agent mit dem Namen `name` existiert und dieser 
+z.B. `actionSpace` Aktionen zur Verfügung hat. Dadurch muss keine konreket Instanz eines Agenten vorliegen, um seine Eigenschaften zu beschreiben.
+Alle Descriptoren sind über einen Namen eindeutig identifizierbar und können über diesen durch die entsprechende Repository
+abgerufen werden.
+Da die Descriptoren über die Laufzeit des Programms nicht gelöscht werden können, exisitieren diese quasi "ewig".
+
+![Agent Descriptor Entity](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/entityAgentDescriptor.puml)
+
 ### ​Value Objects
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Value Objects; falls kein Value Object vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
@@ -442,8 +454,9 @@ Jedes Objekt ist Read-Only. Sollte eine Änderung nötig sein, so wird ein neues
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Repositories; falls kein Repository vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
-Abgeleitete Klasse des Interfaces ConfigRepository sind dafür zuständig, die gespeicherten Einträge der Config zu verwalten.
+Abgeleitete Klasse des Interfaces `ConfigRepository` sind dafür zuständig, die gespeicherten Einträge der Config zu verwalten.
 Die Aufgaben sind sowohl das Einlesen als auch das Modifizieren (Hinzufügen).
+Da für alle Schichten die konkrete Herkunft der Config-Items egal ist, wird dieses unwichtige Detail über das Interface abstrahiert.
 
 ![Config Repo](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/repositoryConfig.puml)
 
@@ -554,7 +567,5 @@ das Szenario übergeben, welche den Observer bei folgenden Ereignissen informier
 * Vor jedem Schritt, der innerhalb des Szenarios ausgeführt wird.
 * Nach jedem Schritt, der innerhalb des Szenarios ausgeführt wird.
 * Nach dem Ende des Szenarios.
-
-Der im UML Diagramm zu sehende Observer ist nicht der, der vom User erstellt wird.
 
 ![Observer Pattern](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/observerPattern.puml)

@@ -1,0 +1,19 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class AgentDescriptor {
+    +String name
+    +String description
+    +Action[] requiredCapabilities
+    +int actionSpace
+}
+
+interface AgentRepository {
+    +{abstract}Collection<AgentDescriptor> getAgentInfos()
+    +{abstract}Optional<AgentDescriptor> getAgentInfo(String name)
+    +{abstract}Agent createAgentInstance(AgentDescriptor descriptor, Environment environment, ActionSource source)
+}
+
+AgentDescriptor <.. AgentRepository
+
+@enduml
