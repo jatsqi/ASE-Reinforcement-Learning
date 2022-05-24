@@ -11,6 +11,7 @@
         <module name="3-ase-reinforcement-learning-adapters" />
         <module name="1-ase-reinforcement-learning-domain" />
         <module name="0-ase-reinforcement-learning-utils" />
+        <module name="ase-rl-report" />
       </profile>
     </annotationProcessing>
   </component>
