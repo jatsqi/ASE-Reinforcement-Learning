@@ -14,7 +14,7 @@ class SzenarioSession {
     -void execWhenPresent(Consumer<SzenarioProgressObserver> consumer)
 }
 
-class ExecutionService {
+class ExecutionServiceImpl {
     - AgentRepository agentRepository
     - PolicyRepository policyRepository
     - EnvironmentRepository environmentRepository
@@ -32,6 +32,6 @@ class ExecutionService {
     - {static} Optional<String> makeStringOptional()
 }
 
-SzenarioSession <.. ExecutionService
+SzenarioSession <.. ExecutionServiceImpl
 
 @enduml
