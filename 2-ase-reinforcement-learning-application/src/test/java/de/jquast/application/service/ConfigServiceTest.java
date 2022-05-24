@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class ConfigServiceTest {
+class ConfigServiceTest {
 
     @Mock
     ConfigRepository repository;
@@ -28,7 +28,7 @@ public class ConfigServiceTest {
     ConfigServiceImpl service;
 
     @BeforeEach
-    public void setupMocks() {
+    void setupMocks() {
         MockitoAnnotations.openMocks(this);
 
         Collection<ConfigItem> items = Arrays.asList(
@@ -48,7 +48,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void getConfigItemWithNameShouldReturnCorrectItem() {
+    void getConfigItemWithNameShouldReturnCorrectItem() {
         Optional<ConfigItem> keyOp = service.getConfigItem(DefaultConfigItem.ALGORITHM_LEARNING_RATE.getKey());
 
         assertTrue(keyOp.isPresent());
@@ -59,21 +59,21 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void getConfigItemShouldReturnEmptyWithInvalidKey() {
+    void getConfigItemShouldReturnEmptyWithInvalidKey() {
         Optional<ConfigItem> keyOp = service.getConfigItem("this is invalid");
 
         assertTrue(keyOp.isEmpty());
     }
 
     @Test
-    public void setConfigItemShouldReturnFalseWithInvalidItem() {
+    void setConfigItemShouldReturnFalseWithInvalidItem() {
         Optional<ConfigItem> keyOp = service.getConfigItem("this is invalid");
 
         assertTrue(keyOp.isEmpty());
     }
 
     @Test
-    public void getConfigItemShouldReturnTrueWithValidItemRegardlessOfCasing() {
+    void getConfigItemShouldReturnTrueWithValidItemRegardlessOfCasing() {
         String key = DefaultConfigItem.ALGORITHM_LEARNING_RATE.getKey();
 
         assertTrue(service.getConfigItem(key).isPresent());
@@ -82,7 +82,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void setConfigItemShouldReturnTrueWithValidItem() {
+    void setConfigItemShouldReturnTrueWithValidItem() {
         Optional<ConfigItem> item = service.setConfigItem(
                 DefaultConfigItem.ALGORITHM_LEARNING_RATE.getKey(),
                 DefaultConfigItem.ALGORITHM_LEARNING_RATE.getDefaultValue());
@@ -91,7 +91,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void getConfigItemsShouldReturnCorrectItems() {
+    void getConfigItemsShouldReturnCorrectItems() {
         assertEquals(
                 service.getConfigItems(),
                 Arrays.asList(
@@ -103,7 +103,7 @@ public class ConfigServiceTest {
     }
 
     @Test
-    public void getAvailableConfigKeysShouldReturnAllEnumKeys() {
+    void getAvailableConfigKeysShouldReturnAllEnumKeys() {
         String[] keys = service.getAvailableConfigKeys().toArray(new String[0]);
         assertEquals(DefaultConfigItem.values().length, keys.length);
 

@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ActionValueStoreTest {
+class ActionValueStoreTest {
 
     private ActionValueStore store;
 
     @BeforeEach
-    public void prepareStore() {
+    void prepareStore() {
         double[][] valueStore = new double[][] {
                 { 1.0, 0.0 },
                 { 0.0, 1.0 },
@@ -22,7 +22,7 @@ public class ActionValueStoreTest {
     }
 
     @Test
-    public void actionValueStoreIntsConstructorShouldInitValuesCorrectly() {
+    void actionValueStoreIntsConstructorShouldInitValuesCorrectly() {
         ActionValueStore store = new ActionValueStore(3, 2);
 
         assertEquals(2, store.getActionCount());
@@ -30,13 +30,13 @@ public class ActionValueStoreTest {
     }
 
     @Test
-    public void actionValueStoreArrayConstructorShouldInitValuesCorrectly() {
+    void actionValueStoreArrayConstructorShouldInitValuesCorrectly() {
         assertEquals(2, store.getActionCount());
         assertEquals(3, store.getStateCount());
     }
     
     @Test
-    public void getActionValuesShouldReturnCorrectStateArray() {
+    void getActionValuesShouldReturnCorrectStateArray() {
         assertArrayEquals(new double[] {
                 1.0, 0.0
         }, store.getActionValues(0));
@@ -51,13 +51,13 @@ public class ActionValueStoreTest {
     }
 
     @Test
-    public void getActionValueShouldReturnCorrectValue() {
+    void getActionValueShouldReturnCorrectValue() {
         assertEquals(1.0, store.getActionValue(0, 0));
         assertEquals(0.0, store.getActionValue(0, 1));
     }
 
     @Test
-    public void setActionValueShouldSetCorrectValues() {
+    void setActionValueShouldSetCorrectValues() {
         store.setActionValue(0, 0, 5.0);
 
         assertEquals(5.0, store.getActionValue(0, 0));
@@ -65,7 +65,7 @@ public class ActionValueStoreTest {
     }
 
     @Test
-    public void resetShouldSetAllValuesToZero() {
+    void resetShouldSetAllValuesToZero() {
         store.reset();
 
         for (int i = 0; i < store.getStateCount(); i++) {
@@ -76,7 +76,7 @@ public class ActionValueStoreTest {
     }
 
     @Test
-    public void getMaxActionValueShouldReturnMaximumEntryOfState() {
+    void getMaxActionValueShouldReturnMaximumEntryOfState() {
         checkMaxValue(0, 0, 1.0);
         checkMaxValue(1, 1, 1.0);
         checkMaxValue(2, 0, 0.0);

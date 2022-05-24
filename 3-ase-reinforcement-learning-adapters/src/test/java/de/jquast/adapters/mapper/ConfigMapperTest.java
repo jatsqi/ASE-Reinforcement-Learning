@@ -19,17 +19,17 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConfigMapperTest {
+class ConfigMapperTest {
 
     private ConfigMapper mapper;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         mapper = new ConfigMapper();
     }
 
     @Test
-    public void dtoAttributesShouldHaveSameValue() {
+    void dtoAttributesShouldHaveSameValue() {
         ConfigItem item = new ConfigItem("key_nice", "value_best");
         Optional<ConfigItemDto> dtoOp = mapper.toDto(Optional.of(item));
         assertTrue(dtoOp.isPresent());
@@ -40,7 +40,7 @@ public class ConfigMapperTest {
     }
 
     @Test
-    public void rlSettingsShouldHaveSameValues() {
+    void rlSettingsShouldHaveSameValues() {
         RLSettings settings = new RLSettings(
                 1.0, 2.0, 3.0, 4.0
         );
@@ -53,7 +53,7 @@ public class ConfigMapperTest {
     }
 
     @Test
-    public void mappedDomainObjectShouldHaveSameValues() {
+    void mappedDomainObjectShouldHaveSameValues() {
         ConfigItemDto itemDto = new ConfigItemDto("key_nice", "value_best");
         ConfigItem item = mapper.fromDto(itemDto);
 
@@ -62,7 +62,7 @@ public class ConfigMapperTest {
     }
 
     @Test
-    public void emptyOptionalShouldReturnEmptyDtoOptional() {
+    void emptyOptionalShouldReturnEmptyDtoOptional() {
         assertTrue(mapper.toDto(Optional.empty()).isEmpty());
     }
 

@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MovingAgent2DTest {
+class MovingAgent2DTest {
 
     private MovingAgent2D movingAgent;
 
@@ -24,7 +24,7 @@ public class MovingAgent2DTest {
     private ActionSource source;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         MockitoAnnotations.openMocks(this);
 
         movingAgent = new MovingAgent2D(environment, source, new RLSettings(
@@ -33,7 +33,7 @@ public class MovingAgent2DTest {
     }
 
     @Test
-    public void transformActionShouldReturnCorrectMapping() {
+    void transformActionShouldReturnCorrectMapping() {
         assertEquals(new Agent.ActionDataPair(
                 Action.DO_NOTHING, 1
         ), movingAgent.transformAction(0));

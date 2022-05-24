@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ActionMapperTest {
+class ActionMapperTest {
 
     @Test
-    public void dtoAttributesShouldHaveSameValue() {
+    void dtoAttributesShouldHaveSameValue() {
         ActionMapper mapper = new ActionMapper();
 
         for (Action action : Action.values()) {

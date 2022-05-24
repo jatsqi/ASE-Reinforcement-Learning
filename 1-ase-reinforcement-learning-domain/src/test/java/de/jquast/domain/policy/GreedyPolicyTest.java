@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GreedyPolicyTest {
+class GreedyPolicyTest {
 
     private GreedyPolicy policy;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         ActionValueStore store = new ActionValueStore(
                 new double[][]{
                         { 0.0, 1.0, 2.0 },
@@ -29,14 +29,14 @@ public class GreedyPolicyTest {
     }
 
     @Test
-    public void policyShouldAlwaysSelectBestAction() {
+    void policyShouldAlwaysSelectBestAction() {
         assertEquals(2, policy.selectAction(0));
         assertEquals(1, policy.selectAction(1));
         assertEquals(0, policy.selectAction(2));
     }
 
     @Test
-    public void emptyGreedyPolicyShouldAlwaysSelectFirstAction() {
+    void emptyGreedyPolicyShouldAlwaysSelectFirstAction() {
         EpsilonGreedyPolicy emptyPolicy = new GreedyPolicy(3, 3, new RLSettings(
                 0.0, 0.0, 100, 0.0
         ));

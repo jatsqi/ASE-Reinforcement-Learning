@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class AgentTest {
+class AgentTest {
 
     @Mock
     private Environment environment;
@@ -27,7 +27,7 @@ public class AgentTest {
     private FakeAgent agent;
 
     @BeforeEach
-    public void prepareMocks() {
+    void prepareMocks() {
         settings = new RLSettings(
                 0.0, 0.0, 0.0, 1.0
         );
@@ -48,7 +48,7 @@ public class AgentTest {
     }
 
     @Test
-    public void getCurrentStateShouldBeCalledThreeTimes() {
+    void getCurrentStateShouldBeCalledThreeTimes() {
         agent.executeNextAction();
 
         // first call for state cache
@@ -58,21 +58,21 @@ public class AgentTest {
     }
 
     @Test
-    public void getCurrentAverageRewardShouldReturnOneIfStepSizeAndRewardIsOne() {
+    void getCurrentAverageRewardShouldReturnOneIfStepSizeAndRewardIsOne() {
         agent.executeNextAction();
 
         assertEquals(1.0, agent.getCurrentAverageReward());
     }
 
     @Test
-    public void actionShouldBeTransformedExactlyOnce() {
+    void actionShouldBeTransformedExactlyOnce() {
         agent.executeNextAction();
 
         verify(agent, times(1)).collectActionFromSource();
     }
 
     @Test
-    public void actionShouldBeExecutedExactlyOnce() {
+    void actionShouldBeExecutedExactlyOnce() {
         agent.executeNextAction();
 
         verify(environment, times(1)).executeAction(any(), anyInt());
@@ -80,7 +80,7 @@ public class AgentTest {
     }
 
     @Test
-    public void sourceShouldBeCriticisedExactlyOnce() {
+    void sourceShouldBeCriticisedExactlyOnce() {
         agent.executeNextAction();
 
         verify(source, times(1)).criticiseAction(anyInt(), anyInt(), anyInt(), anyDouble());

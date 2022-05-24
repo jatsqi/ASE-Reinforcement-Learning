@@ -17,17 +17,17 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AgentMapperTest {
+class AgentMapperTest {
 
     private AgentMapper mapper;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         mapper = new AgentMapper();
     }
 
     @Test
-    public void dtoAttributesShouldHaveSameValue() {
+    void dtoAttributesShouldHaveSameValue() {
         AgentDescriptor descriptor = new AgentDescriptor(
                 "my cool agent",
                 "this is a cool agent",
@@ -49,7 +49,7 @@ public class AgentMapperTest {
     }
 
     @Test
-    public void emptyOptionalShouldReturnEmptyDtoOptional() {
+    void emptyOptionalShouldReturnEmptyDtoOptional() {
         assertTrue(mapper.toDto(Optional.empty()).isEmpty());
     }
 

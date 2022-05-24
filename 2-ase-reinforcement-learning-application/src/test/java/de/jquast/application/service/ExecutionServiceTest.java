@@ -32,7 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class ExecutionServiceTest {
+class ExecutionServiceTest {
 
     private ExecutionServiceImpl executionService;
 
@@ -65,7 +65,7 @@ public class ExecutionServiceTest {
     private RLAlgorithmDescriptor algorithmDescriptor;
 
     @BeforeEach
-    public void prepare() throws AgentCreationException, PolicyCreationException, EnvironmentCreationException, AlgorithmCreationException, VisualizerCreationException {
+    void prepare() throws AgentCreationException, PolicyCreationException, EnvironmentCreationException, AlgorithmCreationException, VisualizerCreationException {
         agentDescriptor = new AgentDescriptor(
                 "best-agent", "cool agent",
                 new Action[]{ Action.DO_NOTHING }, 10
@@ -149,7 +149,7 @@ public class ExecutionServiceTest {
     }
 
     @Test
-    public void startSzenarioWithUnknownDescriptorsShouldThrow() throws StartSzenarioException {
+    void startSzenarioWithUnknownDescriptorsShouldThrow() throws StartSzenarioException {
         Exception e = assertThrows(StartSzenarioException.class, () -> executionService.startTraining(
                 "???????",
                 "best-environment",
@@ -172,7 +172,7 @@ public class ExecutionServiceTest {
     }
 
     @Test
-    public void startSzenarioShouldThrowOnInvalidActionValueStore() throws StartSzenarioException {
+    void startSzenarioShouldThrowOnInvalidActionValueStore() throws StartSzenarioException {
         Exception e = assertThrows(StartSzenarioException.class, () -> executionService.startTraining(
                 "best-agent",
                 "best-environment",
@@ -186,7 +186,7 @@ public class ExecutionServiceTest {
     }
 
     @Test
-    public void startSzenarioShouldThrowOnUnknownActionValueStore() {
+    void startSzenarioShouldThrowOnUnknownActionValueStore() {
         Exception e = assertThrows(StartSzenarioException.class, () -> executionService.startTraining(
                 "best-agent",
                 "best-environment",
@@ -200,7 +200,7 @@ public class ExecutionServiceTest {
     }
 
     @Test
-    public void startSzenarioShouldCallAllObserverMethods() throws StartSzenarioException {
+    void startSzenarioShouldCallAllObserverMethods() throws StartSzenarioException {
         executionService.startTraining(
                 "best-agent",
                 "best-environment",
@@ -217,7 +217,7 @@ public class ExecutionServiceTest {
     }
 
     @Test
-    public void startEvaluationShouldNotCallPersistStore() throws StartSzenarioException {
+    void startEvaluationShouldNotCallPersistStore() throws StartSzenarioException {
         executionService.startEvaluation(
                 "best-agent",
                 "best-environment",
@@ -234,7 +234,7 @@ public class ExecutionServiceTest {
     }
 
     @Test
-    public void startEvaluationShouldThrowOnNegativeStoreId() {
+    void startEvaluationShouldThrowOnNegativeStoreId() {
         Exception e = assertThrows(StartSzenarioException.class, () -> executionService.startEvaluation(
                 "best-agent",
                 "best-environment",

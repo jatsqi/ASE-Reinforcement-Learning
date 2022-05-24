@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FlatMovingPullAgentTest {
+class FlatMovingPullAgentTest {
 
     private FlatMovingPullAgent pullAgent;
 
@@ -23,7 +23,7 @@ public class FlatMovingPullAgentTest {
     private ActionSource source;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         MockitoAnnotations.openMocks(this);
 
         pullAgent = new FlatMovingPullAgent(environment, source, new RLSettings(
@@ -32,7 +32,7 @@ public class FlatMovingPullAgentTest {
     }
 
     @Test
-    public void transformActionShouldReturnCorrectMapping() {
+    void transformActionShouldReturnCorrectMapping() {
         assertEquals(new Agent.ActionDataPair(
                 Action.DO_NOTHING, 1
         ), pullAgent.transformAction(0));

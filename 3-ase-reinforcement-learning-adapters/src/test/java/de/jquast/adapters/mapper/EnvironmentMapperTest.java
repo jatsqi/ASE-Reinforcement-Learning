@@ -12,17 +12,17 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EnvironmentMapperTest {
+class EnvironmentMapperTest {
 
     private EnvironmentMapper mapper;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         mapper = new EnvironmentMapper();
     }
 
     @Test
-    public void dtoAttributesShouldHaveSameValue() {
+    void dtoAttributesShouldHaveSameValue() {
         EnvironmentDescriptor descriptor = new EnvironmentDescriptor(
                 "my cool environment",
                 "this is a cool environment",
@@ -42,7 +42,7 @@ public class EnvironmentMapperTest {
     }
 
     @Test
-    public void emptyOptionalShouldReturnEmptyDtoOptional() {
+    void emptyOptionalShouldReturnEmptyDtoOptional() {
         assertTrue(mapper.toDto(Optional.empty()).isEmpty());
     }
 

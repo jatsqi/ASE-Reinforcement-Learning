@@ -8,14 +8,14 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GridWorldEnvironmentTest {
+class GridWorldEnvironmentTest {
 
     private GridWorldEnvironment environment;
     private int[][] grid;
 
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         grid = new int[2][3];
         grid[0][0] = GridWorldEnvironment.STATE_TERMINAL;
         grid[1][0] = GridWorldEnvironment.STATE_SPAWN;
@@ -28,7 +28,7 @@ public class GridWorldEnvironmentTest {
     }
 
     @Test
-    public void constructorShouldDetermineCorrectAttributes() {
+    void constructorShouldDetermineCorrectAttributes() {
         // Spawn Pos
         assertEquals(1, environment.getCurrentState());
 
@@ -39,7 +39,7 @@ public class GridWorldEnvironmentTest {
     }
 
     @Test
-    public void actionsShouldMoveAgent() {
+    void actionsShouldMoveAgent() {
         environment.executeAction(Action.MOVE_X_DOWN, 1);
         assertEquals(0, environment.getCurrentState());
 
@@ -57,7 +57,7 @@ public class GridWorldEnvironmentTest {
     }
 
     @Test
-    public void negativeRewardShouldBeCorrectOnFields() {
+    void negativeRewardShouldBeCorrectOnFields() {
         assertEquals(-0.01, environment.getReward());
 
         environment.executeAction(Action.MOVE_Y_UP, 1);
@@ -65,13 +65,13 @@ public class GridWorldEnvironmentTest {
     }
 
     @Test
-    public void positiveRewardShouldBeCorrectOnTerminalField() {
+    void positiveRewardShouldBeCorrectOnTerminalField() {
         environment.executeAction(Action.MOVE_X_DOWN, 1);
         assertEquals(5.0, environment.getReward());
     }
 
     @Test
-    public void positionShouldResetOnTerminalOrBombState() {
+    void positionShouldResetOnTerminalOrBombState() {
         environment.executeAction(Action.MOVE_X_DOWN, 1);
         assertEquals(0, environment.getCurrentState());
         environment.tick();
@@ -84,7 +84,7 @@ public class GridWorldEnvironmentTest {
     }
 
     @Test
-    public void environmentShouldNotBeAbleToMoveToForbiddenState() {
+    void environmentShouldNotBeAbleToMoveToForbiddenState() {
         environment.executeAction(Action.MOVE_X_DOWN, 1);
         environment.executeAction(Action.MOVE_Y_UP, 1);
         assertEquals(2, environment.getCurrentState());
@@ -94,7 +94,7 @@ public class GridWorldEnvironmentTest {
     }
 
     @Test
-    public void environmentShouldNotBeAbleToMoveOutOfGrid() {
+    void environmentShouldNotBeAbleToMoveOutOfGrid() {
         environment.executeAction(Action.MOVE_X_UP, 1);
         assertEquals(1, environment.getCurrentState());
 

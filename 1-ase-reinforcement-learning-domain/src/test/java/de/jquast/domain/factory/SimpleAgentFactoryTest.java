@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SimpleAgentFactoryTest {
+class SimpleAgentFactoryTest {
 
     private SimpleAgentFactory factory;
     private RLSettings settings;
@@ -27,7 +27,7 @@ public class SimpleAgentFactoryTest {
     private ActionSource source;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         factory = new SimpleAgentFactory();
         settings = new RLSettings(
                 0.0, 0.0, 0.0, 0.0
@@ -37,7 +37,7 @@ public class SimpleAgentFactoryTest {
     }
 
     @Test
-    public void createPullAgentShouldReturnValidAgent() {
+    void createPullAgentShouldReturnValidAgent() {
         AgentDescriptor pull = new AgentDescriptor(
                 "pull",
                 "",
@@ -50,7 +50,7 @@ public class SimpleAgentFactoryTest {
     }
 
     @Test
-    public void create2DMovingAgentShouldReturnValidAgent() {
+    void create2DMovingAgentShouldReturnValidAgent() {
         AgentDescriptor pull = new AgentDescriptor(
                 "2d-moving-agent",
                 "",
@@ -63,7 +63,7 @@ public class SimpleAgentFactoryTest {
     }
 
     @Test
-    public void createUnknownAgentShouldReturnEmptyOptional() {
+    void createUnknownAgentShouldReturnEmptyOptional() {
         AgentDescriptor pull = new AgentDescriptor(
                 "unknown??????",
                 "",

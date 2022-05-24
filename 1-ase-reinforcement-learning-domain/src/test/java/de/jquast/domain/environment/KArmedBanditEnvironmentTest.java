@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class KArmedBanditEnvironmentTest {
+class KArmedBanditEnvironmentTest {
 
     private KArmedBanditEnvironment environment;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         environment = new KArmedBanditEnvironment(10);
     }
 
@@ -21,54 +21,54 @@ public class KArmedBanditEnvironmentTest {
      * KArmedBanditEnvironment beruht.
      */
     @Test
-    public void allPrecomputedValuesShouldBeBetween1AndMinus1() {
+    void allPrecomputedValuesShouldBeBetween1AndMinus1() {
         for (double r : environment.getPrecomputedBanditRewards()) {
             assertTrue(r <= 1 && r >= -1);
         }
     }
 
     @Test
-    public void stateSpaceShouldMatchBanditCountTimesTwo() {
+    void stateSpaceShouldMatchBanditCountTimesTwo() {
         assertEquals(20, environment.getStateSpace());
     }
 
     @Test
-    public void initialStateShouldAlwaysBeZero() {
+    void initialStateShouldAlwaysBeZero() {
         assertEquals(0, environment.getCurrentState());
     }
 
     @Test
-    public void banditCountShouldBeTen() {
+    void banditCountShouldBeTen() {
         assertEquals(10, environment.getBanditCount());
     }
 
     @Test
-    public void environmentShouldTransitionToNextStateOnMoveAction() {
+    void environmentShouldTransitionToNextStateOnMoveAction() {
         executeActionAndCheckState(Action.MOVE_X_UP, 1);
         executeActionAndCheckState(Action.MOVE_X_UP, 2);
         executeActionAndCheckState(Action.MOVE_X_DOWN, 1);
     }
 
     @Test
-    public void pullActionShouldTransitionEnvironmentToStateBeyondBanditCount() {
+    void pullActionShouldTransitionEnvironmentToStateBeyondBanditCount() {
         executeActionAndCheckState(Action.PULL, 10);
     }
 
     @Test
-    public void environmentTickInTerminalStateShouldResetStateToBanditNumber() {
+    void environmentTickInTerminalStateShouldResetStateToBanditNumber() {
         executeActionAndCheckState(Action.PULL, 10);
         environment.tick();
         assertEquals(0, environment.getCurrentState());
     }
 
     @Test
-    public void unsupportedActionShouldNotChangeState() {
+    void unsupportedActionShouldNotChangeState() {
         environment.executeAction(Action.MOVE_Z_DOWN, 1);
         assertEquals(0, environment.getCurrentState());
     }
 
     @Test
-    public void environmentMoveActionShouldNotLeaveBoundary() {
+    void environmentMoveActionShouldNotLeaveBoundary() {
         executeActionAndCheckState(Action.MOVE_X_DOWN, 0);
         executeActionAndCheckState(Action.MOVE_X_UP, 1);
         executeActionAndCheckState(Action.MOVE_X_DOWN, 0);
@@ -76,7 +76,7 @@ public class KArmedBanditEnvironmentTest {
     }
 
     @Test
-    public void getRewardShouldMatchPrecomputedArray() {
+    void getRewardShouldMatchPrecomputedArray() {
         int moveNTimesRight = environment.getStateSpace() / 2 - 1;
 
         for (int i = 0; i < moveNTimesRight; i++) {
@@ -89,7 +89,7 @@ public class KArmedBanditEnvironmentTest {
     }
 
     @Test
-    public void allNonTerminalStatesShouldHaveRewardOfZero() {
+    void allNonTerminalStatesShouldHaveRewardOfZero() {
         int moveNTimesRight = environment.getStateSpace() / 2 - 1;
         for (int i = 0; i < moveNTimesRight; i++) {
             environment.executeAction(Action.MOVE_X_UP, 1);
