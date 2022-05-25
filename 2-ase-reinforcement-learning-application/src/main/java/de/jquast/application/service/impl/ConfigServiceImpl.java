@@ -71,7 +71,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     private double getDoubleConfigItem(DefaultConfigItem item) {
         return Double.parseDouble(
-                configRepository.getConfigItem(item.getKey())
+                getConfigItem(item.getKey())
                         .orElse(new ConfigItem("", "0.0"))
                         .value());
     }

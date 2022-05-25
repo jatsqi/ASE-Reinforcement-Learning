@@ -2,6 +2,7 @@ package de.jquast.application.service;
 
 import de.jquast.application.config.DefaultConfigItem;
 import de.jquast.application.service.impl.ConfigServiceImpl;
+import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.config.ConfigItem;
 import de.jquast.domain.config.ConfigRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -110,6 +111,24 @@ class ConfigServiceTest {
         for (int i = 0; i < DefaultConfigItem.values().length; ++i) {
             assertEquals(DefaultConfigItem.values()[i].getKey(), keys[i]);
         }
+    }
+
+    @Test
+    void getRLSettingsShouldConvertValues() {
+        RLSettings settings = service.getRLSettings();
+
+        assertEquals(
+                Double.parseDouble(DefaultConfigItem.ALGORITHM_LEARNING_RATE.getDefaultValue()),
+                settings.learningRate());
+        assertEquals(
+                Double.parseDouble(DefaultConfigItem.ALGORITHM_EXPLORATION_RATE.getDefaultValue()),
+                settings.explorationRate());
+        assertEquals(
+                Double.parseDouble(DefaultConfigItem.ALGORITHM_DISCOUNT_FACTOR.getDefaultValue()),
+                settings.discountFactor());
+        assertEquals(
+                Double.parseDouble(DefaultConfigItem.AGENT_REWARD_UPDATE_STEP_SIZE.getDefaultValue()),
+                settings.agentRewardStepSize());
     }
 
 }
