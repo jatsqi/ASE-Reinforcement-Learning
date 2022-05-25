@@ -15,7 +15,7 @@ public class EnvironmentMapper {
         return new EnvironmentDescriptorDto(
                 descriptor.name(),
                 descriptor.description(),
-                Arrays.stream(descriptor.supportedCapabilities()).map(MAPPER::toDto).toList().toArray(new ActionDto[0])
+                Arrays.stream(descriptor.requiredCapabilities()).map(MAPPER::toDto).toList().toArray(new ActionDto[0])
         );
     }
 

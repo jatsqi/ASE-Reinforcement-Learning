@@ -7,7 +7,7 @@ import java.util.Objects;
 public record AgentDescriptor(
         String name,
         String description,
-        Action[] requiredCapabilities,
+        Action[] availableCapabilities,
         int actionSpace) {
 
     @Override

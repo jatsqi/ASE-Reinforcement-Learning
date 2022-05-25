@@ -15,7 +15,7 @@ public class AgentMapper {
         return new AgentDescriptorDto(
                 descriptor.name(),
                 descriptor.description(),
-                Arrays.stream(descriptor.requiredCapabilities()).map(MAPPER::toDto).toList().toArray(new ActionDto[0]),
+                Arrays.stream(descriptor.availableCapabilities()).map(MAPPER::toDto).toList().toArray(new ActionDto[0]),
                 descriptor.actionSpace()
         );
     }

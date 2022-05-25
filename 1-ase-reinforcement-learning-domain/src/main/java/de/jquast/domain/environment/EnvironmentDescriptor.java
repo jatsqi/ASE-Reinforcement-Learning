@@ -7,7 +7,8 @@ import java.util.Objects;
 public record EnvironmentDescriptor(
         String name,
         String description,
-        Action[] supportedCapabilities) {
+        // Was ist erforderlich, um das Environment sinnvoll(!) nutzen zu können.
+        Action[] requiredCapabilities) {
 
     @Override
     public String toString() {
