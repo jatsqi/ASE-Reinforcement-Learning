@@ -66,7 +66,7 @@ class ExecutionServiceTest {
     private RLAlgorithmDescriptor algorithmDescriptor;
 
     @BeforeEach
-    void prepare() throws AgentCreationException, PolicyCreationException, EnvironmentCreationException, AlgorithmCreationException, VisualizerCreationException {
+    void prepare() throws AgentCreationException, PolicyCreationException, EnvironmentCreationException, AlgorithmCreationException, VisualizerCreationException, PersistStoreException {
         MockitoAnnotations.openMocks(this);
 
         settings = new RLSettings(
@@ -139,7 +139,7 @@ class ExecutionServiceTest {
         );
     }
 
-    private void setupActionValueRepository() throws AlgorithmCreationException {
+    private void setupActionValueRepository() throws AlgorithmCreationException, PersistStoreException {
         PersistedStoreInfo bestInfo = new PersistedStoreInfo(0, "best-agent", "best-environment");
         when(actionValueRepository.persistActionValueStore(
                 eq("best-environment"),
@@ -231,7 +231,7 @@ class ExecutionServiceTest {
     }
 
     @Test
-    void startEvaluationShouldNotCallPersistStore() throws StartSzenarioException {
+    void startEvaluationShouldNotCallPersistStore() throws StartSzenarioException, PersistStoreException {
         executionService.startEvaluation(
                 "best-agent",
                 "best-environment",

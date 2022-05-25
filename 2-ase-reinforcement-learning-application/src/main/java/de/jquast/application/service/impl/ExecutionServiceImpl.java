@@ -17,6 +17,7 @@ import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentRepository;
+import de.jquast.domain.exception.PersistStoreException;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyDescriptor;
 import de.jquast.domain.policy.PolicyRepository;
@@ -214,7 +215,7 @@ public class ExecutionServiceImpl implements ExecutionService {
         return new ActionValueStore(stateSpace, actionSpace);
     }
 
-    private PersistedStoreInfo storeTrainedPolicy(String agent, String environment, Policy policy) {
+    private PersistedStoreInfo storeTrainedPolicy(String agent, String environment, Policy policy) throws PersistStoreException {
         return actionValueRepository.persistActionValueStore(agent, environment, policy.getActionValueStore());
     }
 
@@ -225,10 +226,16 @@ public class ExecutionServiceImpl implements ExecutionService {
                 progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.onSzenarioEnd(session, averageReward));
 
                 DescriptorBundle bundle = session.getSzenario().metadata();
-                PersistedStoreInfo info = storeTrainedPolicy(
-                        bundle.agentDescriptor().name(),
-                        bundle.environmentDescriptor().name(),
-                        session.getSzenario().policy());
+                PersistedStoreInfo info = null;
+                try {
+                    info = storeTrainedPolicy(
+                            bundle.agentDescriptor().name(),
+                            bundle.environmentDescriptor().name(),
+                            session.getSzenario().policy());
+                } catch (PersistStoreException e) {
+                    e.printStackTrace();
+                    // TODO: Exception Handling
+                }
 
                 onActionStorePersisted(info);
             }

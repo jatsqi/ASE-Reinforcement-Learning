@@ -2,6 +2,7 @@ package de.jquast.plugin.repository;
 
 import de.jquast.application.service.AgentService;
 import de.jquast.application.service.EnvironmentService;
+import de.jquast.domain.exception.PersistStoreException;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.domain.shared.PersistedStoreInfo;
@@ -31,6 +32,15 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     public FileSystemActionValueRepository(AgentService agentService, EnvironmentService environmentService) {
         this.agentService = agentService;
         this.environmentService = environmentService;
+
+        try {
+            if (!Files.exists(Path.of(STORAGE_FOLDER_PATH))) {
+                Files.createDirectory(Path.of(STORAGE_FOLDER_PATH));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // TODO: Exception Handling
+        }
     }
 
     private static String infoToFileName(PersistedStoreInfo info) {
@@ -63,8 +73,13 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     }
 
     @Override
-    public PersistedStoreInfo persistActionValueStore(String agentName, String envName, ActionValueStore store) {
-        int id = findNextId(agentName, envName);
+    public PersistedStoreInfo persistActionValueStore(String agentName, String envName, ActionValueStore store) throws PersistStoreException {
+        int id = 0;
+        try {
+            id = findNextId(agentName, envName);
+        } catch (IOException e) {
+            throw new PersistStoreException("Es gab einen Fehler beim Lesen des Ordners der Value Stores!");
+        }
         PersistedStoreInfo info = new PersistedStoreInfo(id, agentName, envName);
 
         try (BufferedWriter writer = Files.newBufferedWriter(Path.of(STORAGE_FOLDER_PATH, infoToFileName(info)), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -76,7 +91,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new PersistStoreException("Es gab einen Fehler beim Öffnen der Datei zum Schreiben des Stores!");
         }
 
         return info;
@@ -96,7 +111,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
                     valueInfo.put(info.get().id(), info.get());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            // Fehler vorerst ignorieren, da in diesem Fall ein Problem mit dem Ordner selber besteht
         }
     }
 
@@ -142,7 +157,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         );
     }
 
-    private Optional<PersistedStoreInfo> fileNameToInfo(String fileName) {
+    private static Optional<PersistedStoreInfo> fileNameToInfo(String fileName) {
         String[] parts = fileName.split("\\.")[0].split("_");
         if (parts.length != 3)
             return Optional.empty();
@@ -150,14 +165,29 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         return Optional.of(new PersistedStoreInfo(Integer.parseInt(parts[0]), parts[1], parts[2]));
     }
 
-    private int findNextId(String agentName, String envName) {
-        for (int i = 0; i < Integer.MAX_VALUE; ++i) {
-            if (!Files.exists(Path.of(STORAGE_FOLDER_PATH, infoToFileName(i, agentName, envName)))) {
-                return i;
+    private int findNextId(String agentName, String envName) throws IOException {
+        int currentMaxId = 0;
+
+        try (Stream<Path> foundFiles = Files.walk(Path.of(STORAGE_FOLDER_PATH))) {
+            List<Path> storeFiles = foundFiles
+                    .filter(p -> p.toString().endsWith(STORAGE_FILE_EXTENSION)).toList();
+
+            for (Path f : storeFiles) {
+                String[] parts = f.getFileName().toString().split("_");
+
+                int id;
+                try {
+                    id = Integer.parseInt(parts[0]);
+                } catch (NumberFormatException ex) {
+                    continue;
+                }
+
+                if (currentMaxId < id)
+                    currentMaxId = id;
             }
         }
 
-        throw new RuntimeException("This should never happen....");
+        return currentMaxId + 1;
     }
 
     private record StoreCSVEntry(int state, int action, double value) {
