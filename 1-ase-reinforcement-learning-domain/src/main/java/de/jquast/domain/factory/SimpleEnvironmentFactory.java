@@ -40,14 +40,14 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
     private GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
         if (!parameters.containsKey("from")) {
             if (!parameters.containsKey("height") || !parameters.containsKey("width"))
-                throw new RuntimeException("");
+                throw new EnvironmentCreationException("Höhe bzw. Breite oder ein Dateiname sind für die Erstellung erforderlich!", "grid-world");
 
             try {
                 Integer height = Integer.parseInt(parameters.get("height"));
                 Integer width = Integer.parseInt(parameters.get("width"));
 
                 return new GridWorldEnvironment(height, width);
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 throw new EnvironmentCreationException("Höhe oder Breite konnten nicht gelesen werden!", "grid-world");
             }
         }
@@ -62,8 +62,11 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
         }
     }
 
-    private int[][] parseGridWorldFile(Path fromPath) throws IOException {
+    private int[][] parseGridWorldFile(Path fromPath) throws IOException, EnvironmentCreationException {
         List<String> lines = Files.readAllLines(fromPath);
+        if (lines.size() <= 0)
+            throw new EnvironmentCreationException("Die angegebene Datei ist leer.", "grid-world");
+
         int[][] grid = new int[lines.get(0).length()][lines.size()];
 
         for (int i = 0; i < lines.size(); i++) {
