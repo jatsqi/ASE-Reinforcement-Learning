@@ -32,7 +32,7 @@ public class RunCommand implements Runnable {
     @Option(names = "--environment", description = "Name des Environment.", required = true)
     public String environmentName;
     @Option(names = "--steps", description = "Anzahl der Trainingschritte.", required = true)
-    public int steps;
+    public long steps;
     @Option(names = "--resume", description = "Benutze Values eines vorherigen Trainings", defaultValue = "-1")
     public int resumeFromStoreId;
     @Option(names = "--eval", description = "Schalter, ob der Agent trainiert werden soll, oder ob der übergebene Store nur ausgeführt wird.")
