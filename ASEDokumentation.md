@@ -366,6 +366,21 @@ nicht mehr Platz einnehmen als nötig.
 
 _[Code Coverage im Projekt analysieren und begründen]_
 
+In der Folgenden Analyse der Code-Coverage sind nur die Module des tatsächlichen Reinforcement Learning Projektes
+beinhaltet. Das Utils Modul, welches den CLI parser und die Dependency Injection zur Verfügung
+stellt wurde bewusst davon ausgenommen, da dieses nicht wirklich Logik für das Reinforcement Learning ansich
+bereitstellt und "nur" als Exkurs zum Lernen prgrammiert wurde.
+Dennoch sind selbstverständlich einige Aspekte dieses Moduls getestet, allem voran 
+die zahlreichen Funktionen, die die Reflection durchführen.
+Auch ist der `InjectionContext` selbst mit Tests versehen, um das Mapping der Interfaces auf konkrete Klassen zu testen.
+
+| Modul/Layer | Coverage | Begründung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+|-------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Domain      | ca. 60%  | Die Tests decken alle wichtigen Kernfunktionalitäten ab, d.h. die Implementierten Environments, Algorithmen sowie verschiedenen Policy-Varianten. Kurz: Alles, was Logik beinhaltet und Funktionalität nach außen bereitstellt. Teilweise nicht durch Tests abgedeckt sind die Factories, die die Domain-Objekte erstellen.                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Applikation | ca. 84%  | Die einzigen Services im Applikationslayer, die tatsächlich wichtige Logik beinhalten, sind der `ExecutionService` und der `ConfigService`  bzw. deren Implementierung. Beide Services werden entsprechend soweit wie möglich mit gemockten Dependencies isoliert getestet. Die übrigen Services wie z.B. `AgentService` oder `EnvironmentService` reichen alle Calls momentan 1 zu 1 an die Repository weiter. Sie existieren aus dem Grund, dass wenn die Services später erweitert werden sollen, nicht erst in anderen Klassen auf einen Service gewechselt werden muss.                                                                                                                                                |
+| Adapters    | ca. 60%  | In der Adapter-Schicht werden momentan nur die wichtigsten Klassen getestet, welche im Moment die Mapper sind. Diese mappen ein bestimmtes Domain-Objekt auf den entsprechenden DTO. Zusätzlich wird für die `ExecutionServiceFacade` getestet, ob die `startTraining` bzw. `startEvaluation` Methoden die richtige Methode im gemockten Service aufrufen. Die übrigenden Fassaden sind momentan ungetestet, da diese ausschließlich den entsprechenden Mapper aufrufen und keine testenswerte Logik beinhalten.  |
+| Plugin      | ca. 15%  | Das aktuell am wenigsten getestete Modul ist das Plugin-Modul, welches das CLI beinhaltet. Auch hier wird im Moment nur für den `RunCommand` getestet, ob je nach Parameter die richtige Methode in der `ExecutionServiceFacade` aufgerufen wird. Dies ist sehr wichtig, da diese beiden Methode den Eintrittspunkt für die gesamte Funktionalität darstellen. Alle übrigen Commands printen die DTOs eins zu eins in die Konsole. Die genaue Ausgabe in der Konsole zu testen erschien nicht sinnvoll bzw. das Aufwand-Nutzen Verhätnis ist hier nicht wirklich gegeben.                                                                                                                                                                                                                                                                                                                                                             |
+
 ### ​Fakes und Mocks
 
 _[Analyse und Begründung des Einsatzes von 2 Fake/Mock-Objekten; zusätzlich jeweils UML Diagramm der Klasse]_
@@ -513,9 +528,7 @@ _[jeweils 1 Code-Beispiel zu 2 Code Smells aus der Vorlesung; jeweils Code-Beisp
 
 _[2 unterschiedliche Refactorings aus der Vorlesung anwenden, begründen, sowie UML vorher/nachher liefern; jeweils auf die Commits verweisen]_
 
-| **Refactoring** | **
-Begründung**                                                                                                                                                                        | **
-Commit** |
+| **Refactoring** | **Begründung**| **Commit** |
 |-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
 | Rename Method   | Methodename deutete darauf hin, dass<br/> ausschließlich das Training mit diesem Observer<br/>beobachtet werden kann<br/>Allerdings war dieser für alle Szenarien gedacht.            |499c5493af7518e04cb6c1e5c19ab92a38edae4f|
 | Extract Method  | In der Klasse `RunCommand` wurde, neben einigen weiteren Änderungen, die Erstellung des Observers in eine eigene Methode ausgelagert, damit die `run()` Methode übersichtlich bleibt. |dbabe3845931cad4d9708778fd0c784a7cbe1ee8                                        |
