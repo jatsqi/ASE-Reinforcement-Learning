@@ -20,6 +20,7 @@ interface PolicyVisualizerFactory {
 }
 
 class SimplePolicyVisualizerFactory {
+-{static} Map<Class<?>, VisualizerConstructor> CONSTRUCTORS
 +Optional<PolicyVisualizer> createVisualizer(Policy policy, Environment environment)
 }
 

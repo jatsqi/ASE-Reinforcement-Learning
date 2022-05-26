@@ -1,14 +1,17 @@
 @startuml
 
 interface EnvironmentFactory {
-+{abstract}Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters)
+    +{abstract}Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters)
 }
 
 class SimpleEnvironmentFactory {
-+Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters)
--KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters)
--GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters)
--int[][] parseGridWorldFile(Path fromPath)
+    -{static} Map<String, EnvironmentConstructor> ENV_CONSTRUCTORS
+    ---
+    +Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters)
+    ---
+    -{static} KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters)
+    -{static} GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters)
+    -{static} int[][] parseGridWorldFile(Path fromPath)
 }
 
 note left of SimpleEnvironmentFactory::parseGridWorldFile

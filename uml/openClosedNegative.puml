@@ -6,19 +6,18 @@ class AgentFactory {
 }
 
 class SimpleAgentFactory {
+    -{static} Map<String, AgentConstructor> AGENT_CONSTRUCTORS
     +Optional<Agent> createAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings)
-    -FlatMovingPullAgent createPullAgent(Environment environment, ActionSource source, RLSettings settings)
-    -MovingAgent2D create2DMoveAgent(Environment environment, ActionSource source, RLSettings settings)
 }
 
 note right of SimpleAgentFactory::createAgent
-    Agent agent = switch (nameOfAgent) {
-        case "pull" -> createPullAgent(...);
-        case "2d-moving-agent" -> create2DMoveAgent(...);
-        default -> null;
-    };
+    Agent agent = null;
+    if (AGENT_CONSTRUCTORS.containsKey(descriptor.name()))
+        agent = AGENT_CONSTRUCTORS
+            .get(descriptor.name())
+            .constructAgent(descriptor, environment, source, settings);
 
-    Return created Agent
+    Return agent
 end note
 
 AgentFactory <|-- SimpleAgentFactory

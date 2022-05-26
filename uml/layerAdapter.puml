@@ -38,11 +38,11 @@ class ActionMapper {
 }
 
 EnvironmentMapper o-- ActionMapper
-ActionMapper --- ActionDto
+ActionMapper ..> ActionDto
 
 EnvironmentServiceFacadeImpl o-- EnvironmentMapper
-EnvironmentServiceFacadeImpl <|-- EnvironmentServiceFacade
-EnvironmentServiceFacade --- EnvironmentDescriptorDto
+EnvironmentServiceFacade <|-- EnvironmentServiceFacadeImpl
+EnvironmentServiceFacade ..> EnvironmentDescriptorDto
 EnvironmentDescriptorDto *-- ActionDto
 
 @enduml
