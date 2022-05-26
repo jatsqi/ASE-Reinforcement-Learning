@@ -70,9 +70,79 @@ Die JAR hat standardmäßig den Namen `4-ase-reinforcement-learning-plugin-1.0-S
 
 ### ​Wie testet man die Applikation?
 
+#### Zum Ausführen der Unit Tests:
+
 ```shell
 mvn test
 ```
+
+#### Zum Benutzen der Applikation:
+
+Befehle anzeigen:
+
+````shell
+java -jar <jar>
+````
+
+Agenten auflisten:
+
+````shell
+java -jar <jar> agent
+````
+
+Umgebungen auflisten:
+
+````shell
+java -jar <jar> env
+````
+
+Algorithmen auflisten:
+
+````shell
+java -jar <jar> algorithm
+````
+
+Config bearbeiten (Key(s) auflisten):
+
+````shell
+java -jar <jar> config get [KEY]
+````
+
+Config bearbeiten (Keys setzen):
+
+````shell
+java -jar <jar> config set <Key>
+````
+
+Parameter für Training/Evaluation auflisten:
+
+````shell
+java -jar <jar> run 
+````
+
+Training in beliebiger Grid-World starten:
+
+````shell
+java -jar <jar> run --agent 2d-moving-agent --environment grid-world --steps 1000000 --envopts height=10,width=10
+````
+
+Training in abgespeicherter Grid-World aus einer Datei starten:
+
+````shell
+java -jar <jar> run --agent 2d-moving-agent --environment grid-world --steps 1000000 --envopts from=examples/maze.grid
+````
+
+Training in K-Armed-Bandit Umgebung starten:
+
+````shell
+java -jar <jar> run --agent pull --environment k-armed-bandit --steps 100000 --envopts bandits=10
+````
+
+Training aus gespeicherter Policy (Beispiel-ID: 5) fortsetzen (Beispiel: Grid-World):
+
+````shell
+java -jar <jar> run --agent 2d-moving-agent --environment grid-world --steps 1000000 --envopts from=examples/maze.grid --resume 5
+````
 
 # Kapitel 2: Clean Architecture
 
