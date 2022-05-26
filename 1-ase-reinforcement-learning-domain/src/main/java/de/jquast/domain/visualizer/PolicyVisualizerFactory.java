@@ -1,4 +1,4 @@
-package de.jquast.domain.policy.visualizer;
+package de.jquast.domain.visualizer;
 
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.environment.Environment;

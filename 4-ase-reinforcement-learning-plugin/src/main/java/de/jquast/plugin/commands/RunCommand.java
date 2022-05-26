@@ -6,7 +6,7 @@ import de.jquast.application.config.DefaultConfigItem;
 import de.jquast.application.exception.StartSzenarioException;
 import de.jquast.application.service.SzenarioExecutionObserver;
 import de.jquast.application.session.SzenarioSession;
-import de.jquast.domain.policy.visualizer.VisualizationFormat;
+import de.jquast.domain.visualizer.VisualizationFormat;
 import de.jquast.domain.shared.PersistedStoreInfo;
 import de.jquast.utils.cli.command.annotations.Command;
 import de.jquast.utils.cli.command.annotations.Option;

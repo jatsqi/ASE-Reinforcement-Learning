@@ -62,7 +62,7 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
         }
     }
 
-    private int[][] parseGridWorldFile(Path fromPath) throws IOException, EnvironmentCreationException {
+    private static int[][] parseGridWorldFile(Path fromPath) throws IOException, EnvironmentCreationException {
         List<String> lines = Files.readAllLines(fromPath);
         if (lines.size() <= 0)
             throw new EnvironmentCreationException("Die angegebene Datei ist leer.", "grid-world");

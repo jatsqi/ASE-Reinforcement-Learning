@@ -17,7 +17,7 @@ import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.exception.*;
 import de.jquast.domain.policy.PolicyDescriptor;
 import de.jquast.domain.policy.PolicyRepository;
-import de.jquast.domain.policy.visualizer.PolicyVisualizerFactory;
+import de.jquast.domain.visualizer.PolicyVisualizerFactory;
 import de.jquast.domain.shared.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
