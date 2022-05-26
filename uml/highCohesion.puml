@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Environment {
+    +{abstract}boolean executeAction(Action action, int data);
+    +{abstract}int getCurrentState();
+    +{abstract}int getStateSpace();
+    +{abstract}void tick();
+}
+
+interface RewardSource {
+    +{abstract} double getReward();
+}
+
+class KArmedBanditEnvironment {
+    -{static} Random RND
+    -int currentBandit
+    -int banditCount
+    -int currentState
+    -double[] precomputedBanditRewards
+    ---
+    +boolean executeAction(Action action, int data)
+    +int getCurrentState()
+    +int getStateSpace()
+    +void tick()
+    ---
+    +double getReward()
+    ---
+    +int getBanditCount()
+    +double[] getPrecomputedBanditRewards()
+    -void recomputeRewards()
+}
+
+RewardSource <|-- Environment
+Environment <|-- KArmedBanditEnvironment
+
+@enduml

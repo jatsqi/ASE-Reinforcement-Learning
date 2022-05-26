@@ -1,21 +1,21 @@
 @startuml
 
 interface ConfigRepository {
-+{abstract}Collection<ConfigItem> getConfigItems()
-+{abstract}Optional<ConfigItem> getConfigItem(String name)
-+{abstract}boolean isConfigItemPresent(String name)
-+{abstract}boolean setConfigItem(ConfigItem item)
+    +{abstract}Collection<ConfigItem> getConfigItems()
+    +{abstract}Optional<ConfigItem> getConfigItem(String name)
+    +{abstract}boolean isConfigItemPresent(String name)
+    +{abstract}boolean setConfigItem(ConfigItem item)
 }
 
 class PropertiesConfigRepository {
--{static}String FILE_NAME
--Map<String, ConfigItem> configItems
-+Collection<ConfigItem> getConfigItems()
-+Optional<ConfigItem> getConfigItem(String name)
-+boolean isConfigItemPresent(String name)
-+void setConfigItem(ConfigItem item)
--void refreshConfigItems()
--void saveConfigItems()
+    -{static}String FILE_NAME
+    -Map<String, ConfigItem> configItems
+    +Collection<ConfigItem> getConfigItems()
+    +Optional<ConfigItem> getConfigItem(String name)
+    +boolean isConfigItemPresent(String name)
+    +void setConfigItem(ConfigItem item)
+    -void refreshConfigItems()
+    -void saveConfigItems()
 }
 
 ConfigRepository <|-- PropertiesConfigRepository

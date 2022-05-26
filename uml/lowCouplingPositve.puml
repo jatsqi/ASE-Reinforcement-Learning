@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface AgentRepository {
+    Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters)
+}
+
+interface ConfigService {
+    +{abstract} Collection<ConfigItem> getConfigItems()
+    +{abstract} Collection<String> getAvailableConfigKeys()
+    +{abstract} Optional<ConfigItem> setConfigItem(String key, String value)
+    +{abstract} Optional<ConfigItem> getConfigItem(String name)
+    +{abstract} ConfigItem getConfigItem(DefaultConfigItem item)
+    +{abstract} RLSettings getRLSettings()
+}
+
+interface AgentFactory {
+    +Optional<Agent> createAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings)
+}
+
+class InMemoryAgentRepository {
+    -{static} Map<String, AgentDescriptor> AGENTS;
+    -ConfigService configService;
+    -AgentFactory agentFactory
+
+    +Collection<AgentDescriptor> getAgentInfos()
+    +Optional<AgentDescriptor> getAgentInfo(String name)
+    +Agent createAgentInstance(AgentDescriptor descriptor, Environment environment, ActionSource source)
+}
+
+AgentRepository <|-- InMemoryAgentRepository
+InMemoryAgentRepository o-- ConfigService
+InMemoryAgentRepository o-- AgentFactory
+
+@enduml

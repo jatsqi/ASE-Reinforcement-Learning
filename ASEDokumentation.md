@@ -228,13 +228,41 @@ verschiedenen Ausprägungen der Sessions auch erstellen kann bzw. die Factory be
 
 _[jeweils eine bis jetzt noch nicht behandelte Klasse als positives und negatives Beispiel geringer Kopplung; jeweils UML Diagramm mit zusammenspielenden Klassen, Aufgabenbeschreibung und Begründung für die Umsetzung der geringen Kopplung bzw. Beschreibung, wie die Kopplung aufgelöst werden kann]_
 
-#### ​Positiv-Beispiel
+#### Positiv-Beispiel
 
-#### ​_Negativ-Beispiel_
+![Low Coupling Positive](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/lowCouplingPositve.puml)
+
+Die Klasse `InMemoryAgentRepository` ist durchaus ein gutes Beispiel für lose Kopplung.
+Um ihre Funktionalität zu erfüllen sind von außen betrachtet nur ein Service und eine weitere Factory relevant.
+Alle Methodenaufrufe auf die beiden Abhängigkeiten innerhalb von `InMemoryAgentRepository` geschehen über das jeweilige Interface (virtualler Methodenaufruf über Interface),
+wie im UML Diagramm dargestellt.
+Die konkreten Ausprägungen der Interfaces sind sehr leicht austauschbar und auch in den Tests dadurch leicht mockbar.
+Somit kann die Repository auch sehr isoliert getestet werden.
+
+#### Negativ-Beispiel
+
+![High Coupling Negative](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/lowCouplingNegative.puml)
+
+Ein negativ-Beispiel für geringe Kopplung zeigt sich der Beziehung zwischen den Klassen `Szenario` und `SzenarioSession`.
+Die Session weist eine direkte Abhängigkeit zu Objekten der Klasse `Szenario` auf.
+Sollte sich der Aufbau eines Szenarios ändern, z.B. das anstatt den konkreten Descriptoren nun die Namen dieser gespeichert werden (z.B. statt AgentDescriptor nun den Namen des Agenten),
+könnte es zu Probleme kommen, wenn die SzenarioSession diesen benötigt.
+Die Klasse müsste sich nun selbst darum kümmern, wie es an den Descriptor kommt.
+**Kurz:** Selbst kleinere Änderungen in `Szenario` können ebenfalls umfangreichere Änderungen in `Szenario` bedeuten. Die Module wären
+sind länger wirklich isoliert voneinander.
+Besser wäre in diesem Fall ein Interface, welches für dieses Beispiel eine Methode `getAgentDescriptor()` anbieten könnte.
+Konkrete Ausprägungen von `Szenario` müsste sich dann damit beschäftigen, wie sie an den Descriptor gelangen. 
 
 ### ​Analyse GRASP: Hohe **Kohäsion**
 
 _[eine Klasse als positives Beispiel hoher Kohäsion; UML Diagramm und Begründung, warum die Kohäsion hoch ist]_
+
+![High Cohesion](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/highCohesion.puml)
+
+Als Beispiel für hohe Kohäsion wurde hier die konkrete Aisprägung eines Environments ausgewählt: Das `KArmedBanditEnvironment`. 
+Das Environment besitzt prinzipiell, wie auch im UML Diagramm dargestellt, keine weiteren Abhängigkeiten nach Außen.
+Alle Methoden und Attribute, die die Klasse besitzt, beziehen sich einzug und alleine auf *dieses konkrete* Environment und sind
+alle unabdingbar, damit dieses seine korrekte Funktionalität gewährleisten kann.
 
 ### ​**Don&#39;t Repeat Yourself (DRY)**
 

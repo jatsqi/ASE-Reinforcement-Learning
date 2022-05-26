@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Szenario {
+    +DescriptorBundle metadata
+    +Agent agent
+    +Environment environment
+    +Policy policy
+    +PolicyVisualizer visualizer
+    +long maxSteps
+    +RLSettings settings
+}
+
+class DescriptorBundle {
+    +AgentDescriptor agentDescriptor
+    +EnvironmentDescriptor environmentDescriptor
+   +PolicyDescriptor policyDescriptor
+}
+
+class SzenarioSession {
+    -int currentStep
+    -Szenario szenario
+    -List<SzenarioProgressObserver> observer
+    --
+    +void start()
+    +SzenarioSession addObserver(SzenarioProgressObserver observer)
+    +Szenario getSzenario()
+    +int getCurrentStep()
+    --
+    -void execWhenPresent(Consumer<SzenarioProgressObserver> consumer)
+}
+
+SzenarioSession o-- Szenario
+Szenario *-- DescriptorBundle
+
+@enduml
