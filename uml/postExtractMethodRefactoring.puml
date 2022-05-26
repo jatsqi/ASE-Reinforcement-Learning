@@ -19,7 +19,7 @@ class RunCommand {
 -ExecutionService.SzenarioExecutionObserver createObserver(long stepInterval)
 }
 
-note right of RunCommand::run
+note left of RunCommand::run
     ...
     executionService.startTraining(
         ...,

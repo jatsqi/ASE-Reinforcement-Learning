@@ -18,7 +18,7 @@ class RunCommand {
 +void run()
 }
 
-note right of RunCommand::run
+note left of RunCommand::run
     ...
     session.addObserver(new ExecutionService.SzenarioExecutionObserver() { ... })
     ...

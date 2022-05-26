@@ -548,9 +548,105 @@ int bestAction = maxEntry.action();
 int bestValue = maxEntry.value();
 ```
 
-#### Code-Smell 2: TBD
+#### Code-Smell 2: Long Method
 
 _[jeweils 1 Code-Beispiel zu 2 Code Smells aus der Vorlesung; jeweils Code-Beispiel und einen möglichen Lösungsweg bzw. den genommen Lösungsweg beschreiben (inkl.__(Pseudo-)Code)]_
+
+Die `createGridWorldEnvironment()` Methode der Klasse `SimpleEnvironmentFactory` hatte sich anfangs nur mit dem Erstellen einer Grid-World
+beschäftigt, die eine konfigurierbare Höhe bzw. Breite besaß. Später wurde die Möglichkeit hinzugefügt, die Grid-World über eine
+Datei zu initialisieren.
+Das Parsen bzw. Auslesen der Datei wurde in dieselbe Methode eingebaut (siehe Vorher), weswegen diese, jedenfalls aus meiner Wahrnehmung heraus, recht unübersichtlich wurde.
+Es war ohne Kontext nicht mehr wirklich verständlich, welchen konkreten Zweck die Methode besaß. (Soll sie Parsen? Wenn ja, was genau? ...)
+Um dies zu beheben wurde der Parsing Teil in eine eigene Methode ausgelagert, die mit dem Namen `parseGridWorldFile()` versehen wurde, der eindeutig beschreibt, welche Aufgabe der Code besitzt (Siehe Nachher).
+
+**Vorher:**
+
+````java
+private GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
+    if (!parameters.containsKey("from")) {
+        if (!parameters.containsKey("height") || !parameters.containsKey("width"))
+            throw new RuntimeException("");
+
+        try {
+            Integer height = Integer.parseInt(parameters.get("height"));
+            Integer width = Integer.parseInt(parameters.get("width"));
+
+            return new GridWorldEnvironment(height, width);
+        } catch (NumberFormatException e) {
+            throw new EnvironmentCreationException("Höhe oder Breite konnten nicht gelesen werden!", "grid-world");
+        }
+    }
+
+    // Das Parsen könnte man noch in eine eigene Klasse auslagern und über Interface in dieses Objekt injecten,
+    // aber für dieses einfache Beispiel ist es denke ich so O.K.
+
+    String from = parameters.get("from");
+    Path fromPath = Paths.get(from);
+    try {
+        List<String> lines = Files.readAllLines(fromPath);
+        int[][] grid = new int[lines.get(0).length()][lines.size()];
+
+        for (int i = 0; i < lines.size(); i++) {
+            char[] chars = lines.get(i).toCharArray();
+
+            for (int j = 0; j < chars.length; j++) {
+                int num = chars[j] - '0';
+                grid[j][i] = num;
+            }
+        }
+
+        return new GridWorldEnvironment(grid);
+    } catch (IOException e) {
+        throw new EnvironmentCreationException(
+                String.format("Die Datei '%s' konnte nicht korrekt gelesen werden!", from), "grid-world");
+    }
+}
+````
+
+***Nachher:***
+
+````java
+private GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
+    if (!parameters.containsKey("from")) {
+        if (!parameters.containsKey("height") || !parameters.containsKey("width"))
+            throw new RuntimeException("");
+
+        try {
+            Integer height = Integer.parseInt(parameters.get("height"));
+            Integer width = Integer.parseInt(parameters.get("width"));
+
+            return new GridWorldEnvironment(height, width);
+        } catch (NumberFormatException e) {
+            throw new EnvironmentCreationException("Höhe oder Breite konnten nicht gelesen werden!", "grid-world");
+        }
+    }
+
+    String from = parameters.get("from");
+    Path fromPath = Paths.get(from);
+    try {
+        return new GridWorldEnvironment(parseGridWorldFile(fromPath));
+    } catch (IOException e) {
+        throw new EnvironmentCreationException(
+                String.format("Die Datei '%s' konnte nicht korrekt gelesen werden!", from), "grid-world");
+    }
+}
+
+private int[][] parseGridWorldFile(Path fromPath) throws IOException {
+    List<String> lines = Files.readAllLines(fromPath);
+    int[][] grid = new int[lines.get(0).length()][lines.size()];
+
+    for (int i = 0; i < lines.size(); i++) {
+        char[] chars = lines.get(i).toCharArray();
+
+        for (int j = 0; j < chars.length; j++) {
+            int num = chars[j] - '0';
+            grid[j][i] = num;
+        }
+    }
+
+    return grid;
+}
+````
 
 ### ​2 Refactorings
 
