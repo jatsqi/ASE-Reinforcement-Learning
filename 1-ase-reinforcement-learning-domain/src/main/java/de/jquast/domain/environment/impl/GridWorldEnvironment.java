@@ -43,6 +43,13 @@ public class GridWorldEnvironment implements Environment {
 
     @Override
     public boolean executeAction(Action action, int data) {
+        if (!action.equals(Action.MOVE_X_UP)
+                && !action.equals(Action.MOVE_X_DOWN)
+                && !action.equals(Action.MOVE_Y_UP)
+                && !action.equals(Action.MOVE_Y_DOWN)
+                && !action.equals(Action.DO_NOTHING))
+            return false;
+
         int oldX = currX;
         int oldY = currY;
 

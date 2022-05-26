@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GridWorldEnvironmentTest {
 
@@ -40,20 +40,18 @@ class GridWorldEnvironmentTest {
 
     @Test
     void actionsShouldTransitionEnvironmentToNewState() {
-        environment.executeAction(Action.MOVE_X_DOWN, 1);
-        assertEquals(0, environment.getCurrentState());
+        execActionAndCompareState(Action.MOVE_X_DOWN, 0);
+        execActionAndCompareState(Action.MOVE_Y_UP, 2);
+        execActionAndCompareState(Action.MOVE_Y_DOWN, 0);
+        execActionAndCompareState(Action.MOVE_X_UP, 1);
+        execActionAndCompareState(Action.DO_NOTHING, 1);
+    }
 
-        environment.executeAction(Action.MOVE_Y_UP, 1);
-        assertEquals(2, environment.getCurrentState());
-
-        environment.executeAction(Action.MOVE_Y_DOWN, 1);
-        assertEquals(0, environment.getCurrentState());
-
-        environment.executeAction(Action.MOVE_X_UP, 1);
-        assertEquals(1, environment.getCurrentState());
-
-        environment.executeAction(Action.DO_NOTHING, 1);
-        assertEquals(1, environment.getCurrentState());
+    @Test
+    void unsupportedActionsShouldReturnFalseAndNotChangeState() {
+        execInvalidActionAndCompareState(Action.PULL);
+        execInvalidActionAndCompareState(Action.MOVE_Z_UP);
+        execInvalidActionAndCompareState(Action.MOVE_Z_UP);
     }
 
     @Test
@@ -101,5 +99,17 @@ class GridWorldEnvironmentTest {
         environment.executeAction(Action.MOVE_X_UP, 1);
         assertEquals(1, environment.getCurrentState());
     }
-    
+
+    private void execActionAndCompareState(Action action, int expectedState) {
+        assertTrue(environment.executeAction(action, 1));
+        assertEquals(expectedState, environment.getCurrentState());
+    }
+
+    private void execInvalidActionAndCompareState(Action action) {
+        int preState = environment.getCurrentState();
+        environment.executeAction(action, 1);
+
+        assertEquals(preState, environment.getCurrentState());
+    }
+
 }
