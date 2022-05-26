@@ -10,6 +10,8 @@ public class PrimitiveConverter implements Converter {
             return Integer.parseInt(source);
         } else if (target.equals(Float.class) || target.equals(float.class)) {
             return Float.parseFloat(source);
+        } else if (target.equals(Long.class) || target.equals(long.class)) {
+            return Long.parseLong(source);
         }
 
         return null;

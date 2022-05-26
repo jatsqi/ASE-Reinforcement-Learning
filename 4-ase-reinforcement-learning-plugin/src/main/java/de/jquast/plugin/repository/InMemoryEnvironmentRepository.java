@@ -78,7 +78,7 @@ public class InMemoryEnvironmentRepository implements EnvironmentRepository {
     private Map<String, String> parseEnvOptions(String envOptions) {
         Map<String, String> result = new HashMap<>();
 
-        for (String s : envOptions.split(";")) {
+        for (String s : envOptions.split(",")) {
             String[] parts = s.split("=");
             if (parts.length != 2)
                 continue;
