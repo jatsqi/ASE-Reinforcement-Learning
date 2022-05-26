@@ -162,6 +162,7 @@ _[(1 Klasse, die die Dependency Rule einhält und eine Klasse, die die Dependenc
 
 In dieser Applikation halten prinzipiell alle Klassen die Dependency-Rule hinsichtlich dem "Fluss" der Abhängigkeiten ein.
 Klassen innerer Schichten besitzen <ins>keine</ins> Abhängigkeiten nach Außen.
+Dies wird u.a. durch den Aufbau des Maven Projektes selbst gewährleistet, da nur die äußeren Schichten/Module weiter innen liegende Module al Abhängigkeit definiert haben.
 Beispielsweise werden Repositories in der Domain-Schicht als Interface deklariert und erst außen konkret implementiert.
 
 #### 1. Positiv-Beispiel: Dependency Rule
@@ -195,15 +196,15 @@ Die Klasse ist hier angesiedelt, da sie
 1. nur das "Verhalten" definiert und keine technischen Details berücksichtigt
 2. im Allgemeinen zur Domäne des Reinforcement Learnings gehört
 
-Konkrete Agenten erben von dieser Klasse und mappen die Aktionen (Integer), die sie von der Aktion Source bekommen, auf konkrete
+Konkrete Agenten erben von dieser Klasse und mappen die Aktionen (Integer), die sie von der Aktion Source bekommen (siehe dazu Rückgabetyp von z.B. `ActionSource#selectAction`, auf konkrete
 Aktionen `Action`, die die Umgebung versteht.
 
 #### ​Schicht: Adapter
 
 ![Clean Arch Adapter Layer](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/layerAdapter.puml)
 
-Die Klasse `EnvironmentServiceFacade` dient als Einstiegspunkt für das UI, wenn es um das Abrufen von Environment geht.
-Das UI greift dabei nicht direkt auf die Services zu und arbeit damit mit Domain Objekten, sondern benutzt mehrere Facetten.
+Die Klasse `EnvironmentServiceFacade` dient als Einstiegspunkt für das UI, wenn es um das Abrufen von Environments geht.
+Das UI greift dabei nicht direkt auf die Services zu und arbeit somit mit Domain Objekten, sondern benutzt mehrere Facetten.
 Diese sind im Adapter-Layer platziert und wandeln die Domain Objekte, die sich mitunter ändern können, in eine speziell für UI
 vorgesehen Repräsentation um. Somit kann sich das Domain-Modell ändern, allerdings könnte durch das Mapping das UI unverändert bleiben.
 
@@ -215,16 +216,17 @@ _[jeweils eine Klasse als positives und negatives Beispiel für SRP; jeweils UML
 
 #### ​Positiv-Beispiel
 
-Das SRP wird durch so gut wie jede Repository Implementierung erfüllt. Als Beispiel wurde hier die `ConfigRepository`
+Das SRP wird durch so gut wie jede Repository-Implementierung erfüllt. Als Beispiel wurde hier die `ConfigRepository`
 mit der konkreten Implementierung `PropertiesConfigRepository` gewählt.
-Die Repository hat die Aufgabe, Config Einträge aus der `.properties` Datei auszulesen und in diese zu speichern.
+Die Repository hat die Aufgabe, Config Einträge aus der `config.properties` Datei auszulesen und in diese zu speichern.
+Die Repository führt dabei keine besonderen Validierungen oder ähnliches durch, sondern ist einzig und alleine für CRUD Operationen verantwortlich und müsste auch nur aus diesem Grund geändert werden.
 
 ![SRP Positiv](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/srpPositiv.puml)
 
 #### ​Negativ-Beispiel
 
-Als eventuelles negativ-Beispiel habe ich die Klasse `SimpleEnvironmentFactory` gewählt.
-Obwohl es für dieses kleine Projekt in Ordnung sein mag, ist dennoch das SRP verletzt. Die Klassen kümmert sich beispielsweise
+Als negativ-Beispiel habe ich die Klasse `SimpleEnvironmentFactory` gewählt.
+Obwohl es für dieses kleine Projekt in Ordnung sein mag, ist dennoch das SRP in diesem Fall verletzt. Die Klasse kümmert sich beispielsweise
 nicht nur um das Erstellen einer Grid-World Umgebung, sondern auch um das Parsen der Datei, aus der eine Grid-World initialisiert werden könnte.
 Zur Lösung könnte das Parsing in eine eigene Klasse ausgelagert werden und an die Factory könnte ein Interface übergeben werden.
 
@@ -263,6 +265,8 @@ Die Methode `executeNextAction()`, die bereits in der Basisklasse implementiert 
 ruft diese dann auf, um die konkrete Aktion zu holen.
 Sämtliche Logik, die zum Trainieren des Agenten genutzt wird, bleibt unverändert, sobald ein neuer Agent hinzugefügt wird,
 da diese Klassen alle entweder `transformAction` aufrufen oder `executeNextAction` direkt (siehe dazu Klasse `SzenarioSession` für konkretes Beispiel).
+Nützlich war dies vorallem bei den zwei unterschiedlichen Agenten `MovingAgent2d` und `FlatMovingPullAgent`, die jeweils nur
+`transformAction` überschreiben. Sie können per Plug & Play überall eingesetzt werden.
 
 ### ​Analyse Liskov-Substitution- (LSP), Interface-Segreggation- (ISP), Dependency-Inversion-Principle (DIP)
 
@@ -270,7 +274,7 @@ _[jeweils eine Klasse als positives und negatives Beispiel für entweder LSP ode
 
 _[Anm.: es darf nur ein Prinzip ausgewählt werden; es darf NICHT z.B. ein positives Beispiel für LSP und ein negatives Beispiel für ISP genommen werden]_
 
-#### Positiv-Beispiel
+#### Positiv-Beispiel (Dependency Inversion)
 
 ![DI Config](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyRulePositiv.puml)
 
@@ -280,7 +284,7 @@ eine einheitliche und technologisch unabhängige Schnittstelle definiert.
 Somit kann, in diesem Fall der Service, mit beliebigen Ausprägungen der `ConfigRepository` genutzt werden.
 Würde `ConfigServiceImpl` die konkrete Implementierung nutzen, wäre zusötzlich die Depdendency Rule verletzt.
 
-#### ​Negativ-Beispiel
+#### Negativ-Beispiel (Dependency Inversion)
 
 ![DI Exec Service](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyInversionNegative.puml)
 
@@ -303,7 +307,7 @@ _[jeweils eine bis jetzt noch nicht behandelte Klasse als positives und negative
 ![Low Coupling Positive](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/lowCouplingPositve.puml)
 
 Die Klasse `InMemoryAgentRepository` ist durchaus ein gutes Beispiel für lose Kopplung.
-Um ihre Funktionalität zu erfüllen sind von außen betrachtet nur ein Service und eine weitere Factory relevant.
+Um ihre Funktionalität zu erfüllen sind, jedenfalls von außen betrachtet, nur ein Service und eine weitere Factory relevant.
 Alle Methodenaufrufe auf die beiden Abhängigkeiten innerhalb von `InMemoryAgentRepository` geschehen über das jeweilige Interface (virtualler Methodenaufruf über Interface),
 wie im UML Diagramm dargestellt.
 Die konkreten Ausprägungen der Interfaces sind sehr leicht austauschbar und auch in den Tests dadurch leicht mockbar.
@@ -318,8 +322,7 @@ Die Session weist eine direkte Abhängigkeit zu Objekten der Klasse `Szenario` a
 Sollte sich der Aufbau eines Szenarios ändern, z.B. das anstatt den konkreten Descriptoren nun die Namen dieser gespeichert werden (z.B. statt AgentDescriptor nun den Namen des Agenten),
 könnte es zu Probleme kommen, wenn die SzenarioSession diesen benötigt.
 Die Klasse müsste sich nun selbst darum kümmern, wie es an den Descriptor kommt.
-**Kurz:** Selbst kleinere Änderungen in `Szenario` können ebenfalls umfangreichere Änderungen in `Szenario` bedeuten. Die Module wären
-sind länger wirklich isoliert voneinander.
+**Kurz:** Selbst kleinere Änderungen in `Szenario` können ebenfalls umfangreichere Änderungen in `Szenario` bedeuten.
 Besser wäre in diesem Fall ein Interface, welches für dieses Beispiel eine Methode `getAgentDescriptor()` anbieten könnte.
 Konkrete Ausprägungen von `Szenario` müsste sich dann damit beschäftigen, wie sie an den Descriptor gelangen. 
 
@@ -376,7 +379,62 @@ _[jeweils 1 positives und negatives Beispiel zu &#39;Thorough&#39;; jeweils Code
 
 #### Positiv Thorough:
 
+Besonders für die Tests der Environments war es wichtig sicherzustellen, dass alle möglichen Pfade abgedeckt sind und
+das Environment kein Fehlerverhalten aufweist, da dadurch die Trainingsergebnisse verfälscht werden könnten bzw. komplett falsch wären.
+Wie im unteren Beispiel zu erkennen ist, wurden zunächst alle validen Aktionen getestet (Bewegung in 4 Richtungen sowie nichts tun).
+Um sicherzugehen, dass andere Aktionen nichts verändern, werde diese separat im Test darunter überprüft. 
+
+````java
+@Test
+void actionsShouldTransitionEnvironmentToNewState() {
+    execActionAndCompareState(Action.MOVE_X_DOWN, 0);
+    execActionAndCompareState(Action.MOVE_Y_UP, 2);
+    execActionAndCompareState(Action.MOVE_Y_DOWN, 0);
+    execActionAndCompareState(Action.MOVE_X_UP, 1);
+    execActionAndCompareState(Action.DO_NOTHING, 1);
+}
+
+@Test
+void unsupportedActionsShouldReturnFalseAndNotChangeState() {
+    execInvalidActionAndCompareState(Action.PULL);
+    execInvalidActionAndCompareState(Action.MOVE_Z_UP);
+    execInvalidActionAndCompareState(Action.MOVE_Z_UP);
+}
+
+private void execActionAndCompareState(Action action, int expectedState) {
+    assertTrue(environment.executeAction(action, 1));
+    assertEquals(expectedState, environment.getCurrentState());
+}
+
+private void execInvalidActionAndCompareState(Action action) {
+    int preState = environment.getCurrentState();
+    environment.executeAction(action, 1);
+
+    assertEquals(preState, environment.getCurrentState());
+}
+````
+
 #### Negativ Thorough:
+
+Ein negativ-Beispiel ist im unteren Code-Beispiel abgebildet.
+Hier wird der Update-Schritt des Algorithmus' `QLearning` anhand von wenigen Beispielwerten getestet und mit einer fixen Konfiguration.
+Die Learning-Rate wurde in allen QLearning-Tests auf 1 (neutrales Element der Multiplikation) gesetzt, was den absolut einfachsten Fall darstellt.
+Obwohl der Algorithmus hier korrektes Verhalten aufweist, könnte es eventuell mit sehr kleinen oder großen Werten für die Learning-Rate
+zu Problemen kommen, bzw. sich Fehler in der Formel offenbaren (ob die Learning Rate z.B. uberhaupt korrekt berücksichtigt wird).
+Behoben werden kann dies über zusätzliche Tests mit unterschiedlichen Konfiguration, um solche Fehler zu offenbaren.
+Auch Tests mit möglichen Edge-Cases wären denkbar z.B. mit Werten, die nicht auftreten dürfen (negative Werte z.B.).
+
+````java
+@Test
+void learningShouldAdjustOldStateActionPairCorrectly() {
+    // !IMPORTANT! Learning Rate is 1 and Discount Factor is 1, so it should reach target instantly
+    learning.criticiseAction(0, 0, 1, 3.141);
+    assertEquals(3.341, store.getActionValue(0, 0));
+
+    learning.criticiseAction(1, 2, 2, 0);
+    assertEquals(0.2, store.getActionValue(1, 2));
+}
+````
 
 ### ​ATRIP: Professional
 
@@ -386,20 +444,16 @@ _[jeweils 1 positives und negatives Beispiel zu &#39;Professional&#39;; jeweils 
 ```java
 @Test
 void actionsShouldTransitionEnvironmentToNewState() {
-    environment.executeAction(Action.MOVE_X_DOWN, 1);
-    assertEquals(0, environment.getCurrentState());
+    execActionAndCompareState(Action.MOVE_X_DOWN, 0);
+    execActionAndCompareState(Action.MOVE_Y_UP, 2);
+    execActionAndCompareState(Action.MOVE_Y_DOWN, 0);
+    execActionAndCompareState(Action.MOVE_X_UP, 1);
+    execActionAndCompareState(Action.DO_NOTHING, 1);
+}
 
-    environment.executeAction(Action.MOVE_Y_UP, 1);
-    assertEquals(2, environment.getCurrentState());
-
-    environment.executeAction(Action.MOVE_Y_DOWN, 1);
-    assertEquals(0, environment.getCurrentState());
-
-    environment.executeAction(Action.MOVE_X_UP, 1);
-    assertEquals(1, environment.getCurrentState());
-
-    environment.executeAction(Action.DO_NOTHING, 1);
-    assertEquals(1, environment.getCurrentState());
+private void execActionAndCompareState(Action action, int expectedState) {
+    assertTrue(environment.executeAction(action, 1));
+    assertEquals(expectedState, environment.getCurrentState());
 }
 ```
 
@@ -409,6 +463,7 @@ die verschiedenen Aktionen getestet werden, die das Environment unterstützt.
 Als Konsequenz auf jede Aktion geht die Umgebung in einen neuen Zustand über, den es zu prüfen gilt.
 Genutzt werden wohlbekannte Assertions von JUnit wie z.B. `assertEquals`, in dem der erwartete Zustand mit dem aktuellen
 Zustand der Umgang nach der Aktion verglichen wird.
+Des Weiteren wurde versucht die Code-Duplikation durch das Einführen von einer neuen Methode zu reduzieren.
 
 #### Professional Negativ:
 
@@ -579,6 +634,8 @@ Da für alle Schichten die konkrete Herkunft der Config-Items egal ist, wird die
 ### ​Aggregates
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Aggregates; falls kein Aggregate vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
+
+TODO
 
 # ​Kapitel 7: Refactoring
 
