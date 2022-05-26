@@ -11,24 +11,32 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class SimpleEnvironmentFactory implements EnvironmentFactory {
 
+    private static Map<String, EnvironmentConstructor> ENV_CONSTRUCTORS;
+
+    static {
+        ENV_CONSTRUCTORS = new HashMap<>();
+
+        ENV_CONSTRUCTORS.put("k-armed-bandit", (descriptor, parameters) -> createKArmedBanditEnvironment(parameters));
+        ENV_CONSTRUCTORS.put("grid-world", (descriptor, parameters) -> createGridWorldEnvironment(parameters));
+    }
+
     @Override
     public Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters) throws EnvironmentCreationException {
-        Environment environment = switch (descriptor.name().toLowerCase()) {
-            case "k-armed-bandit" -> createKArmedBanditEnvironment(parameters);
-            case "grid-world" -> createGridWorldEnvironment(parameters);
-            default -> null;
-        };
+        Environment environment = null;
+        if (ENV_CONSTRUCTORS.containsKey(descriptor.name()))
+            environment = ENV_CONSTRUCTORS.get(descriptor.name()).constructEnvironment(descriptor, parameters);
 
         return Optional.ofNullable(environment);
     }
 
-    private KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
+    private static KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
         try {
             Integer k = Integer.parseInt(parameters.get("bandits"));
             return new KArmedBanditEnvironment(k);
@@ -37,7 +45,7 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
         }
     }
 
-    private GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
+    private static GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
         if (!parameters.containsKey("from")) {
             if (!parameters.containsKey("height") || !parameters.containsKey("width"))
                 throw new EnvironmentCreationException("Höhe bzw. Breite oder ein Dateiname sind für die Erstellung erforderlich!", "grid-world");
@@ -79,5 +87,9 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
         }
 
         return grid;
+    }
+
+    private interface EnvironmentConstructor {
+        Environment constructEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters) throws EnvironmentCreationException;
     }
 }

@@ -9,26 +9,31 @@ import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.shared.ActionSource;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class SimpleAgentFactory implements AgentFactory {
 
+    private static Map<String, AgentConstructor> AGENT_CONSTRUCTORS;
+
+    static {
+        AGENT_CONSTRUCTORS = new HashMap<>();
+
+        AGENT_CONSTRUCTORS.put("pull", (descriptor, environment, source, settings) -> new FlatMovingPullAgent(environment, source, settings));
+        AGENT_CONSTRUCTORS.put("2d-moving-agent", (descriptor, environment, source, settings) -> new MovingAgent2D(environment, source, settings));
+    }
+
     @Override
     public Optional<Agent> createAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings) {
-        Agent agent = switch (descriptor.name()) {
-            case "pull" -> createPullAgent(environment, source, settings);
-            case "2d-moving-agent" -> create2DMoveAgent(environment, source, settings);
-            default -> null;
-        };
+        Agent agent = null;
+        if (AGENT_CONSTRUCTORS.containsKey(descriptor.name()))
+            agent = AGENT_CONSTRUCTORS.get(descriptor.name()).constructAgent(descriptor, environment, source, settings);
 
         return Optional.ofNullable(agent);
     }
 
-    private FlatMovingPullAgent createPullAgent(Environment environment, ActionSource source, RLSettings settings) {
-        return new FlatMovingPullAgent(environment, source, settings);
-    }
-
-    private MovingAgent2D create2DMoveAgent(Environment environment, ActionSource source, RLSettings settings) {
-        return new MovingAgent2D(environment, source, settings);
+    private interface AgentConstructor {
+        Agent constructAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings);
     }
 }

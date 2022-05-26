@@ -8,21 +8,30 @@ import de.jquast.domain.algorithm.impl.QLearning;
 import de.jquast.domain.shared.ActionSource;
 import de.jquast.domain.shared.ActionValueStore;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class SimpleAlgorithmFactory implements AlgorithmFactory {
 
+    private static Map<String, AlgorithmConstructor> ALGORITHM_CONSTRUCTORS;
+
+    static {
+        ALGORITHM_CONSTRUCTORS = new HashMap<>();
+
+        ALGORITHM_CONSTRUCTORS.put("qlearning", (descriptor, store, delegate, settings) -> new QLearning(store, delegate, settings));
+    }
+
     @Override
     public Optional<RLAlgorithm> createAlgorithm(RLAlgorithmDescriptor descriptor, ActionValueStore store, ActionSource delegate, RLSettings settings) {
-        RLAlgorithm algorithm = switch (descriptor.name()) {
-            case "qlearning" -> createQLearning(store, delegate, settings);
-            default -> null;
-        };
+        RLAlgorithm algorithm = null;
+        if (ALGORITHM_CONSTRUCTORS.containsKey(descriptor.name()))
+            algorithm = ALGORITHM_CONSTRUCTORS.get(descriptor.name()).constructAlgorithm(descriptor, store, delegate, settings);
 
         return Optional.ofNullable(algorithm);
     }
 
-    private QLearning createQLearning(ActionValueStore store, ActionSource delegate, RLSettings settings) {
-        return new QLearning(store, delegate, settings);
+    private interface AlgorithmConstructor {
+        RLAlgorithm constructAlgorithm(RLAlgorithmDescriptor descriptor, ActionValueStore store, ActionSource delegate, RLSettings settings);
     }
 }
