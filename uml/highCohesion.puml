@@ -14,6 +14,8 @@ interface RewardSource {
 
 class KArmedBanditEnvironment {
     -{static} Random RND
+    -{static} EnvironmentDescriptor K_ARMED_BANDIT_DESCRIPTOR
+    ---
     -int currentBandit
     -int banditCount
     -int currentState

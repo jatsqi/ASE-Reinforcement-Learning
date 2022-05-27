@@ -33,16 +33,16 @@ Abgabedatum: 28.05.2022
 - _verlangte Positiv-Beispiele müssen gebracht werden_
 - _Code-Beispiel = Code in das Dokument kopieren_
 
-# ​Kapitel 1: **Einführung**
+# Kapitel 1: **Einführung**
 
-### ​Übersicht über die Applikation
+### Übersicht über die Applikation
 
 Das Projekt "ASE Reinforcement Learning" soll ein einfaches CLI zur Verfügung stellen, mit dem jeder typische Beispiele
 (aktuell nur eins) des Reinforcement Learnings ausprobieren und über einige Parameter anpassen kann. Das Ergebnis des
 Trainings wird als CSV zur Verfügung gestellt und kann anschließend für andere Projekte genutzt werden. Auch können,
 basierend auf bestehenden Beispielen, eigene Beispiele erstellt werden.
 
-### ​Wie startet man die Applikation?
+### Wie startet man die Applikation?
 
 Requirements:
 
@@ -70,7 +70,7 @@ cd 4-ase-reinforcement-learning-plugin
 
 Die JAR hat standardmäßig den Namen `4-ase-reinforcement-learning-plugin-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
-### ​Wie testet man die Applikation?
+### Wie testet man die Applikation?
 
 #### Zum Ausführen der Unit Tests:
 
@@ -148,7 +148,7 @@ java -jar <jar> run --agent 2d-moving-agent --environment grid-world --steps 100
 
 # Kapitel 2: Clean Architecture
 
-### ​Was ist Clean Architecture?
+### Was ist Clean Architecture?
 
 _[allgemeine Beschreibung der Clean Architecture in eigenen Worten]_
 
@@ -158,7 +158,7 @@ unabhängigen Kern vom Rest der Applikation zu trennen, damit Abhängigkeiten na
 verändert werden können und die eigentliche Business-Logik bzw. Modellierung der Domäne keine Rücksicht auf konkrete
 technische Details nehmen muss.
 
-### ​Analyse der Dependency Rule
+### Analyse der Dependency Rule
 
 _[(1 Klasse, die die Dependency Rule einhält und eine Klasse, die die Dependency Rule verletzt); jeweils UML der Klasse und Analyse der Abhängigkeiten in beide Richtungen (d.h., von wem hängt die Klasse ab und wer hängt von der Klasse ab) in Bezug auf die Dependency Rule]_
 
@@ -188,7 +188,7 @@ Adapter-Schicht ist einzig und allein die `AgentServiceFacadeImpl` vom Service a
 Die Facades bieten der Plugin-Schicht ein einheitliches Interface an. Somit kann sich das Domain-Model änndern, ohne dass das
 Ui davon beeinflusst wird.
 
-### ​ **Analyse der Schichten**
+### **Analyse der Schichten**
 
 _[jeweils 1 Klasse zu 2 unterschiedlichen Schichten der Clean-Architecture: jeweils UML der Klasse (ggf. auch zusammenspielenden Klassen), Beschreibung der Aufgabe, Einordnung mit Begründung in die Clean-Architecture]_
 
@@ -206,7 +206,7 @@ Die Klasse ist hier angesiedelt, da sie
 Konkrete Agenten erben von dieser Klasse und mappen die Aktionen (Integer), die sie von der Aktion Source bekommen (
 siehe dazu Rückgabetyp von z.B. `ActionSource#selectAction`, auf konkrete Aktionen `Action`, die die Umgebung versteht.
 
-#### ​Schicht: Adapter
+#### Schicht: Adapter
 
 ![Clean Arch Adapter Layer](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/layerAdapter.puml)
 
@@ -216,13 +216,13 @@ Facetten. Diese sind im Adapter-Layer platziert und wandeln die Domain Objekte, 
 speziell für UI vorgesehen Repräsentation um. Somit kann sich das Domain-Modell ändern, allerdings könnte durch das
 Mapping das UI unverändert bleiben.
 
-# ​Kapitel 3: SOLID
+# Kapitel 3: SOLID
 
-### ​Analyse Single-Responsibility-Principle (**SRP)**
+### Analyse Single-Responsibility-Principle (**SRP)**
 
 _[jeweils eine Klasse als positives und negatives Beispiel für SRP; jeweils UML der Klasse und Beschreibung der Aufgabe bzw. der Aufgaben und möglicher Lösungsweg des Negativ-Beispiels (inkl. UML)]_
 
-#### ​Positiv-Beispiel
+#### Positiv-Beispiel
 
 Das SRP wird durch so gut wie jede Repository-Implementierung erfüllt. Als Beispiel wurde hier die `ConfigRepository`
 mit der konkreten Implementierung `PropertiesConfigRepository` gewählt. Die Repository hat die Aufgabe, Config Einträge
@@ -232,17 +232,24 @@ nur aus diesem Grund geändert werden.
 
 ![SRP Positiv](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/srpPositiv.puml)
 
-#### ​Negativ-Beispiel
+#### Negativ-Beispiel
 
 Als negativ-Beispiel habe ich die Klasse `SimpleEnvironmentFactory` gewählt. Obwohl es für dieses kleine Projekt in
 Ordnung sein mag, ist dennoch das SRP in diesem Fall verletzt. Die Klasse kümmert sich beispielsweise nicht nur um das
 Erstellen einer Grid-World Umgebung, sondern auch um das Parsen der Datei, aus der eine Grid-World initialisiert werden
-könnte. Zur Lösung könnte das Parsing in eine eigene Klasse ausgelagert werden und an die Factory könnte ein Interface
+könnte. 
+Aus aktueller Sicht könnte es deswegen vorkommen, dass die Klasse aus mehr als einem Grund angepasst werden müsste:
+
+1. Zum Anpassen der Factory Methode selbst (=> _Wie_ die Objekte erstellt werden)
+2. Falls sich das Format der Grid-World Datei ändert
+
+Zur Lösung könnte das Parsing in eine eigene Klasse ausgelagert werden und an die Factory könnte ein Interface
 übergeben werden.
+Per Dependency Injection o.ä. würde die konkrete Implementierung des Parsers in die Factory gelangen.
 
 ![SRP Negativ](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/srpNegativ.puml)
 
-### ​Analyse Open-Closed-Principle (OCP)
+### Analyse Open-Closed-Principle (OCP)
 
 _[jeweils eine Klasse als positives und negatives Beispiel für OCP; jeweils UML der Klasse und Analyse mit Begründung, warum das OCP erfüllt/nicht erfüllt wurde – falls erfüllt: warum hier sinnvoll/welches Problem gab es? Falls nicht erfüllt: wie könnte man es lösen (inkl. UML)?]_
 
@@ -256,31 +263,32 @@ hinzugefügt, so muss entweder
 
 * Die Methode `createAgent` selbst angepasst werden -> direkte Verletzung OCP
 * Eine abgeleitete Klasse erstellt werden, die für alle bestehenden Agenten `super.createAgent()` aufruft. In diesem
-  Fall muss auch die neue bzw. erweiterte Factory in die Dependency Injection oder ähnliches aufgenommen werden.
+  Fall muss auch die neue bzw. erweiterte Factory in die Dependency Injection oder ähnliches aufgenommen werden. Auch wenn
+  über Polymorphie in diesem Fall das OCP erfüllt werden würde, ist dieses Konzept nicht flexibel einsetzbar, da definitiv bereits genutzte
+  Datenstrukturen wie z.B. die `ENV_CONSTRUCTORS` wiederholt werden müssten, da sie in der aktuellen Version als `private` deklariert sind.
 
 Abhilfe würde hier ein etwas dynamischeres Konzept schaffen. Über eine zentrale Registry könnte man für jeden
 Agenten-Namen bestimmte `Provider` registrieren, die sich um das Erstellen eines bestimmten Agenten kümmern. Die Factory
 greift auf diese Registry zu und holt sich den entsprechenden `Provider` aus der Map. So müsste die Factory nicht
 angepasst werden. In meinem Fall habe ich mich allerdings bewusst bei **allen** Factories dagegen entschieden, da mir
-bei dieser Projektgrö0e
-**KISS** wichtiger war.
+bei dieser Projektgrö0e **KISS** als Konzept wichtiger war.
 
 #### Positiv-Beispiel:
 
 ![OCP Positiv](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/openClosedPositive.puml)
 
-Obwohl die Factory das OCP verletzt, ist der Agent selbst ein gutes Beispiel für die Nutzung dessen. Die abstrakte
+Obwohl die Factory streng genommen das OCP verletzt, ist der Agent selbst ein gutes Beispiel für die Nutzung dessen. Die abstrakte
 Basisklasse `Agent` stellt die abstrakte Methode `transformAction` bereit und abgeleitete Klasse bzw. konkrete Agenten
 implementieren diese. Die Methode wandelt den Integer der Aktion, der von der Action Source kommt in eine für das
 Environment verständliche Aktion um. Die Methode `executeNextAction()`, die bereits in der Basisklasse implementiert ist
 und die für **alle** Agenten gleiche Logik zum Ausführen einer Aktion beinhaltet, ruft diese dann auf, um die konkrete
 Aktion zu holen. Sämtliche Logik, die zum Trainieren des Agenten genutzt wird, bleibt unverändert, sobald ein neuer
 Agent hinzugefügt wird, da diese Klassen alle entweder `transformAction` aufrufen oder `executeNextAction` direkt (siehe
-dazu Klasse `SzenarioSession` für konkretes Beispiel). Nützlich war dies vorallem bei den zwei unterschiedlichen
+dazu Klasse `SzenarioSession` für konkretes Beispiel). Nützlich war dies vor allem bei den zwei unterschiedlichen
 Agenten `MovingAgent2d` und `FlatMovingPullAgent`, die jeweils nur
-`transformAction` überschreiben. Sie können per Plug & Play überall eingesetzt werden.
+`transformAction` überschreiben. Sie können per **Plug & Play** überall eingesetzt werden.
 
-### ​Analyse Liskov-Substitution- (LSP), Interface-Segreggation- (ISP), Dependency-Inversion-Principle (DIP)
+### Analyse Liskov-Substitution- (LSP), Interface-Segreggation- (ISP), Dependency-Inversion-Principle (DIP)
 
 _[jeweils eine Klasse als positives und negatives Beispiel für entweder LSP oder ISP oder DIP); jeweils UML der Klasse und Begründung, warum man hier das Prinzip erfüllt/nicht erfüllt wird]_
 
@@ -301,7 +309,7 @@ verletzt.
 
 ![DI Exec Service](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyInversionNegative.puml)
 
-Das Negativbeispiel bezieht sich hierbei auf die Klasse`ExecutionServiceImpl`, da diese von der konkreten Implementierung der Klasse `SzenarioSession` abhängt.
+Das Negativ-Beispiel bezieht sich hierbei auf die Klasse`ExecutionServiceImpl`, da diese von der konkreten Implementierung der Klasse `SzenarioSession` abhängt.
 Die Klasse `SzenarioSession`, die die Logik für das Ausführen des Trainings bzw. der Evaluation beinhaltet, ist eine
 direkte Abhängigkeit des `ExecutionService`. Sollte das Verhalten, wie das Training durchlaufen werden soll, später
 angepasst werden, muss zuerst die Struktur innerhalb von `ExecutionServiceImpl` umgebaut werden. In diesem einfachen Projekt ist dies nicht der Fall,
@@ -310,9 +318,9 @@ Interface eingeführt wird und eine äußere Schicht sich um die Details kümmer
 Umständen eine weitere Factory nötig, damit der Service die verschiedenen Ausprägungen der Sessions auch erstellen kann
 bzw. die Factory beauftragen kann, diese zu erstellen.
 
-# ​Kapitel 4: Weitere Prinzipien
+# Kapitel 4: Weitere Prinzipien
 
-### ​Analyse GRASP: Geringe Kopplung
+### Analyse GRASP: Geringe Kopplung
 
 _[jeweils eine bis jetzt noch nicht behandelte Klasse als positives und negatives Beispiel geringer Kopplung; jeweils UML Diagramm mit zusammenspielenden Klassen, Aufgabenbeschreibung und Begründung für die Umsetzung der geringen Kopplung bzw. Beschreibung, wie die Kopplung aufgelöst werden kann]_
 
