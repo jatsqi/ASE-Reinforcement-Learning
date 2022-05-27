@@ -12,10 +12,10 @@ class ActionValueStoreTest {
 
     @BeforeEach
     void prepareStore() {
-        double[][] valueStore = new double[][] {
-                { 1.0, 0.0 },
-                { 0.0, 1.0 },
-                { 0.0, 0.0 }
+        double[][] valueStore = new double[][]{
+                {1.0, 0.0},
+                {0.0, 1.0},
+                {0.0, 0.0}
         };
 
         store = new ActionValueStore(valueStore);
@@ -34,18 +34,18 @@ class ActionValueStoreTest {
         assertEquals(2, store.getActionCount());
         assertEquals(3, store.getStateCount());
     }
-    
+
     @Test
     void getActionValuesShouldReturnCorrectStateArray() {
-        assertArrayEquals(new double[] {
+        assertArrayEquals(new double[]{
                 1.0, 0.0
         }, store.getActionValues(0));
 
-        assertArrayEquals(new double[] {
+        assertArrayEquals(new double[]{
                 0.0, 1.0
         }, store.getActionValues(1));
 
-        assertArrayEquals(new double[] {
+        assertArrayEquals(new double[]{
                 0.0, 0.0
         }, store.getActionValues(2));
     }

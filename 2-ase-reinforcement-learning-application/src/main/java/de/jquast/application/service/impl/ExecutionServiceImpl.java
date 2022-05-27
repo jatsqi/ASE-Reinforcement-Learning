@@ -21,11 +21,11 @@ import de.jquast.domain.exception.PersistStoreException;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyDescriptor;
 import de.jquast.domain.policy.PolicyRepository;
-import de.jquast.domain.visualizer.PolicyVisualizer;
-import de.jquast.domain.visualizer.PolicyVisualizerFactory;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.domain.shared.PersistedStoreInfo;
+import de.jquast.domain.visualizer.PolicyVisualizer;
+import de.jquast.domain.visualizer.PolicyVisualizerFactory;
 import de.jquast.utils.di.annotations.Inject;
 
 import java.util.Optional;
@@ -160,13 +160,13 @@ public class ExecutionServiceImpl implements ExecutionService {
      * Erstellt ein grundsätzliches Szenario aus den übergeben Parametern, welches für das Training oder ähnliches
      * genutzt werden kann.
      *
-     * @param agentName     Name des Agenten.
-     * @param envName       Name des Environments.
-     * @param policyName    Name der Policy.
-     * @param envOptions    Optionen für das Environment.
-     * @param maxSteps      Maximale Anzahl an Trainingsschritten.
-     * @param storeId       Store ID, von der das Training fortgefahren wird.
-     * @return              Das erstellte Szenario.
+     * @param agentName  Name des Agenten.
+     * @param envName    Name des Environments.
+     * @param policyName Name der Policy.
+     * @param envOptions Optionen für das Environment.
+     * @param maxSteps   Maximale Anzahl an Trainingsschritten.
+     * @param storeId    Store ID, von der das Training fortgefahren wird.
+     * @return Das erstellte Szenario.
      * @throws SzenarioCreationException Wird ausgelöst, sofern etwas bei der Erstellung nicht geklappt hat.
      */
     private Szenario createSzenario(
@@ -243,8 +243,8 @@ public class ExecutionServiceImpl implements ExecutionService {
      * Erstellt einen Wrapper um einen bestehenden Observer, um onSzenarioEnd() abzufangen, den Store zu speichern, un den
      * gewrappten Observer durch einen Aufruf über onActionStorePersisted() über die Speicherung zu informieren.
      *
-     * @param progressObserver  Der zu wrappende Observer.
-     * @return                  Ein Observer, welche den Store speichern kann.
+     * @param progressObserver Der zu wrappende Observer.
+     * @return Ein Observer, welche den Store speichern kann.
      */
     private SzenarioExecutionObserver createWrappedTrainingObserver(Optional<SzenarioExecutionObserver> progressObserver) {
         return new SzenarioExecutionObserver() {

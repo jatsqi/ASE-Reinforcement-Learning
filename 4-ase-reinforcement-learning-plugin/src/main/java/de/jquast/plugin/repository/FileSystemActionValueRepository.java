@@ -55,6 +55,14 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
                 STORAGE_FILE_EXTENSION);
     }
 
+    private static Optional<PersistedStoreInfo> fileNameToInfo(String fileName) {
+        String[] parts = fileName.split("\\.")[0].split("_");
+        if (parts.length != 3)
+            return Optional.empty();
+
+        return Optional.of(new PersistedStoreInfo(Integer.parseInt(parts[0]), parts[1], parts[2]));
+    }
+
     @Override
     public Collection<PersistedStoreInfo> getStoredActionValueInfo() {
         updateValueInfo();
@@ -155,14 +163,6 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
                 Integer.parseInt(cols[1]),
                 Double.parseDouble(cols[2])
         );
-    }
-
-    private static Optional<PersistedStoreInfo> fileNameToInfo(String fileName) {
-        String[] parts = fileName.split("\\.")[0].split("_");
-        if (parts.length != 3)
-            return Optional.empty();
-
-        return Optional.of(new PersistedStoreInfo(Integer.parseInt(parts[0]), parts[1], parts[2]));
     }
 
     private int findNextId(String agentName, String envName) throws IOException {

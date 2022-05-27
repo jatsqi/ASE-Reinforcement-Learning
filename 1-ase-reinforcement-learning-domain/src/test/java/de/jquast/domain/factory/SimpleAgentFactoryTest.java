@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SimpleAgentFactoryTest {
 
@@ -41,7 +41,7 @@ class SimpleAgentFactoryTest {
         AgentDescriptor pull = new AgentDescriptor(
                 "pull",
                 "",
-                new Action[] {},
+                new Action[]{},
                 0
         );
 
@@ -54,7 +54,7 @@ class SimpleAgentFactoryTest {
         AgentDescriptor pull = new AgentDescriptor(
                 "2d-moving-agent",
                 "",
-                new Action[] {},
+                new Action[]{},
                 0
         );
 
@@ -67,7 +67,7 @@ class SimpleAgentFactoryTest {
         AgentDescriptor pull = new AgentDescriptor(
                 "unknown??????",
                 "",
-                new Action[] {},
+                new Action[]{},
                 0
         );
 

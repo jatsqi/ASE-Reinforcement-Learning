@@ -1,7 +1,6 @@
 package de.jquast.plugin.commands;
 
 import de.jquast.adapters.facade.ConfigServiceFacade;
-import de.jquast.adapters.facade.EnvironmentServiceFacade;
 import de.jquast.adapters.facade.ExecutionServiceFacade;
 import de.jquast.adapters.facade.dto.ConfigItemDto;
 import de.jquast.application.config.DefaultConfigItem;
@@ -13,7 +12,8 @@ import org.mockito.MockitoAnnotations;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RunCommandTest {
 

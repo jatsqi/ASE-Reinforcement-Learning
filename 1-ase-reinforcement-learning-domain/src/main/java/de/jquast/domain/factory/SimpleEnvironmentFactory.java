@@ -27,15 +27,6 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
         ENV_CONSTRUCTORS.put("grid-world", (descriptor, parameters) -> createGridWorldEnvironment(parameters));
     }
 
-    @Override
-    public Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters) throws EnvironmentCreationException {
-        Environment environment = null;
-        if (ENV_CONSTRUCTORS.containsKey(descriptor.name()))
-            environment = ENV_CONSTRUCTORS.get(descriptor.name()).constructEnvironment(descriptor, parameters);
-
-        return Optional.ofNullable(environment);
-    }
-
     private static KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
         try {
             Integer k = Integer.parseInt(parameters.get("bandits"));
@@ -87,6 +78,15 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
         }
 
         return grid;
+    }
+
+    @Override
+    public Optional<Environment> createEnvironment(EnvironmentDescriptor descriptor, Map<String, String> parameters) throws EnvironmentCreationException {
+        Environment environment = null;
+        if (ENV_CONSTRUCTORS.containsKey(descriptor.name()))
+            environment = ENV_CONSTRUCTORS.get(descriptor.name()).constructEnvironment(descriptor, parameters);
+
+        return Optional.ofNullable(environment);
     }
 
     private interface EnvironmentConstructor {

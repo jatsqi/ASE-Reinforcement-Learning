@@ -1,6 +1,5 @@
 package de.jquast.domain.agent;
 
-import de.jquast.domain.agent.impl.FlatMovingPullAgent;
 import de.jquast.domain.agent.impl.MovingAgent2D;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;

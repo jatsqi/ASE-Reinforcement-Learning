@@ -1,22 +1,16 @@
 package de.jquast.adapters.mapper;
 
-import de.jquast.adapters.facade.dto.ActionDto;
 import de.jquast.adapters.facade.dto.ConfigItemDto;
-import de.jquast.adapters.facade.dto.EnvironmentDescriptorDto;
 import de.jquast.adapters.facade.dto.RLSettingsDto;
-import de.jquast.adapters.facade.mapper.ActionMapper;
 import de.jquast.adapters.facade.mapper.ConfigMapper;
-import de.jquast.adapters.facade.mapper.EnvironmentMapper;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.config.ConfigItem;
-import de.jquast.domain.environment.EnvironmentDescriptor;
-import de.jquast.domain.shared.Action;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConfigMapperTest {

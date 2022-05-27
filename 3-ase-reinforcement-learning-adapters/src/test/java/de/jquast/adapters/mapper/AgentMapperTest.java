@@ -2,13 +2,8 @@ package de.jquast.adapters.mapper;
 
 import de.jquast.adapters.facade.dto.ActionDto;
 import de.jquast.adapters.facade.dto.AgentDescriptorDto;
-import de.jquast.adapters.facade.dto.ConfigItemDto;
-import de.jquast.adapters.facade.dto.EnvironmentDescriptorDto;
 import de.jquast.adapters.facade.mapper.AgentMapper;
-import de.jquast.adapters.facade.mapper.ConfigMapper;
 import de.jquast.domain.agent.AgentDescriptor;
-import de.jquast.domain.config.ConfigItem;
-import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.shared.Action;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +26,7 @@ class AgentMapperTest {
         AgentDescriptor descriptor = new AgentDescriptor(
                 "my cool agent",
                 "this is a cool agent",
-                new Action[]{ Action.DO_NOTHING, Action.MOVE_X_UP },
+                new Action[]{Action.DO_NOTHING, Action.MOVE_X_UP},
                 2
         );
 
@@ -42,7 +37,7 @@ class AgentMapperTest {
         assertEquals("my cool agent", dto.name());
         assertEquals("this is a cool agent", dto.description());
         assertEquals(2, dto.actionSpace());
-        assertArrayEquals(new ActionDto[] {
+        assertArrayEquals(new ActionDto[]{
                 new ActionDto(Action.DO_NOTHING.getId(), Action.DO_NOTHING.name(), Action.DO_NOTHING.getDescription()),
                 new ActionDto(Action.MOVE_X_UP.getId(), Action.MOVE_X_UP.name(), Action.MOVE_X_UP.getDescription())
         }, dto.requiredCapabilities());

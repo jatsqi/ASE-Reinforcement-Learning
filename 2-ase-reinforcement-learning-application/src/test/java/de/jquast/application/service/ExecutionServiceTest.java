@@ -17,8 +17,8 @@ import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.exception.*;
 import de.jquast.domain.policy.PolicyDescriptor;
 import de.jquast.domain.policy.PolicyRepository;
-import de.jquast.domain.visualizer.PolicyVisualizerFactory;
 import de.jquast.domain.shared.*;
+import de.jquast.domain.visualizer.PolicyVisualizerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -106,7 +106,7 @@ class ExecutionServiceTest {
     private void setupDescriptors() {
         agentDescriptor = new AgentDescriptor(
                 "best-agent", "cool agent",
-                new Action[]{ Action.DO_NOTHING }, 10
+                new Action[]{Action.DO_NOTHING}, 10
         );
         policyDescriptor = new PolicyDescriptor(
                 "best-policy", "Beste Policy"

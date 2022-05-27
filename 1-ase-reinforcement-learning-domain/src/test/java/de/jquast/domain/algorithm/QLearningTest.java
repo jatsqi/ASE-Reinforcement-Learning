@@ -29,9 +29,9 @@ class QLearningTest {
                 1.0, 1.0, 0.0, 0.0
         );
         store = new ActionValueStore(new double[][]{
-                { 0.0, 2.1, 0.3 }, // State 1
-                { 0.2, -3.1, -0.2 }, // State 2
-                { 0.0, -2.1, 0.2 } // State 3
+                {0.0, 2.1, 0.3}, // State 1
+                {0.2, -3.1, -0.2}, // State 2
+                {0.0, -2.1, 0.2} // State 3
         });
         learning = new QLearning(store, source, settings);
     }

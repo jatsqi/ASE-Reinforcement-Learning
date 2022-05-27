@@ -26,7 +26,7 @@ class EnvironmentMapperTest {
         EnvironmentDescriptor descriptor = new EnvironmentDescriptor(
                 "my cool environment",
                 "this is a cool environment",
-                new Action[]{ Action.DO_NOTHING, Action.MOVE_X_UP }
+                new Action[]{Action.DO_NOTHING, Action.MOVE_X_UP}
         );
 
         Optional<EnvironmentDescriptorDto> dtoOp = mapper.toDto(Optional.of(descriptor));
@@ -35,7 +35,7 @@ class EnvironmentMapperTest {
         EnvironmentDescriptorDto dto = dtoOp.get();
         assertEquals("my cool environment", dto.name());
         assertEquals("this is a cool environment", dto.description());
-        assertArrayEquals(new ActionDto[] {
+        assertArrayEquals(new ActionDto[]{
                 new ActionDto(Action.DO_NOTHING.getId(), Action.DO_NOTHING.name(), Action.DO_NOTHING.getDescription()),
                 new ActionDto(Action.MOVE_X_UP.getId(), Action.MOVE_X_UP.name(), Action.MOVE_X_UP.getDescription())
         }, dto.supportedCapabilities());
