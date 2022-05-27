@@ -15,6 +15,16 @@ abstract class Agent {
     #int collectActionFromSource()
 }
 
+class MovingAgent2D {
+    -{static} Map<Integer, Action> ACTION_INT_TO_ACTION_MAPPING
+    +ActionDataPair transformAction(int action)
+}
+
+class FlatMovingPullAgent {
+    -{static} Map<Integer, Action> ACTION_INT_TO_ACTION_MAPPING
+    +ActionDataPair transformAction(int action)
+}
+
 class Szenario {
     +DescriptorBundle metadata,
     +Agent agent
@@ -23,24 +33,6 @@ class Szenario {
     +PolicyVisualizer visualizer
     +long maxSteps
     +RLSettings settings
-}
-
-class ActionDataPair {
-    +Action action
-    +int data
-}
-
-interface ActionSource {
-    +{abstract}int selectAction(int state)
-    +{abstract}int selectBestAction(int state)
-    +{abstract}void criticiseAction(int oldState, int action, int newState, double reward)
-}
-
-interface Environment {
-    +{abstract}boolean executeAction(Action action, int data);
-    +{abstract}int getCurrentState();
-    +{abstract}int getStateSpace();
-    +{abstract}void tick();
 }
 
 class SzenarioSession {
@@ -83,13 +75,10 @@ note right of Agent::executeNextAction
     Aktualisiere interne Belohnungsschätzung
 end note
 
-Szenario o-- Environment
-Szenario o-- Agent
+Agent <|-- FlatMovingPullAgent
+Agent <|-- MovingAgent2D
 
+Szenario o-- Agent
 Szenario --o SzenarioSession
-'Agent --o SzenarioSession : Teil über Szenario Klasse
-Agent ..> ActionDataPair
-Agent o-- Environment
-Agent o-- ActionSource
 
 @enduml

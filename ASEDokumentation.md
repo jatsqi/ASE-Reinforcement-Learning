@@ -152,8 +152,8 @@ java -jar <jar> run --agent 2d-moving-agent --environment grid-world --steps 100
 
 _[allgemeine Beschreibung der Clean Architecture in eigenen Worten]_
 
-Als Clean-Architecture wird eine etrem vielseitige und anapssungsfähige Architektur bezeichnet, deren Aufbau häufig mit
-einer Zwiebel verglichen wird, da sich die verschiedenen Schichten ummanteln. Primäres Ziel ist es, eine technologisch
+Als Clean-Architecture wird eine extrem vielseitige und anpassungsfähige Architektur bezeichnet, deren Aufbau häufig mit
+einer Zwiebel verglichen wird, da sich die verschiedenen Schichten ummanteln. Primäres Ziel ist es, den technologisch
 unabhängigen Kern vom Rest der Applikation zu trennen, damit Abhängigkeiten nach außen schnell ausgetauscht werden bzw.
 verändert werden können und die eigentliche Business-Logik bzw. Modellierung der Domäne keine Rücksicht auf konkrete
 technische Details nehmen muss.
@@ -211,10 +211,12 @@ siehe dazu Rückgabetyp von z.B. `ActionSource#selectAction`, auf konkrete Aktio
 ![Clean Arch Adapter Layer](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/layerAdapter.puml)
 
 Die Klasse `EnvironmentServiceFacade` dient als Einstiegspunkt für das UI, wenn es um das Abrufen von Environments geht.
-Das UI greift dabei nicht direkt auf die Services zu und arbeit somit mit Domain Objekten, sondern benutzt mehrere
+Das UI greift dabei nicht direkt auf die Services zu und arbeit somit nicht mit Domain Objekten, sondern benutzt mehrere
 Facetten. Diese sind im Adapter-Layer platziert und wandeln die Domain Objekte, die sich mitunter ändern können, in eine
 speziell für UI vorgesehen Repräsentation um. Somit kann sich das Domain-Modell ändern, allerdings könnte durch das
 Mapping das UI unverändert bleiben.
+Innerhalb des Projektes wird die Umwandlung zwischen Domain-Objekt und der Repräsentation für das UI - den DTOs (Data Transfer Objects) -
+über verschiedene Mapper wie z.B. Objekte der Klasse `ActionMapper` durchgeführt.
 
 # Kapitel 3: SOLID
 
@@ -242,9 +244,10 @@ Aus aktueller Sicht könnte es deswegen vorkommen, dass die Klasse aus mehr als 
 
 1. Zum Anpassen der Factory Methode selbst (=> _Wie_ die Objekte erstellt werden)
 2. Falls sich das Format der Grid-World Datei ändert
+3. Falls weitere Optionen für das Erstellung von Environments unterstützt werden sollen
 
-Zur Lösung könnte das Parsing in eine eigene Klasse ausgelagert werden und an die Factory könnte ein Interface
-übergeben werden.
+Zur Lösung könnte das Parsing in eine eigene Klasse ausgelagert werden.
+Diese Klasse würde einen bestimtes Inteface implementieren, welches die Factory für alle Aufrufe nutzen kann. 
 Per Dependency Injection o.ä. würde die konkrete Implementierung des Parsers in die Factory gelangen.
 
 ![SRP Negativ](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/srpNegativ.puml)
@@ -258,8 +261,10 @@ _[jeweils eine Klasse als positives und negatives Beispiel für OCP; jeweils UML
 ![OCP Negativ](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/openClosedNegative.puml)
 
 Als klassisches Negativbeispiel für die Verletzung dieses Prinzips kann eine solche Factory genommen werden. Diese
-entscheidet in diesem Fall, je nach Name des Agenten, welcher Agent erzeugt werden muss. Wird ein neuer Agent im Code
-hinzugefügt, so muss entweder
+entscheidet in diesem Fall, je nach Name des Agenten, welcher Agent erzeugt werden muss. 
+Die Fallunterscheidung, welcher konkrete Typ erstellt werden muss, geschieht mittels einer Map, die von dem Namen eines
+Agenten auf eine sepzielle Funktion mapped, die die Konstruktion übernimmt.
+Wird ein neuer Agent im Code hinzugefügt, so muss entweder
 
 * Die Methode `createAgent` selbst angepasst werden -> direkte Verletzung OCP
 * Eine abgeleitete Klasse erstellt werden, die für alle bestehenden Agenten `super.createAgent()` aufruft. In diesem
@@ -270,23 +275,36 @@ hinzugefügt, so muss entweder
 Abhilfe würde hier ein etwas dynamischeres Konzept schaffen. Über eine zentrale Registry könnte man für jeden
 Agenten-Namen bestimmte `Provider` registrieren, die sich um das Erstellen eines bestimmten Agenten kümmern. Die Factory
 greift auf diese Registry zu und holt sich den entsprechenden `Provider` aus der Map. So müsste die Factory nicht
-angepasst werden. In meinem Fall habe ich mich allerdings bewusst bei **allen** Factories dagegen entschieden, da mir
-bei dieser Projektgrö0e **KISS** als Konzept wichtiger war.
+angepasst werden. 
+Das Problem verlagert sich dabei allerdings auf die Registry, die nun von außen manipuliert bzw. überschrieben werden müsste.
+In meinem Fall habe ich mich allerdings bewusst bei **allen** Factories dagegen entschieden, da mir
+bei dieser Projektgröße **KISS** als Konzept wichtiger war.
+
+Ein weiteres Problem könnte in der Signatur der Fabrikmethode selbst bestehen, sofern neue Agenten hinzugefügt werden,
+deren Konstruktur von den bisherigen abweicht.
+Umgangen werden könnte dies über die bereits angesprochene Subklasse. 
+Über den Konstruktur der Factory könnten die fehlenden Parameter übergeben werden, sofern diese beim Erzeugen der
+Factory bekannt sind.
 
 #### Positiv-Beispiel:
 
 ![OCP Positiv](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/openClosedPositive.puml)
 
-Obwohl die Factory streng genommen das OCP verletzt, ist der Agent selbst ein gutes Beispiel für die Nutzung dessen. Die abstrakte
-Basisklasse `Agent` stellt die abstrakte Methode `transformAction` bereit und abgeleitete Klasse bzw. konkrete Agenten
-implementieren diese. Die Methode wandelt den Integer der Aktion, der von der Action Source kommt in eine für das
-Environment verständliche Aktion um. Die Methode `executeNextAction()`, die bereits in der Basisklasse implementiert ist
-und die für **alle** Agenten gleiche Logik zum Ausführen einer Aktion beinhaltet, ruft diese dann auf, um die konkrete
-Aktion zu holen. Sämtliche Logik, die zum Trainieren des Agenten genutzt wird, bleibt unverändert, sobald ein neuer
-Agent hinzugefügt wird, da diese Klassen alle entweder `transformAction` aufrufen oder `executeNextAction` direkt (siehe
-dazu Klasse `SzenarioSession` für konkretes Beispiel). Nützlich war dies vor allem bei den zwei unterschiedlichen
-Agenten `MovingAgent2d` und `FlatMovingPullAgent`, die jeweils nur
+Obwohl die Factory streng genommen das OCP verletzt, ist der Agent selbst ein gutes Beispiel für die Nutzung dessen. 
+Die abstrakte Basisklasse `Agent` stellt die abstrakte Methode `transformAction` bereit und abgeleitete Klassn bzw. 
+konkrete Agenten implementieren diese. Die Methode wandelt den Integer der Aktion, der von der Action Source kommt in 
+eine für das Environment verständliche Aktion um. 
+Die Methode `executeNextAction()`, die bereits in der Basisklasse implementiert ist und die für **alle** Agenten 
+gleiche Logik zum Ausführen einer Aktion beinhaltet, ruft diese dann auf, um die konkrete Aktion zu holen. 
+Sämtliche Logik, die zum Trainieren des Agenten genutzt wird, bleibt unverändert, sobald ein neuer Agent hinzugefügt 
+wird, da diese Klassen alle entweder `transformAction` aufrufen oder`executeNextAction` direkt (siehe dazu Klasse `SzenarioSession` für konkretes Beispiel). 
+
+Nützlich war dies vor allem bei den zwei unterschiedlichen Agenten `MovingAgent2d` und `FlatMovingPullAgent`, die jeweils nur
 `transformAction` überschreiben. Sie können per **Plug & Play** überall eingesetzt werden.
+
+Soll ein neuer Agent hinzugefügt werden, kann einfach eine Subclass von `Agent` erstellt werden, die die entsprechenden
+Methoden überschreibt. `SzenarioSession` wird mit diesem neuen Agenten genauso problemlos verfahren wie mit allen
+bereits implementieren Agenten.
 
 ### Analyse Liskov-Substitution- (LSP), Interface-Segreggation- (ISP), Dependency-Inversion-Principle (DIP)
 
@@ -302,8 +320,9 @@ Wie im UML Diagramm zu sehen ist, ist die Klasse `ConfigServiceImpl` aus dem App
 Implementierung der Repository `PropertiesConfigRepository`, welche in der Plugin-Schicht implementiert ist, abhängig,
 sondern von dem deklarierten Interface `ConfigRepository`, welches eine einheitliche und technologisch unabhängige
 Schnittstelle definiert. Somit kann, in diesem Fall der Service, mit beliebigen Ausprägungen der `ConfigRepository`
-genutzt werden. Würde `ConfigServiceImpl` die konkrete Implementierung nutzen, wäre zusötzlich die Depdendency Rule
-verletzt.
+genutzt werden. Würde `ConfigServiceImpl` die konkrete Implementierung nutzen, wäre zusätzlich die Depdendency Rule
+verletzt, da diese sich auf der Plugin-Schicht befindet.
+Zusätzlich werden auf diese Weise die "technischen Details" an die äußeren Schichten verlagert. 
 
 #### Negativ-Beispiel (Dependency Inversion)
 
@@ -311,12 +330,18 @@ verletzt.
 
 Das Negativ-Beispiel bezieht sich hierbei auf die Klasse`ExecutionServiceImpl`, da diese von der konkreten Implementierung der Klasse `SzenarioSession` abhängt.
 Die Klasse `SzenarioSession`, die die Logik für das Ausführen des Trainings bzw. der Evaluation beinhaltet, ist eine
-direkte Abhängigkeit des `ExecutionService`. Sollte das Verhalten, wie das Training durchlaufen werden soll, später
-angepasst werden, muss zuerst die Struktur innerhalb von `ExecutionServiceImpl` umgebaut werden. In diesem einfachen Projekt ist dies nicht der Fall,
-weswegen es auf diese Weise gelöst wurde. Gelöst werden könnte dies genauso wie bei den Repositories, indem ein
-Interface eingeführt wird und eine äußere Schicht sich um die Details kümmert. Für diesen konkreten Fall wäre unter
-Umständen eine weitere Factory nötig, damit der Service die verschiedenen Ausprägungen der Sessions auch erstellen kann
-bzw. die Factory beauftragen kann, diese zu erstellen.
+direkte Abhängigkeit des `ExecutionServiceImpl`. Sollte das Verhalten, wie das Training durchlaufen werden soll, später
+angepasst werden, muss zuerst die Struktur innerhalb von `ExecutionServiceImpl` umgebaut werden.
+In diesem einfachen Projekt ist dies nicht der Fall, weswegen es auf diese Weise gelöst wurde. 
+Gelöst werden könnte dies genauso wie bei den Repositories, indem ein Interface eingeführt wird und eine äußere Schicht 
+sich um die Details kümmert.
+Zum Einsatz kommen könnte hier beispielsweise das Strategy bzw. Behaviour Pattern, welches die Logik zum Ausführen
+des Trainings hinter verschiedenen Implementieren verstecken könnte.
+Durch polymorphe Methodenaufrufe, die aus Sicht des Services über ein gemeinsames Interface geschehen, könnten so die
+konkreten Details versteckt werden.
+
+Sollen von Außen unterschiedliche Möglichkeiten konfigurierbar sein, wie konkret das Training ausgeführt werden soll,
+wäre eine weitere Factory von nöten, die die verschiedenen Sessions erstellen kann.
 
 # Kapitel 4: Weitere Prinzipien
 
@@ -328,12 +353,13 @@ _[jeweils eine bis jetzt noch nicht behandelte Klasse als positives und negative
 
 ![Low Coupling Positive](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/lowCouplingPositve.puml)
 
-Die Klasse `InMemoryAgentRepository` ist durchaus ein gutes Beispiel für lose Kopplung. Um ihre Funktionalität zu
-erfüllen sind, jedenfalls von außen betrachtet, nur ein Service und eine weitere Factory relevant. Alle Methodenaufrufe
-auf die beiden Abhängigkeiten innerhalb von `InMemoryAgentRepository` geschehen über das jeweilige Interface (virtualler
+Die Klasse `InMemoryAgentRepository` ist ein gutes Beispiel für lose Kopplung. Um ihre Funktionalität zu
+erfüllen sind, jedenfalls von außen betrachtet, ist nur ein Service und eine weitere Factory relevant. Alle Methodenaufrufe
+auf die beiden Abhängigkeiten innerhalb von `InMemoryAgentRepository` geschehen über das jeweilige Interface (virtueller
 Methodenaufruf über Interface), wie im UML Diagramm dargestellt. Die konkreten Ausprägungen der Interfaces sind sehr
-leicht austauschbar und auch in den Tests dadurch leicht mockbar. Somit kann die Repository auch sehr isoliert getestet
-werden.
+leicht austauschbar und auch in den Tests dadurch leicht mockbar. Somit kann die Repository sehr isoliert getestet
+werden und benötigt **kein** Wissen über Implementierungsdetails bzw. muss keine Annhamen über den internen Aufbau
+dieser Komponenten treffen.
 
 #### Negativ-Beispiel
 
@@ -346,7 +372,8 @@ AgentDescriptor nun den Namen des Agenten), könnte es zu Probleme kommen, wenn 
 Klasse müsste sich nun selbst darum kümmern, wie es an den Descriptor kommt.
 **Kurz:** Selbst kleinere Änderungen in `Szenario` können ebenfalls umfangreichere Änderungen in `Szenario` bedeuten.
 Besser wäre in diesem Fall ein Interface, welches für dieses Beispiel eine Methode `getAgentDescriptor()` anbieten
-könnte. Konkrete Ausprägungen von `Szenario` müsste sich dann damit beschäftigen, wie sie an den Descriptor gelangen.
+könnte. Konkrete Ausprägungen von `Szenario` müsste sich dann damit beschäftigen, wie sie an den Descriptor gelangen,
+nicht die Session, die diesen eigentlich nur nutzen möchte.
 
 ### ​Analyse GRASP: Hohe **Kohäsion**
 
@@ -354,10 +381,15 @@ _[eine Klasse als positives Beispiel hoher Kohäsion; UML Diagramm und Begründu
 
 ![High Cohesion](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/highCohesion.puml)
 
-Als Beispiel für hohe Kohäsion wurde hier die konkrete Aisprägung eines Environments ausgewählt:
+Als Beispiel für hohe Kohäsion wurde hier die konkrete Ausprägung eines Environments ausgewählt:
 Das `KArmedBanditEnvironment`. Das Environment besitzt prinzipiell, wie auch im UML Diagramm dargestellt, keine weiteren
-Abhängigkeiten nach Außen. Alle Methoden und Attribute, die die Klasse besitzt, beziehen sich einzug und alleine auf *
-dieses konkrete* Environment und sind alle unabdingbar, damit dieses seine korrekte Funktionalität gewährleisten kann.
+Abhängigkeiten nach Außen. Dies begünstigt natürlich die Kohäsion, da alles, was die Klasse an Funktionalität ausführen möchte,
+von dieser bereitgestellt werden muss.
+Alle Methoden und Attribute, die die Klasse besitzt, beziehen sich einzig und alleine auf *dieses konkrete* Environment
+und damit auf seine Hauptaufgabe.
+Sie sind alle unabdingbar, damit dieses seine korrekte Funktionalität gewährleisten kann und können alle schwierig bis
+gar nicht in weitere module ausgelagert werden.
+
 
 ### ​**Don&#39;t Repeat Yourself (DRY)**
 
@@ -437,6 +469,9 @@ entsprechend benachrichtigt, sofern Tests fehlgeschlagen sind. Über GitHub Acti
 die Tests ausgeführt werden. So ist gewährleistet, dass bei Änderungen schnell erkannt werden kann, dass die Änderungen
 eventuell unerwünschte Effekte hatten.
 
+Zusätzlich zu den automatischen Unit-Test werden neue Code-Smells, Bugs oder Security Probleme vollautomatisch durch SonarCloud
+überwacht. Auch warnt das Tool davor, sofern neuer Code ungetestet ist oder andere Probleme aufweist.
+
 ### ​ATRIP: Thorough
 
 _[jeweils 1 positives und negatives Beispiel zu &#39;Thorough&#39;; jeweils Code-Beispiel, Analyse und Begründung, was professionell/nicht professionell ist]_
@@ -445,9 +480,12 @@ _[jeweils 1 positives und negatives Beispiel zu &#39;Thorough&#39;; jeweils Code
 
 Besonders für die Tests der Environments war es wichtig sicherzustellen, dass alle möglichen Pfade abgedeckt sind und
 das Environment kein Fehlerverhalten aufweist, da dadurch die Trainingsergebnisse verfälscht werden könnten bzw.
-komplett falsch wären. Wie im unteren Beispiel zu erkennen ist, wurden zunächst alle validen Aktionen getestet (Bewegung
+komplett nutzlos wären. Wie im unteren Beispiel zu erkennen ist, wurden zunächst alle validen Aktionen getestet (Bewegung
 in 4 Richtungen sowie nichts tun). Um sicherzugehen, dass andere Aktionen nichts verändern, werde diese separat im Test
 darunter überprüft.
+
+Durch die Tests werden sowohl Fälle getestet, mit denen die Objekte normalerweise konfrontiert sind (d.h. korrekte Aktionen),
+als auch Fälle, die absichtlich die Environments auf Fehlverhalten prüfen sollen.
 
 ````java
 @Test
@@ -481,14 +519,15 @@ private void execInvalidActionAndCompareState(Action action) {
 
 #### Negativ Thorough:
 
-Ein negativ-Beispiel ist im unteren Code-Beispiel abgebildet. Hier wird der Update-Schritt des Algorithmus' `QLearning`
-anhand von wenigen Beispielwerten getestet und mit einer fixen Konfiguration. Die Learning-Rate wurde in allen
+Ein negativ-Beispiel ist im unteren Code-Beispiel abgebildet. 
+Hier wird der Update-Schritt des Algorithmus' `QLearning` anhand von wenigen Beispielwerten getestet und mit einer fixen Konfiguration. Die Learning-Rate wurde in allen
 QLearning-Tests auf 1 (neutrales Element der Multiplikation) gesetzt, was den absolut einfachsten Fall darstellt. Obwohl
-der Algorithmus hier korrektes Verhalten aufweist, könnte es eventuell mit sehr kleinen oder großen Werten für die
-Learning-Rate zu Problemen kommen, bzw. sich Fehler in der Formel offenbaren (ob die Learning Rate z.B. uberhaupt
-korrekt berücksichtigt wird). Behoben werden kann dies über zusätzliche Tests mit unterschiedlichen Konfiguration, um
-solche Fehler zu offenbaren. Auch Tests mit möglichen Edge-Cases wären denkbar z.B. mit Werten, die nicht auftreten
-dürfen (negative Werte z.B.).
+der Algorithmus hier korrektes Verhalten aufweist und die Code Coverage 100% erreicht, könnte es eventuell mit sehr kleinen oder großen Werten für die
+Learning-Rate zu Problemen kommen, bzw. sich Fehler in der Formel offenbaren (ob die Learning Rate z.B. überhaupt
+korrekt berücksichtigt wird). 
+Behoben werden kann dies über zusätzliche Tests mit unterschiedlichen Konfigurationen, um solche Fehler zu offenbaren. 
+Auch Tests mit möglichen Edge-Cases wären denkbar z.B. mit Werten, die nicht auftreten dürfen, wie z.B. negative Zahlenwerte
+oder NULL Parameter.
 
 ````java
 @Test
@@ -509,6 +548,19 @@ _[jeweils 1 positives und negatives Beispiel zu &#39;Professional&#39;; jeweils 
 #### Professional Positiv:
 
 ```java
+@BeforeEach
+void prepare() {
+    grid = new int[2][3];
+    grid[0][0] = GridWorldEnvironment.STATE_TERMINAL;
+    grid[1][0] = GridWorldEnvironment.STATE_SPAWN;
+    grid[0][1] = GridWorldEnvironment.STATE_NORMAL;
+    grid[1][1] = GridWorldEnvironment.STATE_BOMB;
+    grid[0][2] = GridWorldEnvironment.STATE_FORBIDDEN;
+    grid[1][2] = GridWorldEnvironment.STATE_FORBIDDEN;
+
+    environment = Mockito.spy(new GridWorldEnvironment(grid));
+}
+
 @Test
 void actionsShouldTransitionEnvironmentToNewState() {
     execActionAndCompareState(Action.MOVE_X_DOWN, 0);
@@ -531,10 +583,15 @@ Zustand über, den es zu prüfen gilt. Genutzt werden wohlbekannte Assertions vo
 der erwartete Zustand mit dem aktuellen Zustand der Umgang nach der Aktion verglichen wird. Des Weiteren wurde versucht
 die Code-Duplikation durch das Einführen von einer neuen Methode zu reduzieren.
 
+Um die Tests möglich frei von Initialisierungscode zu halten, wird vor jedem Test die Methode `prepare()` ausgeführt, die
+das Environment und alle zum Testen relevante Attribute zurücksetzt und in diesem Fall ein Beispielgrid initialisiert. 
+Somit kann ein Test genau eine bestimmte Gruppe an zusammenhöngenden Pfaden testen, ohne auf das _Wie komme ich an die Variablen?_ rücksicht nehmen zu müssen.
+
 #### Professional Negativ:
 
-Ein unter Umständen wenig problematisches, allerdings dennoch vorhandene Negativbeispiel ist ein klassisches Beispiel
-der Code-Duplication (hier an zwei Beispielen, taucht allerdings noch öfters auf):
+Ein unter Umständen wenig problematisches, allerdings dennoch vorhandenes Negativbeispiel ist ein klassischer Fall 
+der Code-Duplication.
+Im Folgenden ist dies anhand von zwei einfachen Fällen in den Tests dieses Projektes dargestellt:
 
 _GreedyPolicy.java_
 
@@ -575,30 +632,36 @@ void prepare() {
 ```
 
 In beiden Beispielen werden sehr ähnliche Code-Abschnitte genutzt, vor allem wenn es um das Initialisieren
-des `RLSettings` Objektes geht. Auch wird zwei bzw. mehrmals derselbe oder ein ähnlicher ActionValueStore genutzt.
+des `RLSettings` Objektes geht. Auch wird zwei bzw. mehrmals derselbe oder ein ähnlicher ActionValueStore genutzt, was
+zu unnötiger Code Duplikation führt und damit zu einem erhöhten Wartungsaufwand, falls sich etwas an den Konstruktoren o.ä.
+ändern sollte.
 Gelöst werden könnte dies über eine separate Klasse mit statischen Methoden, die solche "Default" Objekte bereitstellt (
 z.B. eine leeres `RLSettings` Objekt). Auch könnten unter Umständen das _Builder_-Pattern genutzt werden, um die
 Erstellung von solchen Objekten abzukürzen, damit diese nicht mehr Platz einnehmen als nötig.
 
-### ​Code Coverage
+### Code Coverage
 
 _[Code Coverage im Projekt analysieren und begründen]_
 
-In der Folgenden Analyse der Code-Coverage sind nur die Module des tatsächlichen Reinforcement Learning Projektes
-beinhaltet. Das Utils Modul, welches den CLI parser und die Dependency Injection zur Verfügung stellt wurde bewusst
-davon ausgenommen, da dieses nicht wirklich Logik für das Reinforcement Learning ansich bereitstellt und "nur" als
-Exkurs zum Lernen prgrammiert wurde. Dennoch sind selbstverständlich einige Aspekte dieses Moduls getestet, allem voran
-die zahlreichen Funktionen, die die Reflection durchführen. Auch ist der `InjectionContext` selbst mit Tests versehen,
+In der folgenden Analyse der Code-Coverage sind nur die Module des tatsächlichen Reinforcement Learning Projektes
+beinhaltet. Das Utils Modul, welches den CLI-Parser und die Dependency Injection zur Verfügung stellt wurde bewusst
+davon ausgenommen, da dieses nicht wirklich Logik für das Reinforcement Learning an sich bereitstellt und "nur" als
+Exkurs zum Lernen programmiert wurde. 
+Dennoch sind selbstverständlich einige Aspekte dieses Moduls getestet, allem voran die zahlreichen Funktionen, 
+die die Reflection und damit das Kernstück der _Dependency Injection_ durchführen. Auch ist der `InjectionContext` selbst mit Tests versehen,
 um das Mapping der Interfaces auf konkrete Klassen zu testen.
 
-| Modul/Layer | Coverage | Begründung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-|-------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Domain      | ca. 60%  | Die Tests decken alle wichtigen Kernfunktionalitäten ab, d.h. die Implementierten Environments, Algorithmen sowie verschiedenen Policy-Varianten. Kurz: Alles, was Logik beinhaltet und Funktionalität nach außen bereitstellt. Teilweise nicht durch Tests abgedeckt sind die Factories, die die Domain-Objekte erstellen.                                                                                                                                                                                                                                                                                                                                                                                                 |
-| Applikation | ca. 84%  | Die einzigen Services im Applikationslayer, die tatsächlich wichtige Logik beinhalten, sind der `ExecutionService` und der `ConfigService`  bzw. deren Implementierung. Beide Services werden entsprechend soweit wie möglich mit gemockten Dependencies isoliert getestet. Die übrigen Services wie z.B. `AgentService` oder `EnvironmentService` reichen alle Calls momentan 1 zu 1 an die Repository weiter. Sie existieren aus dem Grund, dass wenn die Services später erweitert werden sollen, nicht erst in anderen Klassen auf einen Service gewechselt werden muss.                                                                                                                                                |
-| Adapters    | ca. 60%  | In der Adapter-Schicht werden momentan nur die wichtigsten Klassen getestet, welche im Moment die Mapper sind. Diese mappen ein bestimmtes Domain-Objekt auf den entsprechenden DTO. Zusätzlich wird für die `ExecutionServiceFacade` getestet, ob die `startTraining` bzw. `startEvaluation` Methoden die richtige Methode im gemockten Service aufrufen. Die übrigenden Fassaden sind momentan ungetestet, da diese ausschließlich den entsprechenden Mapper aufrufen und keine testenswerte Logik beinhalten.  |
-| Plugin      | ca. 15%  | Das aktuell am wenigsten getestete Modul ist das Plugin-Modul, welches das CLI beinhaltet. Auch hier wird im Moment nur für den `RunCommand` getestet, ob je nach Parameter die richtige Methode in der `ExecutionServiceFacade` aufgerufen wird. Dies ist sehr wichtig, da diese beiden Methode den Eintrittspunkt für die gesamte Funktionalität darstellen. Alle übrigen Commands printen die DTOs eins zu eins in die Konsole. Die genaue Ausgabe in der Konsole zu testen erschien nicht sinnvoll bzw. das Aufwand-Nutzen Verhätnis ist hier nicht wirklich gegeben.                                                                                                                                                                                                                                                                                                                                                             |
+Triviale Pfade wie z.B. einzelne Get Methoden oder Value-Objekte, die ausschließlich Daten beinhalten wurden nicht getestet,
+da hier das Aufwand/Nutzen verhätnis nicht wirklich gegeben ist.
 
-### ​Fakes und Mocks
+| Modul/Layer | Coverage | Begründung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+|-------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Domain      | ca. 60%  | Die Tests decken alle wichtigen Kernfunktionalitäten ab, d.h. die Implementierten Environments, Algorithmen sowie verschiedenen Policy-Varianten. Kurz: Alles, was Logik beinhaltet und Funktionalität nach außen bereitstellt. Teilweise nicht durch Tests abgedeckt sind die Factories, die die Domain-Objekte erstellen.                                                                                                                                                                                                                                                                                              |
+| Applikation | ca. 84%  | Die einzigen Services im Applikationslayer, die tatsächlich wichtige Logik beinhalten, sind der `ExecutionService` und der `ConfigService`  bzw. deren Implementierung. Beide Services werden entsprechend soweit wie möglich mit gemockten Dependencies isoliert getestet. Die übrigen Services wie z.B. `AgentService` oder `EnvironmentService` reichen alle Calls momentan 1 zu 1 an die Repository weiter. Sie existieren aus dem Grund, dass wenn die Services später erweitert werden sollen, nicht erst in anderen Klassen auf einen Service gewechselt werden muss. Beide Services sind nahezu 100% getestet. |
+| Adapters    | ca. 60%  | In der Adapter-Schicht werden momentan nur die wichtigsten Klassen getestet, welche im Moment die Mapper sind. Diese mappen ein bestimmtes Domain-Objekt auf den entsprechenden DTO. Zusätzlich wird für die `ExecutionServiceFacade` getestet, ob die `startTraining` bzw. `startEvaluation` Methoden die richtige Methode im gemockten Service aufrufen. Die übrigenden Fassaden sind momentan ungetestet, da diese ausschließlich den entsprechenden Mapper aufrufen und keine testenswerte Logik beinhalten.                                                                                                         |
+| Plugin      | ca. 15%  | Das aktuell am wenigsten getestete Modul ist das Plugin-Modul, welches das CLI beinhaltet. Auch hier wird im Moment nur für den `RunCommand` getestet, ob je nach Parameter die richtige Methode in der `ExecutionServiceFacade` aufgerufen wird. Dies ist sehr wichtig, da diese beiden Methode den Eintrittspunkt für die gesamte Funktionalität darstellen. Alle übrigen Commands printen die DTOs eins zu eins in die Konsole. Die genaue Ausgabe in der Konsole zu testen erschien nicht sinnvoll bzw. das Aufwand-Nutzen Verhätnis ist hier nicht wirklich gegeben.                                                |
+
+### Fakes und Mocks
 
 _[Analyse und Begründung des Einsatzes von 2 Fake/Mock-Objekten; zusätzlich jeweils UML Diagramm der Klasse]_
 
@@ -609,9 +672,13 @@ _[Analyse und Begründung des Einsatzes von 2 Fake/Mock-Objekten; zusätzlich je
 Ein Interface, welches häufig gemockt wird, damit keine konkrete Implementierung erforderlich ist, ist das
 Interface `Environment`. Den Gettern werden dabei spezifische Rückgabewerte zugewiesen, die teilweise von den
 übergebenen Parametern an die Methoden abhängig sind. Zusätzlich dazu ist das Mocken dieses Interfaces recht einfach, da
-es sehr simpel aufgebaut ist und keine komplizierten Eingaben bzw. Ausgaben besitzt. Beispielsweise wird dieser Mock in
-der Klasse `SimpleAgentFactoryTest` genutzt, um die `SimpleAgentFactory` zu testen. Für die Funktionalität ist zunächst
-kein konkretes Environment erforderlich, allerdings sollte es, auch im Zuge späterer Erweiterungen auch nicht NULL sein.
+es sehr simpel aufgebaut ist und keine komplizierten Eingaben bzw. Ausgaben sowie wenige Methoden besitzt. 
+Beispielsweise wird dieser Mock in der Klasse `SimpleAgentFactoryTest` genutzt, um die `SimpleAgentFactory` zu testen. 
+Für die Funktionalität ist zunächst kein konkretes Environment erforderlich, allerdings sollte es, auch im Zuge späterer
+Erweiterungen auch nicht NULL sein.
+
+In den Tests für die Factory ist zusätzlich kein _State_ relevant, sondern es soll nur das Verhalten der Methoden getestet 
+werden, was den perfekten Anwendungsfall für solche Mocks bietet.
 
 #### Mock 2:
 
@@ -645,16 +712,25 @@ void startSzenarioShouldCallAllObserverMethods() throws StartSzenarioException {
 
 # ​Kapitel 6: Domain Driven Design
 
+![Markov RL](https://miro.medium.com/max/1400/1*ywOrdJAHgSL5RP-AuxsfJQ.png)
+
+Quelle: https://towardsdatascience.com/introduction-to-reinforcement-learning-markov-decision-process-44c533ebf8da
+
 ### ​Ubiquitous Language
 
 _[4 Beispiele für die Ubiquitous Language; jeweils Bezeichung, Bedeutung und kurze Begründung, warum es zur Ubiquitous Language gehört]_
 
-| **Bezeichung**       | **Bedeutung**                                                                                                                                                                                                                                                                                                                                                                                                                      | **Begründung** |
-|----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --- |
-| Umgebung/Environment | Eine Umgebung bzw. Environment stellt ein Umfeld für Agenten zur Verfügung. Jede Umgebung erlaubt dabei ein bestimmtes Subset an Aktionen. Zur Vereinfachung sind die Environments in diesem Projekt eine Art Controller, der zugleich den Zustand über z.B. die aktuelle Position des Agenten beinhaltet. In klassischen Implementierung würde dies eine separate Engine tun, was allerdings das Projekt nur verkomplizieren würde. |     |
-| Agent                | Ein Agent ist ein Akteur innerhalb einer Umgebung. Der Agent kann verschiedene Aktionen ausführem. die die Umgebung auf eine bestimmte Beweise beinflussen und ihren Zustand ändern.                                                                                                                                                                                                                                               |     |
-| Policy               | Eine Policy ist prinzipiell nur ein Hinweisgeber, der einem Agenten sagt, welche Aktion in welchem Zustand wie sinnvoll ist.                                                                                                                                                                                                                                                                                                       |     |
-| Algorithmus          | Ein Algorithmus modifiziert eine Policy, damit diese bessere Ergebnisse erzielt. Der Algorithmus macht einen Agenten somit lernfähig.                                                                                                                                                                                                                                                                                              |     |
+Sämtliche Begriffe gehören der Domäne des Reinforcement Learnings an. Die grobe Struktur eines einfachen Systems,
+welches aus den Komponenten _Agent_ und _Environment_ besteht. Ein Agent kann dabei die Umgebung für Aktionen beeinflussen,
+die daraufhin in einen neuen Zustand übergeht und dem Agenten eine Belohnung bzw. Bestrafung zuweist.
+Die Bedeutung dieser und weiterer Begriffe ist in der folgenden Tabelle zusammengefasst:
+
+| **Bezeichung**       | **Bedeutung**                                                                                                                                                                                                                                                                                                                                                                                                                       | **Begründung**                                                                                                                                                                                                                                                                                                                                                                                   |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Umgebung/Environment | Eine Umgebung bzw. Environment stellt ein Umfeld für Agenten zur Verfügung. Jede Umgebung erlaubt dabei ein bestimmtes Subset an Aktionen. Zur Vereinfachung sind die Environments in diesem Projekt eine Art Controller, der zugleich den Zustand über z.B. die aktuelle Position des Agenten beinhaltet. In klassischen Implementierung würde dies eine separate Engine tun, was allerdings das Projekt nur verkomplizieren würde. | Die Umgebung ist neben dem Agenten ein zentraler Bestandteil der Domäne. Ohne eine Umgebung kann ein Reinforcement Learning System, wie oben abgebildet, nicht funktionieren. Es ist deshalb wichtig, dass die klare Bedeutung festgestellt wird. Mit einer _Umgebung_ ist deswegen nicht die Entwicklungsumgebung o.ä. gemeint, sondern die Stellung dieser Komponente im Reinforcement Learning. |
+| Agent                | Ein Agent ist ein Akteur innerhalb einer Umgebung. Der Agent kann verschiedene Aktionen ausführem. die die Umgebung auf eine bestimmte Beweise beinflussen und ihren Zustand ändern.                                                                                                                                                                                                                                                | Für den Agenten gilt dasselbe wie für die Umgebung. Der Agent ist der zentrale Akteur und besitzt ebenfalls eine zentrale Bedeutung.                                                                                                                                                                                                                                                             |
+| Policy               | Eine Policy ist prinzipiell nur ein Hinweisgeber, der einem Agenten sagt, welche Aktion in welchem Zustand wie sinnvoll ist. Anschaulich bestimmt die Policy die Aktion _A_, wie oben im Bild dargestellt.                                                                                                                                                                                                                          | Mit einer Policy wird häufig ein Regelwerk oder ähnliches gemeint, was nicht der Bedeutung eines Hinweisgebers bzw. Kommandeurs entspricht, wie in diesem Fall.                                                                                                                                                                                                                                  |
+| Algorithmus          | Ein Algorithmus modifiziert eine Policy, damit diese bessere Ergebnisse erzielt. Der Algorithmus macht einen Agenten somit lernfähig.                                                                                                                                                                                                                                                                                               | Der Begriff _Algorithmus_ ist sehr vielseitig besetzt. In diesem konkreten Fall geht es ausschließlich um den Fakt, dass ein Algorithmus einen Handlungsvorschrift darstellt, die den Agenten mit voranschreitender Zeit **besser** macht, in dem was er tut.                                                                                                                |
 
 ### ​Entities
 
@@ -678,6 +754,8 @@ _[UML, Beschreibung und Begründung des Einsatzes eines Value Objects; falls kei
 Ein häufig eingesetztes Value Object sind Objekte der Klasse `RLSettings`. Objekte der Klassen repräsentieren eine
 einfache, identitätslose Instanz, welche globale Einstellungen zum Reinforcement Learning beinhaltet. Jedes Objekt ist
 Read-Only. Sollte eine Änderung nötig sein, so wird ein neues erstellt.
+Das Value Object ist in diesem Fall ideal, da eine Komponente, die die Settings **verwendet**, diese nicht verändern darf.
+Des Weiteren sollen bestehende Trainings o.ä. nicht durch eine Änderung der Einstellung beeinflusst werden.
 
 ![Settings Value Object](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/valueObjectRLSettings.puml)
 
@@ -701,6 +779,10 @@ _[UML, Beschreibung und Begründung des Einsatzes eines Repositories; falls kein
 Abgeleitete Klasse des Interfaces `ConfigRepository` sind dafür zuständig, die gespeicherten Einträge der Config zu
 verwalten. Die Aufgaben sind sowohl das Einlesen als auch das Modifizieren (Hinzufügen). Da für alle Schichten die
 konkrete Herkunft der Config-Items egal ist, wird dieses unwichtige Detail über das Interface abstrahiert.
+
+Des Weiteren wird durch diese Repository und die damit verbundene Datei auf dem Dateisystem für alle anderen Komponenten eine
+_Single Source of Truth_ geschaffen. **Alle** Abfragen gehen über die Repository und es gibt keine zweite Datenstruktur, die
+eventuell mit der Repository in Konflikt stehende Daten hält. 
 
 ![Config Repo](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/repositoryConfig.puml)
 
@@ -894,10 +976,15 @@ _[2 unterschiedliche Entwurfsmuster aus der Vorlesung (oder nach Absprache auch 
 
 ### Entwurfsmuster 1: Factory Pattern
 
-Wird genutzt, um z.B. konkrete Visualizer zu erstellen, die eine Policy, abhängig vom Environment, visualisieren. Da die
+Das Factory Pattern wird genutzt, um z.B. konkrete Visualizer zu erstellen, die eine Policy, abhängig vom Environment und Agenten, visualisieren. Da die
 Logik zum Erzeugen in diesem Fall recht umfangreich ist, wird diese Logik in einer eigenen Klasse gekapselt. Somit ruft
 beispielsweise eine Repository nur noch die Factory über das Interface auf und die konkrete Implementierung kümmert sich
 um das Erzeugen.
+
+Sollten neue Typen hinzugefügt werden, kann einfach eine Subklasse einer bestehenden Factory bzw. des Interfaces erstellt werden,
+die diesen neuen Typen baut.
+Über die Dependency Injection kann diese Factory dann in sämtliche Repositories eingefügt werden, somit muss kein bestehender
+Code angepasst werden und sämtliche Erzeugungslogik bleibt gekapselt.
 
 ![Factory Pattern](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/factoryPattern.puml)
 
@@ -905,17 +992,58 @@ um das Erzeugen.
 
 Da das Training bzw. die Evaluation eines Agenten mitunter länger dauern kann und der Nutzer über den Fortschritt
 informiert werden soll, wird in diesem Projekt ein Observer eingesetzt. Der Nutzer startet ein Szenario über den Service
-und spezifiziert einen Observer vom Typ `SzenarioExecutionObserver`. Der Observer wird danach in einen anderen Observer
-gewrapped. Der Grund dafür ist recht simpel: Aus Sicht des UI möchte man sich nicht um das Speichern der Trainierten
-Policy kümmern, sondern nur darüber informiert werden, sobald diese gespeichert wurde. Der Wrapper wartet auf den Aufruf
-von `onTrainingEnd`
-, speichert daraufhin den `ActionValueStore` und ruft vom gewrappten die Methode `onActionStorePersisted` auf und
-übergibt die Info des gespeicherten Stores. Alle übrigen aufrufe werden ebenfalls an den gewrappten durchgeleitet. Damit
-sich die `SzenarioSession` nicht um das Speichern in irgendeiner Form kümmern muss, werden auch zwei verschiedene
-Observer genutzt. Die Session kümmert sich *ausschließlich* um das Training und muss gar nicht wissen, dass die Policy
-später gespeichert wird, während der Service den Rest bearbeitet.
+und spezifiziert einen Observer vom Typ `SzenarioExecutionObserver`. 
+Ohne zutun des Benutzers wird dieser Observer in einen weitere gewrapped, damit der Service selbst das Ende des Trainings
+abfangen und eigene Aktionen durchführen kann.
 
-das Szenario übergeben, welche den Observer bei folgenden Ereignissen informiert:
+```java
+public void startTraining(...) {
+    ...
+    session.addObserver(createWrappedTrainingObserver(observer));
+    session.start();
+}
+
+private SzenarioExecutionObserver createWrappedTrainingObserver(Optional<SzenarioExecutionObserver> progressObserver) {
+    return new SzenarioExecutionObserver(){
+        @Override
+        public void onSzenarioEnd(SzenarioSession session,double averageReward){
+            progressObserver.ifPresent(szenarioExecutionObserver->szenarioExecutionObserver.onSzenarioEnd(session,averageReward));
+    
+            DescriptorBundle bundle = session.getSzenario().metadata();
+            PersistedStoreInfo info = null;
+            try {
+                info = storeTrainedPolicy(
+                    bundle.agentDescriptor().name(),
+                    bundle.environmentDescriptor().name(),
+                    session.getSzenario().policy());
+            } catch (PersistStoreException e) {
+                throw new RuntimeException("Es ist ein kritischer Fehler beim Speichern der Trainieren Policy auftreten!");
+            }
+
+            onActionStorePersisted(info);
+        }
+        
+        // die anderen Methoden...
+    }
+}
+```
+
+In diesem konkreten Fall wird der Wrapper genutzt, um die nach dem Trainingsende vorhandene Policy abzuspeichern, wie im
+Code Beispiel zu sehen ist.
+Nachdem die Policy abgespeichert wurde, ruft der Wrapper seine eigene `onActionStorePersisted(info)` Methode auf,
+die schließlich den Aufruf den gewrappten Observer weiterleitet (delegiert).
+
+
+Streng genommen wäre dieser Wrapper nicht erforderlich, da `session.start()` aktuell ein blockierender Aufruf ist.
+In der näheren Zukunft soll dies allerdings asynchron ausgeführt werden, womit ein Observer wie dieser zwingend erforderlich wird.
+
+Damit sich die `SzenarioSession` selbst nicht um das Speichern kümmern muss bzw. überhaupt keine Kenntnis von der Existenz
+eines solchen Vorganges haben muss, werden zwei getrennte Observer genutzt, wie im UML zu erkennen ist.
+`SzenarioProgressObserver` wird dabei von der Session selbst genutzt, während der Nutzer des Services einen
+`SzenarioExecutionObserver` spezifizieren muss. Da die Interfaces voneinander erben, kann der Observer des Services
+für den im Szenario eingesetzt werden.
+
+Das Basis-Interface `SzenarioProgressObserver` wird dabei an das Szenario übergeben, welche bei folgenden Ereignisse benachrichtigt:
 
 * Vor dem Beginn des Szenarios.
 * Vor jedem Schritt, der innerhalb des Szenarios ausgeführt wird.

@@ -1,8 +1,12 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class AgentFactory {
+interface AgentFactory {
     +{abstract}Optional<Agent> createAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings)
+}
+
+interface AgentConstructor {
+    +{abstract} Agent constructAgent(AgentDescriptor descriptor, Environment environment, ActionSource source, RLSettings settings)
 }
 
 class SimpleAgentFactory {
@@ -20,6 +24,7 @@ note right of SimpleAgentFactory::createAgent
     Return agent
 end note
 
+SimpleAgentFactory *-- AgentConstructor
 AgentFactory <|-- SimpleAgentFactory
 
 @enduml

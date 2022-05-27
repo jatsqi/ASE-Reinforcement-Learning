@@ -283,8 +283,7 @@ public class ExecutionServiceImpl implements ExecutionService {
 
             @Override
             public void postSzenarioStep(SzenarioSession session, long currentStep, double averageReward) {
-                if (progressObserver.isPresent())
-                    progressObserver.get().postSzenarioStep(session, currentStep, averageReward);
+                progressObserver.ifPresent(szenarioExecutionObserver -> szenarioExecutionObserver.postSzenarioStep(session, currentStep, averageReward));
             }
         };
     }

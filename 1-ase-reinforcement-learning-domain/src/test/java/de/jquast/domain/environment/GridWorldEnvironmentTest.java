@@ -14,7 +14,6 @@ class GridWorldEnvironmentTest {
     private GridWorldEnvironment environment;
     private int[][] grid;
 
-
     @BeforeEach
     void prepare() {
         grid = new int[2][3];
