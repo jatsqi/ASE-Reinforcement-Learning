@@ -36,14 +36,14 @@ class ConfigMapperTest {
     @Test
     void rlSettingsShouldHaveSameValues() {
         RLSettings settings = new RLSettings(
-                1.0, 2.0, 3.0, 4.0
+                1.0, 0.3, 0.2, 0.8
         );
         RLSettingsDto dto = mapper.toDto(settings);
 
         assertEquals(1.0, dto.learningRate());
-        assertEquals(2.0, dto.discountFactor());
-        assertEquals(3.0, dto.explorationRate());
-        assertEquals(4.0, dto.agentRewardStepSize());
+        assertEquals(0.3, dto.discountFactor());
+        assertEquals(0.2, dto.explorationRate());
+        assertEquals(0.8, dto.agentRewardStepSize());
     }
 
     @Test
