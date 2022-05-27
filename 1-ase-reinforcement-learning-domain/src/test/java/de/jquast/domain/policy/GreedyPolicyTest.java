@@ -24,7 +24,7 @@ class GreedyPolicyTest {
         );
 
         policy = new GreedyPolicy(store, new RLSettings(
-                0.0, 0.0, 1000, 0.0
+                0.0, 0.0, 1, 0.0
         ));
     }
 
@@ -38,7 +38,7 @@ class GreedyPolicyTest {
     @Test
     void emptyGreedyPolicyShouldAlwaysSelectFirstAction() {
         EpsilonGreedyPolicy emptyPolicy = new GreedyPolicy(3, 3, new RLSettings(
-                0.0, 0.0, 100, 0.0
+                0.0, 0.0, 1, 0.0
         ));
 
         assertEquals(0, emptyPolicy.selectAction(0));
