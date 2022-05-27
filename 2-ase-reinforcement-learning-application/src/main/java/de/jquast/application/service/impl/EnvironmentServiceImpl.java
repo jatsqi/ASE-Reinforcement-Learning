@@ -2,7 +2,6 @@ package de.jquast.application.service.impl;
 
 import de.jquast.application.service.EnvironmentService;
 import de.jquast.domain.environment.EnvironmentDescriptor;
-import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.utils.di.annotations.Inject;
 

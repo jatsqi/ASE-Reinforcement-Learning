@@ -8,7 +8,6 @@ import de.jquast.utils.di.annotations.Inject;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class AgentServiceFacadeImpl implements AgentServiceFacade {
 

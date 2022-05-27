@@ -260,8 +260,7 @@ public class ExecutionServiceImpl implements ExecutionService {
                             bundle.environmentDescriptor().name(),
                             session.getSzenario().policy());
                 } catch (PersistStoreException e) {
-                    e.printStackTrace();
-                    // TODO: Exception Handling
+                    throw new RuntimeException("Es ist ein kritischer Fehler beim Speichern der Trainieren Policy auftreten!");
                 }
 
                 onActionStorePersisted(info);

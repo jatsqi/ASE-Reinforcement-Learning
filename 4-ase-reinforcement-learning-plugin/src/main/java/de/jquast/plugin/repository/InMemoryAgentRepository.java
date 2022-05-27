@@ -9,7 +9,6 @@ import de.jquast.domain.agent.impl.FlatMovingPullAgent;
 import de.jquast.domain.agent.impl.MovingAgent2D;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.exception.AgentCreationException;
-import de.jquast.domain.shared.Action;
 import de.jquast.domain.shared.ActionSource;
 import de.jquast.utils.di.annotations.Inject;
 

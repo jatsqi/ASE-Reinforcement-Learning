@@ -30,8 +30,8 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
                 Files.createDirectory(Path.of(STORAGE_FOLDER_PATH));
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            // TODO: Exception Handling
+            throw new RuntimeException("Es ist ein kritischer Fehler beim Erstellen des Ordners aufgetreten" +
+                    ", in dem die Trainingsergebnisse gespeichert werden.");
         }
     }
 

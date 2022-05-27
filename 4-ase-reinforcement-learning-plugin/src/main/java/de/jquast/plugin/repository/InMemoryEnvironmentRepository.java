@@ -7,7 +7,6 @@ import de.jquast.domain.environment.EnvironmentRepository;
 import de.jquast.domain.environment.impl.GridWorldEnvironment;
 import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
 import de.jquast.domain.exception.EnvironmentCreationException;
-import de.jquast.domain.shared.Action;
 import de.jquast.utils.di.annotations.Inject;
 
 import java.util.Collection;
