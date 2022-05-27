@@ -85,12 +85,13 @@ public class ExecutionServiceImpl implements ExecutionService {
             long steps,
             int storeId,
             Optional<SzenarioExecutionObserver> observer) throws StartSzenarioException {
-        AgentDescriptor agentDescriptor = agentRepository
-                .getAgentInfo(agentName)
-                .orElseThrow(() -> new StartSzenarioException("Der Agent konnte nicht gefunden werden."));
-
         try {
             Szenario szenario = createSzenario(agentName, envName, policyRepository.getDefaultPolicyInfo().name(), envOptions, steps, storeId);
+
+            // Hole Agent Info, muss an dieser Stelle gültig sein, da Szenario erfolgreich erstellt
+            @SuppressWarnings("OptionalGetWithoutIsPresent")
+            AgentDescriptor agentDescriptor = agentRepository
+                    .getAgentInfo(agentName).get();
             ActionValueStore store = szenario.policy().getActionValueStore();
 
             // Decorate Policy with Algorithm and recreate Agent
