@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class Agent {
+abstract class Agent {
     #Environment environment
     #ActionSource actionSource
     #RLSettings settings
@@ -13,6 +13,16 @@ class Agent {
     +void executeNextAction()
     +double getCurrentAverageReward()
     #int collectActionFromSource()
+}
+
+class Szenario {
+    +DescriptorBundle metadata,
+    +Agent agent
+    +Environment environment
+    +Policy policy
+    +PolicyVisualizer visualizer
+    +long maxSteps
+    +RLSettings settings
 }
 
 class ActionDataPair {
@@ -34,28 +44,33 @@ interface Environment {
 }
 
 class SzenarioSession {
--int currentStep
--Szenario szenario
--List<SzenarioProgressObserver> observer
---
-+void start()
-+SzenarioSession addObserver(SzenarioProgressObserver observer)
-+Szenario getSzenario()
-+int getCurrentStep()
---
--void execWhenPresent(Consumer<SzenarioProgressObserver> consumer)
+    -int currentStep
+    -Szenario szenario
+    -List<SzenarioProgressObserver> observer
+    --
+    +void start()
+    +SzenarioSession addObserver(SzenarioProgressObserver observer)
+    +Szenario getSzenario()
+    +int getCurrentStep()
+    --
+    -void execWhenPresent(Consumer<SzenarioProgressObserver> consumer)
 }
 
 note left of SzenarioSession::start
     ...
     while(remainingSteps > 0) do
         environment.tick()
+
+        // "agent" kann beliebige Subklasse
+        // von Agent sein.
+        // Subklasse überschreibt
+        // executeNextAction()
         agent.executeNextAction()
     endwhile
     ...
 end note
 
-note left of Agent::executeNextAction
+note right of Agent::executeNextAction
     Definiert Verhalten, welches für
     JEDEN Agenten gleich ist.
 
@@ -68,10 +83,13 @@ note left of Agent::executeNextAction
     Aktualisiere interne Belohnungsschätzung
 end note
 
-Environment --o SzenarioSession : Teil über Szenario Klasse
-Agent --o SzenarioSession : Teil über Szenario Klasse
+Szenario o-- Environment
+Szenario o-- Agent
+
+Szenario --o SzenarioSession
+'Agent --o SzenarioSession : Teil über Szenario Klasse
 Agent ..> ActionDataPair
-Agent *-- Environment
-Agent *-- ActionSource
+Agent o-- Environment
+Agent o-- ActionSource
 
 @enduml

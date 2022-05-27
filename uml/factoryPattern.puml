@@ -2,26 +2,28 @@
 'https://plantuml.com/class-diagram
 
 abstract class PolicyVisualizer {
-#Policy policy
-#Environment environment
+    #Agent agent
+    #Policy policy
+    #Environment environment
 
-+{abstract} byte[] visualize(VisualizationFormat format)
-+void saveToFile(Path path, VisualizationFormat format)
-+Policy getPolicy()
-+Environment getEnvironment()
+    +{abstract} byte[] visualize(VisualizationFormat format)
+    +void saveToFile(Path path, VisualizationFormat format)
+    +Policy getPolicy()
+    +Environment getEnvironment()
 }
 
 class GridWorldVisualizer {
-+byte[] visualize(VisualizationFormat format)
+    +byte[] visualize(VisualizationFormat format)
+    -char actionToDirection(Action action)
 }
 
 interface PolicyVisualizerFactory {
-+{abstract} Optional<PolicyVisualizer> createVisualizer(Policy policy, Environment environment)
+    +{abstract} Optional<PolicyVisualizer> createVisualizer(Agent agent, Policy policy, Environment environment)
 }
 
 class SimplePolicyVisualizerFactory {
--{static} Map<Class<?>, VisualizerConstructor> CONSTRUCTORS
-+Optional<PolicyVisualizer> createVisualizer(Policy policy, Environment environment)
+    -{static} Map<Class<?>, VisualizerConstructor> CONSTRUCTORS
+    +Optional<PolicyVisualizer> createVisualizer(Agent agent, Policy policy, Environment environment)
 }
 
 

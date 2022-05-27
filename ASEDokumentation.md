@@ -162,7 +162,7 @@ _[(1 Klasse, die die Dependency Rule einhält und eine Klasse, die die Dependenc
 
 In dieser Applikation halten prinzipiell alle Klassen die Dependency-Rule hinsichtlich dem "Fluss" der Abhängigkeiten
 ein. Klassen innerer Schichten besitzen <ins>keine</ins> Abhängigkeiten nach Außen. Dies wird u.a. durch den Aufbau des
-Maven Projektes selbst gewährleistet, da nur die äußeren Schichten/Module weiter innen liegende Module al Abhängigkeit
+Maven Projektes selbst gewährleistet, da nur die äußeren Schichten/Module weiter innen liegende Module als Abhängigkeit
 definiert haben. Beispielsweise werden Repositories in der Domain-Schicht als Interface deklariert und erst außen
 konkret implementiert.
 
@@ -171,9 +171,10 @@ konkret implementiert.
 ![Dependency Rule Config](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyRulePositiv.puml)
 
 Wie im UML Diagramm zu sehen ist besitzt das Interface `ConfigRepository` selbst nur Dependencies innerhalb der eigenen
-Schicht, wird aber in der Application schicht genutzt und von `PropertiesConfigRepository` in der PluginSchicht
+Schicht, wird aber in der Application-Schicht genutzt und von `PropertiesConfigRepository` in der Plugin-Schicht
 implementiert. Die Klasse `ConfigServiceImpl` ist ebenfalls nicht abhängig von der Klasse aus der Plugin-Schicht, was
 eine Verletztung der Dependency-Rule darstellen würde, sondern stattdessen abhängig vom Interface.
+Über eine Dependency Injection wird schließlich in der Plugin-Schicht die konkrete Implementierung der Repository "injected".
 
 #### 2. Positiv-Beispiel: Dependency Rule
 
@@ -182,6 +183,8 @@ eine Verletztung der Dependency-Rule darstellen würde, sondern stattdessen abh�
 Selbiges gilt für den `AgentService`. Dieser hat ausschließlich Abhängigkeiten in Richtung Domain-Layer bzw. eine
 Vererbung auf derselben Ebene. Nach außen Richtung Adapter bzw. Plugin Schicht besteht keinerlei Abhängigkeit. In der
 Adapter-Schicht ist einzig und allein die `AgentServiceFacadeImpl` vom Service abhängig.
+Die Facades bieten der Plugin-Schicht ein einheitliches Interface an. Somit kann sich das Domain-Model änndern, ohne dass das
+Ui davon beeinflusst wird.
 
 ### ​ **Analyse der Schichten**
 
@@ -196,6 +199,7 @@ Die Klasse ist hier angesiedelt, da sie
 
 1. nur das "Verhalten" definiert und keine technischen Details berücksichtigt
 2. im Allgemeinen zur Domäne des Reinforcement Learnings gehört
+3. eine vorgegebene Ausführungsreihenfolge definiert, wie das Training oder eine Evaluation abläuft. Dies ist absichtlich nicht Teil der Plugin-Schicht, da hier das Domain-Model solche Invarianten sicherstellen soll
 
 Konkrete Agenten erben von dieser Klasse und mappen die Aktionen (Integer), die sie von der Aktion Source bekommen (
 siehe dazu Rückgabetyp von z.B. `ActionSource#selectAction`, auf konkrete Aktionen `Action`, die die Umgebung versteht.
@@ -295,9 +299,10 @@ verletzt.
 
 ![DI Exec Service](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyInversionNegative.puml)
 
+Das Negativbeispiel bezieht sich hierbei auf die Klasse`ExecutionServiceImpl`, da diese von der konkreten Implementierung der Klasse `SzenarioSession` abhängt.
 Die Klasse `SzenarioSession`, die die Logik für das Ausführen des Trainings bzw. der Evaluation beinhaltet, ist eine
 direkte Abhängigkeit des `ExecutionService`. Sollte das Verhalten, wie das Training durchlaufen werden soll, später
-angepasst werden, muss zuerst die Struktur umgebaut werden. In diesem einfachen Projekt ist dies nicht der Fall,
+angepasst werden, muss zuerst die Struktur innerhalb von `ExecutionServiceImpl` umgebaut werden. In diesem einfachen Projekt ist dies nicht der Fall,
 weswegen es auf diese Weise gelöst wurde. Gelöst werden könnte dies genauso wie bei den Repositories, indem ein
 Interface eingeführt wird und eine äußere Schicht sich um die Details kümmert. Für diesen konkreten Fall wäre unter
 Umständen eine weitere Factory nötig, damit der Service die verschiedenen Ausprägungen der Sessions auch erstellen kann
@@ -693,7 +698,20 @@ konkrete Herkunft der Config-Items egal ist, wird dieses unwichtige Detail über
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Aggregates; falls kein Aggregate vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
-TODO
+Innerhalb dieses Projektes existieren viele Klassen, die aus mehreren anderen Domain-Objekten bestehen, diese speichern oder benötigen, um ihre Funktion zu erfüllen.
+Dazu gehören u.a. `SzenarioSession` mit `DescriptorBundle`, `Agent` sowie die Lernalgorithmen.
+Keine dieser Klassen ist allerdings, mit Ausnahme von `DescriptorBundle`, zum Datenaustausch gedacht, sondern erfüllt eine
+spezielle, ihr zugewiesene Funktion.
+Auch wird keine der Klasse in Repositories oder ähnliches genutzt, um z.B. sicherzustellen, dass stets das gesamte Objekt
+gespeichert und somit für alle Teile des Aggregates ein konsistenter Zustand gewährleistet wird.
+Alle Objekte, die eine Identität besitzen wie z.B. `AgentDescriptor` oder andere Descriptoren, sind völlig unabhängig voneinander abrufbar
+und so ist es auch gedacht.
+Die Entities besitzen in diesem Fall keine wirkliche Beziehung zueinander, da sie nur einen anderen Typ "beschreiben".
+Ein AgentDescriptor trifft z.B. Aussagen über die Struktur eines konkreten Agenten, steht allerdings in keinster Weise in einer direkten Beziehung zu diesem.
+Anders sieht es bei den konkreten Typen aus, die sie beschreiben, denn ein `Agent` benötigt zwingend ein Environment, um zu funktionieren.
+Es ist somit nicht sinnvoll, in z.B. Repositores ein Aggregate zu verwenden bzw. ein Aggregate-Root festzulegen, über den
+einheitlich der Zugriff auf mehrere Entities geschieht, da alle Entities im Projekt völlig unabhöngig voneinander existieren und
+verwendet werden können.
 
 # ​Kapitel 7: Refactoring
 
