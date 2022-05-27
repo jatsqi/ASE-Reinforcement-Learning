@@ -4,7 +4,7 @@
 
 Name: Quast, Johannes Martrikelnummer: 6897847
 
-Abgabedatum: [DATUM]
+Abgabedatum: 28.05.2022
 
 ## _Allgemeine Anmerkungen:_
 
@@ -341,7 +341,49 @@ alle unabdingbar, damit dieses seine korrekte Funktionalität gewährleisten kan
 
 _[ein Commit angeben, bei dem duplizierter Code/duplizierte Logik aufgelöst wurde; Code-Beispiele (vorher/nachher); begründen und Auswirkung beschreiben]_
 
-# ​
+Commit-ID: 24c44969aa2153d42fde255d37a7f77005c2da92
+
+Beim Überprüfen der gültigen Ranges für die Record-Werte (RLSettings.java) wurde sehr oft dasselbe If-Statement wiederholt,
+obwohl es jedes mal eine identische Aussage hat, nur mit einem anderen Wert.
+Da zu erwarten ist, dass mit Algorithmen, die noch implementiert werden, neue Werte dazukommen, könnte diese Überprüfung schnell
+unübersichtlich werden.
+Zur Behebung wurde die Logik für das Überprüfen und Werfen der Exception in eine eigene, statische Methode ausgelagert.
+So kann die Überprüfung der Werte sehr einfach erweitert werden. Zusätzlich lässt sich ohne großes Refactoring die Error Message
+für alle Werte einfach anpassen, falls z.B. ein Präfix o.ä. hinzugefügt werden soll.
+
+**Vorher:**
+
+````java
+public RLSettings {
+    if (learningRate < 0 || learningRate > 1)
+        throw new IllegalArgumentException("Die Lernrate darf nur im Interval [0, 1] liegen.");
+
+    if (discountFactor < 0 || discountFactor > 1)
+        throw new IllegalArgumentException("Der Discount Factor darf nur im Interval [0, 1] liegen.");
+
+    if (explorationRate < 0 || explorationRate > 1)
+        throw new IllegalArgumentException("Die Erkundungsrate darf nur im Interval [0, 1] liegen.");
+
+    if (agentRewardStepSize < 0 || agentRewardStepSize > 1)
+        throw new IllegalArgumentException("Die Agent-Reward-Schrittrate darf nur im Interval [0, 1] liegen.");
+}
+````
+
+**Nachher:**
+
+````java
+public RLSettings {
+    checkArgumentRangeZeroToOneInclusive(learningRate, "Die Lernrate darf nur im Interval [0, 1] liegen.");
+    checkArgumentRangeZeroToOneInclusive(discountFactor, "Der Discount Factor darf nur im Interval [0, 1] liegen.");
+    checkArgumentRangeZeroToOneInclusive(explorationRate, "Die Erkundungsrate darf nur im Interval [0, 1] liegen.");
+    checkArgumentRangeZeroToOneInclusive(agentRewardStepSize, "Die Agent-Reward-Schrittrate darf nur im Interval [0, 1] liegen.");
+}
+
+private static void checkArgumentRangeZeroToOneInclusive(double value, String error) {
+    if (value < 0 || value > 1)
+        throw new IllegalArgumentException(error);
+}
+````
 
 # ​Kapitel 5: **Unit Tests**
 

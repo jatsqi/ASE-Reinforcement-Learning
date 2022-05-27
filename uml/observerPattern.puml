@@ -2,47 +2,45 @@
 'https://plantuml.com/class-diagram
 
 interface SzenarioProgressObserver {
-
-+{abstract} void onSzenarioStart(SzenarioSession session)
-+{abstract} void preSzenarioStep(SzenarioSession session, long currentStep, double averageReward)
-+{abstract} void postSzenarioStep(SzenarioSession session, long currentStep, double averageReward)
-+{abstract} void onSzenarioEnd(SzenarioSession session, double averageReward)
-
+    +{abstract} void onSzenarioStart(SzenarioSession session)
+    +{abstract} void preSzenarioStep(SzenarioSession session, long currentStep, double averageReward)
+    +{abstract} void postSzenarioStep(SzenarioSession session, long currentStep, double averageReward)
+    +{abstract} void onSzenarioEnd(SzenarioSession session, double averageReward)
 }
 
 class SzenarioSession {
--int currentStep
--Szenario szenario
--List<SzenarioProgressObserver> observer
---
-+void start()
-+SzenarioSession addObserver(SzenarioProgressObserver observer)
-+Szenario getSzenario()
-+int getCurrentStep()
---
--void execWhenPresent(Consumer<SzenarioProgressObserver> consumer)
+    -int currentStep
+    -Szenario szenario
+    -List<SzenarioProgressObserver> observer
+    --
+    +void start()
+    +SzenarioSession addObserver(SzenarioProgressObserver observer)
+    +Szenario getSzenario()
+    +int getCurrentStep()
+    --
+    -void execWhenPresent(Consumer<SzenarioProgressObserver> consumer)
 }
 
 interface SzenarioExecutionObserver {
-+{abstract} void onActionStorePersisted(PersistedStoreInfo info)
+    +{abstract} void onActionStorePersisted(PersistedStoreInfo info)
 }
 
-class ExecutionService {
-- AgentRepository agentRepository
-- PolicyRepository policyRepository
-- EnvironmentRepository environmentRepository
-- ConfigService configService
-- ActionValueRepository actionValueRepository
-- RLAlgorithmRepository algorithmRepository
-- PolicyVisualizerFactory policyVisualizerFactory
+class ExecutionServiceImpl {
+    - AgentRepository agentRepository
+    - PolicyRepository policyRepository
+    - EnvironmentRepository environmentRepository
+    - ConfigService configService
+    - ActionValueRepository actionValueRepository
+    - RLAlgorithmRepository algorithmRepository
+    - PolicyVisualizerFactory policyVisualizerFactory
 
-+ startTraining()
-+ startEvaluation()
-- createSzenario()
-- queryStore()
-- storeTrainedPolicy()
-- createWrappedTrainingObserver()
-- {static} Optional<String> makeStringOptional()
+    + startTraining()
+    + startEvaluation()
+    - createSzenario()
+    - queryStore()
+    - storeTrainedPolicy()
+    - createWrappedTrainingObserver()
+    - {static} Optional<String> makeStringOptional()
 }
 
 note right of SzenarioSession::execWhenPresent
@@ -58,7 +56,7 @@ end note
 
 SzenarioSession o-- SzenarioProgressObserver
 SzenarioProgressObserver <|-- SzenarioExecutionObserver
-SzenarioExecutionObserver <..ExecutionService
-SzenarioSession <.. ExecutionService
+SzenarioExecutionObserver <..ExecutionServiceImpl
+SzenarioSession <.. ExecutionServiceImpl
 
 @enduml
