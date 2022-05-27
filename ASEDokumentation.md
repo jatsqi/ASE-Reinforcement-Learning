@@ -150,37 +150,39 @@ java -jar <jar> run --agent 2d-moving-agent --environment grid-world --steps 100
 
 _[allgemeine Beschreibung der Clean Architecture in eigenen Worten]_
 
-Als Clean-Architecture wird eine etrem vielseitige und anapssungsfähige Architektur bezeichnet, 
-deren Aufbau häufig mit einer Zwiebel verglichen wird, da sich die verschiedenen Schichten ummanteln.
-Primäres Ziel ist es, eine technologisch unabhängigen Kern vom Rest der Applikation zu trennen, damit
-Abhängigkeiten nach außen schnell ausgetauscht werden bzw. verändert werden können und die eigentliche
-Business-Logik bzw. Modellierung der Domäne keine Rücksicht auf konkrete technische Details nehmen muss.
+Als Clean-Architecture wird eine etrem vielseitige und anapssungsfähige Architektur bezeichnet, deren Aufbau häufig mit
+einer Zwiebel verglichen wird, da sich die verschiedenen Schichten ummanteln. Primäres Ziel ist es, eine technologisch
+unabhängigen Kern vom Rest der Applikation zu trennen, damit Abhängigkeiten nach außen schnell ausgetauscht werden bzw.
+verändert werden können und die eigentliche Business-Logik bzw. Modellierung der Domäne keine Rücksicht auf konkrete
+technische Details nehmen muss.
 
 ### ​Analyse der Dependency Rule
 
 _[(1 Klasse, die die Dependency Rule einhält und eine Klasse, die die Dependency Rule verletzt); jeweils UML der Klasse und Analyse der Abhängigkeiten in beide Richtungen (d.h., von wem hängt die Klasse ab und wer hängt von der Klasse ab) in Bezug auf die Dependency Rule]_
 
-In dieser Applikation halten prinzipiell alle Klassen die Dependency-Rule hinsichtlich dem "Fluss" der Abhängigkeiten ein.
-Klassen innerer Schichten besitzen <ins>keine</ins> Abhängigkeiten nach Außen.
-Dies wird u.a. durch den Aufbau des Maven Projektes selbst gewährleistet, da nur die äußeren Schichten/Module weiter innen liegende Module al Abhängigkeit definiert haben.
-Beispielsweise werden Repositories in der Domain-Schicht als Interface deklariert und erst außen konkret implementiert.
+In dieser Applikation halten prinzipiell alle Klassen die Dependency-Rule hinsichtlich dem "Fluss" der Abhängigkeiten
+ein. Klassen innerer Schichten besitzen <ins>keine</ins> Abhängigkeiten nach Außen. Dies wird u.a. durch den Aufbau des
+Maven Projektes selbst gewährleistet, da nur die äußeren Schichten/Module weiter innen liegende Module al Abhängigkeit
+definiert haben. Beispielsweise werden Repositories in der Domain-Schicht als Interface deklariert und erst außen
+konkret implementiert.
 
 #### 1. Positiv-Beispiel: Dependency Rule
 
 ![Dependency Rule Config](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyRulePositiv.puml)
 
-Wie im UML Diagramm zu sehen ist besitzt das Interface `ConfigRepository` selbst nur Dependencies innerhalb der eigenen Schicht,
-wird aber in der Application schicht genutzt und von `PropertiesConfigRepository` in der PluginSchicht implementiert.
-Die Klasse `ConfigServiceImpl` ist ebenfalls nicht abhängig von der Klasse aus der Plugin-Schicht, was eine Verletztung der Dependency-Rule
-darstellen würde, sondern stattdessen abhängig vom Interface. 
+Wie im UML Diagramm zu sehen ist besitzt das Interface `ConfigRepository` selbst nur Dependencies innerhalb der eigenen
+Schicht, wird aber in der Application schicht genutzt und von `PropertiesConfigRepository` in der PluginSchicht
+implementiert. Die Klasse `ConfigServiceImpl` ist ebenfalls nicht abhängig von der Klasse aus der Plugin-Schicht, was
+eine Verletztung der Dependency-Rule darstellen würde, sondern stattdessen abhängig vom Interface.
 
 #### 2. Positiv-Beispiel: Dependency Rule
 
 ![Dependency Rule Adapters](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyRulePositiv2.puml)
 
-Selbiges gilt für den `AgentService`. Dieser hat ausschließlich Abhängigkeiten in Richtung Domain-Layer bzw. eine Vererbung auf derselben Ebene.
-Nach außen Richtung Adapter bzw. Plugin Schicht besteht keinerlei Abhängigkeit.
-In der Adapter-Schicht ist einzig und allein die `AgentServiceFacadeImpl` vom Service abhängig.
+Selbiges gilt für den `AgentService`. Dieser hat ausschließlich Abhängigkeiten in Richtung Domain-Layer bzw. eine
+Vererbung auf derselben Ebene. Nach außen Richtung Adapter bzw. Plugin Schicht besteht keinerlei Abhängigkeit. In der
+Adapter-Schicht ist einzig und allein die `AgentServiceFacadeImpl` vom Service abhängig.
+
 ### ​ **Analyse der Schichten**
 
 _[jeweils 1 Klasse zu 2 unterschiedlichen Schichten der Clean-Architecture: jeweils UML der Klasse (ggf. auch zusammenspielenden Klassen), Beschreibung der Aufgabe, Einordnung mit Begründung in die Clean-Architecture]_
@@ -189,24 +191,24 @@ _[jeweils 1 Klasse zu 2 unterschiedlichen Schichten der Clean-Architecture: jewe
 
 ![Clean Arch Domain Layer](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/layerDomain.puml)
 
-Die abstrakte Klasse `Agent` ist eines der Kernstücke der Domain. Der Agent kann Aktionen in einer Umgebung 
-ausführen.
+Die abstrakte Klasse `Agent` ist eines der Kernstücke der Domain. Der Agent kann Aktionen in einer Umgebung ausführen.
 Die Klasse ist hier angesiedelt, da sie
 
 1. nur das "Verhalten" definiert und keine technischen Details berücksichtigt
 2. im Allgemeinen zur Domäne des Reinforcement Learnings gehört
 
-Konkrete Agenten erben von dieser Klasse und mappen die Aktionen (Integer), die sie von der Aktion Source bekommen (siehe dazu Rückgabetyp von z.B. `ActionSource#selectAction`, auf konkrete
-Aktionen `Action`, die die Umgebung versteht.
+Konkrete Agenten erben von dieser Klasse und mappen die Aktionen (Integer), die sie von der Aktion Source bekommen (
+siehe dazu Rückgabetyp von z.B. `ActionSource#selectAction`, auf konkrete Aktionen `Action`, die die Umgebung versteht.
 
 #### ​Schicht: Adapter
 
 ![Clean Arch Adapter Layer](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/layerAdapter.puml)
 
 Die Klasse `EnvironmentServiceFacade` dient als Einstiegspunkt für das UI, wenn es um das Abrufen von Environments geht.
-Das UI greift dabei nicht direkt auf die Services zu und arbeit somit mit Domain Objekten, sondern benutzt mehrere Facetten.
-Diese sind im Adapter-Layer platziert und wandeln die Domain Objekte, die sich mitunter ändern können, in eine speziell für UI
-vorgesehen Repräsentation um. Somit kann sich das Domain-Modell ändern, allerdings könnte durch das Mapping das UI unverändert bleiben.
+Das UI greift dabei nicht direkt auf die Services zu und arbeit somit mit Domain Objekten, sondern benutzt mehrere
+Facetten. Diese sind im Adapter-Layer platziert und wandeln die Domain Objekte, die sich mitunter ändern können, in eine
+speziell für UI vorgesehen Repräsentation um. Somit kann sich das Domain-Modell ändern, allerdings könnte durch das
+Mapping das UI unverändert bleiben.
 
 # ​Kapitel 3: SOLID
 
@@ -217,18 +219,20 @@ _[jeweils eine Klasse als positives und negatives Beispiel für SRP; jeweils UML
 #### ​Positiv-Beispiel
 
 Das SRP wird durch so gut wie jede Repository-Implementierung erfüllt. Als Beispiel wurde hier die `ConfigRepository`
-mit der konkreten Implementierung `PropertiesConfigRepository` gewählt.
-Die Repository hat die Aufgabe, Config Einträge aus der `config.properties` Datei auszulesen und in diese zu speichern.
-Die Repository führt dabei keine besonderen Validierungen oder ähnliches durch, sondern ist einzig und alleine für CRUD Operationen verantwortlich und müsste auch nur aus diesem Grund geändert werden.
+mit der konkreten Implementierung `PropertiesConfigRepository` gewählt. Die Repository hat die Aufgabe, Config Einträge
+aus der `config.properties` Datei auszulesen und in diese zu speichern. Die Repository führt dabei keine besonderen
+Validierungen oder ähnliches durch, sondern ist einzig und alleine für CRUD Operationen verantwortlich und müsste auch
+nur aus diesem Grund geändert werden.
 
 ![SRP Positiv](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/srpPositiv.puml)
 
 #### ​Negativ-Beispiel
 
-Als negativ-Beispiel habe ich die Klasse `SimpleEnvironmentFactory` gewählt.
-Obwohl es für dieses kleine Projekt in Ordnung sein mag, ist dennoch das SRP in diesem Fall verletzt. Die Klasse kümmert sich beispielsweise
-nicht nur um das Erstellen einer Grid-World Umgebung, sondern auch um das Parsen der Datei, aus der eine Grid-World initialisiert werden könnte.
-Zur Lösung könnte das Parsing in eine eigene Klasse ausgelagert werden und an die Factory könnte ein Interface übergeben werden.
+Als negativ-Beispiel habe ich die Klasse `SimpleEnvironmentFactory` gewählt. Obwohl es für dieses kleine Projekt in
+Ordnung sein mag, ist dennoch das SRP in diesem Fall verletzt. Die Klasse kümmert sich beispielsweise nicht nur um das
+Erstellen einer Grid-World Umgebung, sondern auch um das Parsen der Datei, aus der eine Grid-World initialisiert werden
+könnte. Zur Lösung könnte das Parsing in eine eigene Klasse ausgelagert werden und an die Factory könnte ein Interface
+übergeben werden.
 
 ![SRP Negativ](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/srpNegativ.puml)
 
@@ -240,32 +244,34 @@ _[jeweils eine Klasse als positives und negatives Beispiel für OCP; jeweils UML
 
 ![OCP Negativ](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/openClosedNegative.puml)
 
-Als klassisches Negativbeispiel für die Verletzung dieses Prinzips kann eine solche Factory genommen werden.
-Diese entscheidet in diesem Fall, je nach Name des Agenten, welcher Agent erzeugt werden muss.
-Wird ein neuer Agent im Code hinzugefügt, so muss entweder
+Als klassisches Negativbeispiel für die Verletzung dieses Prinzips kann eine solche Factory genommen werden. Diese
+entscheidet in diesem Fall, je nach Name des Agenten, welcher Agent erzeugt werden muss. Wird ein neuer Agent im Code
+hinzugefügt, so muss entweder
 
 * Die Methode `createAgent` selbst angepasst werden -> direkte Verletzung OCP
-* Eine abgeleitete Klasse erstellt werden, die für alle bestehenden Agenten `super.createAgent()` aufruft. In diesem Fall muss auch die neue bzw. erweiterte Factory in die Dependency Injection oder ähnliches aufgenommen werden.
+* Eine abgeleitete Klasse erstellt werden, die für alle bestehenden Agenten `super.createAgent()` aufruft. In diesem
+  Fall muss auch die neue bzw. erweiterte Factory in die Dependency Injection oder ähnliches aufgenommen werden.
 
-Abhilfe würde hier ein etwas dynamischeres Konzept schaffen. Über eine zentrale Registry könnte man für jeden Agenten-Namen
-bestimmte `Provider` registrieren, die sich um das Erstellen eines bestimmten Agenten kümmern.
-Die Factory greift auf diese Registry zu und holt sich den entsprechenden `Provider` aus der Map.
-So müsste die Factory nicht angepasst werden.
-In meinem Fall habe ich mich allerdings bewusst bei **allen** Factories dagegen entschieden, da mir bei dieser Projektgrö0e
+Abhilfe würde hier ein etwas dynamischeres Konzept schaffen. Über eine zentrale Registry könnte man für jeden
+Agenten-Namen bestimmte `Provider` registrieren, die sich um das Erstellen eines bestimmten Agenten kümmern. Die Factory
+greift auf diese Registry zu und holt sich den entsprechenden `Provider` aus der Map. So müsste die Factory nicht
+angepasst werden. In meinem Fall habe ich mich allerdings bewusst bei **allen** Factories dagegen entschieden, da mir
+bei dieser Projektgrö0e
 **KISS** wichtiger war.
 
 #### Positiv-Beispiel:
 
 ![OCP Positiv](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/openClosedPositive.puml)
 
-Obwohl die Factory das OCP verletzt, ist der Agent selbst ein gutes Beispiel für die Nutzung dessen.
-Die abstrakte Basisklasse `Agent` stellt die abstrakte Methode `transformAction` bereit und abgeleitete Klasse bzw. konkrete Agenten implementieren diese.
-Die Methode wandelt den Integer der Aktion, der von der Action Source kommt in eine für das Environment verständliche Aktion um.
-Die Methode `executeNextAction()`, die bereits in der Basisklasse implementiert ist und die für **alle** Agenten gleiche Logik zum Ausführen einer Aktion beinhaltet, 
-ruft diese dann auf, um die konkrete Aktion zu holen.
-Sämtliche Logik, die zum Trainieren des Agenten genutzt wird, bleibt unverändert, sobald ein neuer Agent hinzugefügt wird,
-da diese Klassen alle entweder `transformAction` aufrufen oder `executeNextAction` direkt (siehe dazu Klasse `SzenarioSession` für konkretes Beispiel).
-Nützlich war dies vorallem bei den zwei unterschiedlichen Agenten `MovingAgent2d` und `FlatMovingPullAgent`, die jeweils nur
+Obwohl die Factory das OCP verletzt, ist der Agent selbst ein gutes Beispiel für die Nutzung dessen. Die abstrakte
+Basisklasse `Agent` stellt die abstrakte Methode `transformAction` bereit und abgeleitete Klasse bzw. konkrete Agenten
+implementieren diese. Die Methode wandelt den Integer der Aktion, der von der Action Source kommt in eine für das
+Environment verständliche Aktion um. Die Methode `executeNextAction()`, die bereits in der Basisklasse implementiert ist
+und die für **alle** Agenten gleiche Logik zum Ausführen einer Aktion beinhaltet, ruft diese dann auf, um die konkrete
+Aktion zu holen. Sämtliche Logik, die zum Trainieren des Agenten genutzt wird, bleibt unverändert, sobald ein neuer
+Agent hinzugefügt wird, da diese Klassen alle entweder `transformAction` aufrufen oder `executeNextAction` direkt (siehe
+dazu Klasse `SzenarioSession` für konkretes Beispiel). Nützlich war dies vorallem bei den zwei unterschiedlichen
+Agenten `MovingAgent2d` und `FlatMovingPullAgent`, die jeweils nur
 `transformAction` überschreiben. Sie können per Plug & Play überall eingesetzt werden.
 
 ### ​Analyse Liskov-Substitution- (LSP), Interface-Segreggation- (ISP), Dependency-Inversion-Principle (DIP)
@@ -278,23 +284,24 @@ _[Anm.: es darf nur ein Prinzip ausgewählt werden; es darf NICHT z.B. ein posit
 
 ![DI Config](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyRulePositiv.puml)
 
-Wie im UML Diagramm zu sehen ist, ist die Klasse `ConfigServiceImpl` aus dem Application-Layer nicht von der konkreten Implementierung der
-Repository `PropertiesConfigRepository`, welche in der Plugin-Schicht implementiert ist, abhängig, sondern von dem deklarierten Interface `ConfigRepository`, welches
-eine einheitliche und technologisch unabhängige Schnittstelle definiert.
-Somit kann, in diesem Fall der Service, mit beliebigen Ausprägungen der `ConfigRepository` genutzt werden.
-Würde `ConfigServiceImpl` die konkrete Implementierung nutzen, wäre zusötzlich die Depdendency Rule verletzt.
+Wie im UML Diagramm zu sehen ist, ist die Klasse `ConfigServiceImpl` aus dem Application-Layer nicht von der konkreten
+Implementierung der Repository `PropertiesConfigRepository`, welche in der Plugin-Schicht implementiert ist, abhängig,
+sondern von dem deklarierten Interface `ConfigRepository`, welches eine einheitliche und technologisch unabhängige
+Schnittstelle definiert. Somit kann, in diesem Fall der Service, mit beliebigen Ausprägungen der `ConfigRepository`
+genutzt werden. Würde `ConfigServiceImpl` die konkrete Implementierung nutzen, wäre zusötzlich die Depdendency Rule
+verletzt.
 
 #### Negativ-Beispiel (Dependency Inversion)
 
 ![DI Exec Service](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/dependencyInversionNegative.puml)
 
-Die Klasse `SzenarioSession`, die die Logik für das Ausführen des Trainings bzw. der Evaluation beinhaltet,
-ist eine direkte Abhängigkeit des `ExecutionService`.
-Sollte das Verhalten, wie das Training durchlaufen werden soll, später angepasst werden, muss zuerst die Struktur umgebaut werden.
-In diesem einfachen Projekt ist dies nicht der Fall, weswegen es auf diese Weise gelöst wurde.
-Gelöst werden könnte dies genauso wie bei den Repositories, indem ein Interface eingeführt wird und eine äußere Schicht
-sich um die Details kümmert. Für diesen konkreten Fall wäre unter Umständen eine weitere Factory nötig, damit der Service die
-verschiedenen Ausprägungen der Sessions auch erstellen kann bzw. die Factory beauftragen kann, diese zu erstellen.
+Die Klasse `SzenarioSession`, die die Logik für das Ausführen des Trainings bzw. der Evaluation beinhaltet, ist eine
+direkte Abhängigkeit des `ExecutionService`. Sollte das Verhalten, wie das Training durchlaufen werden soll, später
+angepasst werden, muss zuerst die Struktur umgebaut werden. In diesem einfachen Projekt ist dies nicht der Fall,
+weswegen es auf diese Weise gelöst wurde. Gelöst werden könnte dies genauso wie bei den Repositories, indem ein
+Interface eingeführt wird und eine äußere Schicht sich um die Details kümmert. Für diesen konkreten Fall wäre unter
+Umständen eine weitere Factory nötig, damit der Service die verschiedenen Ausprägungen der Sessions auch erstellen kann
+bzw. die Factory beauftragen kann, diese zu erstellen.
 
 # ​Kapitel 4: Weitere Prinzipien
 
@@ -306,25 +313,25 @@ _[jeweils eine bis jetzt noch nicht behandelte Klasse als positives und negative
 
 ![Low Coupling Positive](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/lowCouplingPositve.puml)
 
-Die Klasse `InMemoryAgentRepository` ist durchaus ein gutes Beispiel für lose Kopplung.
-Um ihre Funktionalität zu erfüllen sind, jedenfalls von außen betrachtet, nur ein Service und eine weitere Factory relevant.
-Alle Methodenaufrufe auf die beiden Abhängigkeiten innerhalb von `InMemoryAgentRepository` geschehen über das jeweilige Interface (virtualler Methodenaufruf über Interface),
-wie im UML Diagramm dargestellt.
-Die konkreten Ausprägungen der Interfaces sind sehr leicht austauschbar und auch in den Tests dadurch leicht mockbar.
-Somit kann die Repository auch sehr isoliert getestet werden.
+Die Klasse `InMemoryAgentRepository` ist durchaus ein gutes Beispiel für lose Kopplung. Um ihre Funktionalität zu
+erfüllen sind, jedenfalls von außen betrachtet, nur ein Service und eine weitere Factory relevant. Alle Methodenaufrufe
+auf die beiden Abhängigkeiten innerhalb von `InMemoryAgentRepository` geschehen über das jeweilige Interface (virtualler
+Methodenaufruf über Interface), wie im UML Diagramm dargestellt. Die konkreten Ausprägungen der Interfaces sind sehr
+leicht austauschbar und auch in den Tests dadurch leicht mockbar. Somit kann die Repository auch sehr isoliert getestet
+werden.
 
 #### Negativ-Beispiel
 
 ![High Coupling Negative](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/lowCouplingNegative.puml)
 
-Ein negativ-Beispiel für geringe Kopplung zeigt sich der Beziehung zwischen den Klassen `Szenario` und `SzenarioSession`.
-Die Session weist eine direkte Abhängigkeit zu Objekten der Klasse `Szenario` auf.
-Sollte sich der Aufbau eines Szenarios ändern, z.B. das anstatt den konkreten Descriptoren nun die Namen dieser gespeichert werden (z.B. statt AgentDescriptor nun den Namen des Agenten),
-könnte es zu Probleme kommen, wenn die SzenarioSession diesen benötigt.
-Die Klasse müsste sich nun selbst darum kümmern, wie es an den Descriptor kommt.
+Ein negativ-Beispiel für geringe Kopplung zeigt sich der Beziehung zwischen den Klassen `Szenario` und `SzenarioSession`
+. Die Session weist eine direkte Abhängigkeit zu Objekten der Klasse `Szenario` auf. Sollte sich der Aufbau eines
+Szenarios ändern, z.B. das anstatt den konkreten Descriptoren nun die Namen dieser gespeichert werden (z.B. statt
+AgentDescriptor nun den Namen des Agenten), könnte es zu Probleme kommen, wenn die SzenarioSession diesen benötigt. Die
+Klasse müsste sich nun selbst darum kümmern, wie es an den Descriptor kommt.
 **Kurz:** Selbst kleinere Änderungen in `Szenario` können ebenfalls umfangreichere Änderungen in `Szenario` bedeuten.
-Besser wäre in diesem Fall ein Interface, welches für dieses Beispiel eine Methode `getAgentDescriptor()` anbieten könnte.
-Konkrete Ausprägungen von `Szenario` müsste sich dann damit beschäftigen, wie sie an den Descriptor gelangen. 
+Besser wäre in diesem Fall ein Interface, welches für dieses Beispiel eine Methode `getAgentDescriptor()` anbieten
+könnte. Konkrete Ausprägungen von `Szenario` müsste sich dann damit beschäftigen, wie sie an den Descriptor gelangen.
 
 ### ​Analyse GRASP: Hohe **Kohäsion**
 
@@ -332,10 +339,10 @@ _[eine Klasse als positives Beispiel hoher Kohäsion; UML Diagramm und Begründu
 
 ![High Cohesion](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/highCohesion.puml)
 
-Als Beispiel für hohe Kohäsion wurde hier die konkrete Aisprägung eines Environments ausgewählt: Das `KArmedBanditEnvironment`. 
-Das Environment besitzt prinzipiell, wie auch im UML Diagramm dargestellt, keine weiteren Abhängigkeiten nach Außen.
-Alle Methoden und Attribute, die die Klasse besitzt, beziehen sich einzug und alleine auf *dieses konkrete* Environment und sind
-alle unabdingbar, damit dieses seine korrekte Funktionalität gewährleisten kann.
+Als Beispiel für hohe Kohäsion wurde hier die konkrete Aisprägung eines Environments ausgewählt:
+Das `KArmedBanditEnvironment`. Das Environment besitzt prinzipiell, wie auch im UML Diagramm dargestellt, keine weiteren
+Abhängigkeiten nach Außen. Alle Methoden und Attribute, die die Klasse besitzt, beziehen sich einzug und alleine auf *
+dieses konkrete* Environment und sind alle unabdingbar, damit dieses seine korrekte Funktionalität gewährleisten kann.
 
 ### ​**Don&#39;t Repeat Yourself (DRY)**
 
@@ -343,13 +350,12 @@ _[ein Commit angeben, bei dem duplizierter Code/duplizierte Logik aufgelöst wur
 
 Commit-ID: 24c44969aa2153d42fde255d37a7f77005c2da92
 
-Beim Überprüfen der gültigen Ranges für die Record-Werte (RLSettings.java) wurde sehr oft dasselbe If-Statement wiederholt,
-obwohl es jedes mal eine identische Aussage hat, nur mit einem anderen Wert.
-Da zu erwarten ist, dass mit Algorithmen, die noch implementiert werden, neue Werte dazukommen, könnte diese Überprüfung schnell
-unübersichtlich werden.
-Zur Behebung wurde die Logik für das Überprüfen und Werfen der Exception in eine eigene, statische Methode ausgelagert.
-So kann die Überprüfung der Werte sehr einfach erweitert werden. Zusätzlich lässt sich ohne großes Refactoring die Error Message
-für alle Werte einfach anpassen, falls z.B. ein Präfix o.ä. hinzugefügt werden soll.
+Beim Überprüfen der gültigen Ranges für die Record-Werte (RLSettings.java) wurde sehr oft dasselbe If-Statement
+wiederholt, obwohl es jedes mal eine identische Aussage hat, nur mit einem anderen Wert. Da zu erwarten ist, dass mit
+Algorithmen, die noch implementiert werden, neue Werte dazukommen, könnte diese Überprüfung schnell unübersichtlich
+werden. Zur Behebung wurde die Logik für das Überprüfen und Werfen der Exception in eine eigene, statische Methode
+ausgelagert. So kann die Überprüfung der Werte sehr einfach erweitert werden. Zusätzlich lässt sich ohne großes
+Refactoring die Error Message für alle Werte einfach anpassen, falls z.B. ein Präfix o.ä. hinzugefügt werden soll.
 
 **Vorher:**
 
@@ -410,10 +416,11 @@ In der folgenden Tabelle ist eine kleine Auswahl aus unterschiedelichen Unit-Tes
 
 _[Begründung/Erläuterung, wie &#39;Automatic&#39; realisiert wurde]_
 
-**Automatic** wurde über die Testing-Bibliothek JUnit realisiert, die automatisch alle Testklassen sucht und alle darin befindlichen Tests ausführt.
-Die Tests selber können über `mvn test` automatisch ausgeführt werden und der Nutzer wird entsprechend benachrichtigt, sofern Tests fehlgeschlagen sind.
-Über GitHub Action können zusätzlich, nach jedem Commit, die Tests ausgeführt werden. So ist gewährleistet, dass bei Änderungen schnell erkannt werden kann, dass
-die Änderungen eventuell unerwünschte Effekte hatten.
+**Automatic** wurde über die Testing-Bibliothek JUnit realisiert, die automatisch alle Testklassen sucht und alle darin
+befindlichen Tests ausführt. Die Tests selber können über `mvn test` automatisch ausgeführt werden und der Nutzer wird
+entsprechend benachrichtigt, sofern Tests fehlgeschlagen sind. Über GitHub Action können zusätzlich, nach jedem Commit,
+die Tests ausgeführt werden. So ist gewährleistet, dass bei Änderungen schnell erkannt werden kann, dass die Änderungen
+eventuell unerwünschte Effekte hatten.
 
 ### ​ATRIP: Thorough
 
@@ -422,9 +429,10 @@ _[jeweils 1 positives und negatives Beispiel zu &#39;Thorough&#39;; jeweils Code
 #### Positiv Thorough:
 
 Besonders für die Tests der Environments war es wichtig sicherzustellen, dass alle möglichen Pfade abgedeckt sind und
-das Environment kein Fehlerverhalten aufweist, da dadurch die Trainingsergebnisse verfälscht werden könnten bzw. komplett falsch wären.
-Wie im unteren Beispiel zu erkennen ist, wurden zunächst alle validen Aktionen getestet (Bewegung in 4 Richtungen sowie nichts tun).
-Um sicherzugehen, dass andere Aktionen nichts verändern, werde diese separat im Test darunter überprüft. 
+das Environment kein Fehlerverhalten aufweist, da dadurch die Trainingsergebnisse verfälscht werden könnten bzw.
+komplett falsch wären. Wie im unteren Beispiel zu erkennen ist, wurden zunächst alle validen Aktionen getestet (Bewegung
+in 4 Richtungen sowie nichts tun). Um sicherzugehen, dass andere Aktionen nichts verändern, werde diese separat im Test
+darunter überprüft.
 
 ````java
 @Test
@@ -458,13 +466,14 @@ private void execInvalidActionAndCompareState(Action action) {
 
 #### Negativ Thorough:
 
-Ein negativ-Beispiel ist im unteren Code-Beispiel abgebildet.
-Hier wird der Update-Schritt des Algorithmus' `QLearning` anhand von wenigen Beispielwerten getestet und mit einer fixen Konfiguration.
-Die Learning-Rate wurde in allen QLearning-Tests auf 1 (neutrales Element der Multiplikation) gesetzt, was den absolut einfachsten Fall darstellt.
-Obwohl der Algorithmus hier korrektes Verhalten aufweist, könnte es eventuell mit sehr kleinen oder großen Werten für die Learning-Rate
-zu Problemen kommen, bzw. sich Fehler in der Formel offenbaren (ob die Learning Rate z.B. uberhaupt korrekt berücksichtigt wird).
-Behoben werden kann dies über zusätzliche Tests mit unterschiedlichen Konfiguration, um solche Fehler zu offenbaren.
-Auch Tests mit möglichen Edge-Cases wären denkbar z.B. mit Werten, die nicht auftreten dürfen (negative Werte z.B.).
+Ein negativ-Beispiel ist im unteren Code-Beispiel abgebildet. Hier wird der Update-Schritt des Algorithmus' `QLearning`
+anhand von wenigen Beispielwerten getestet und mit einer fixen Konfiguration. Die Learning-Rate wurde in allen
+QLearning-Tests auf 1 (neutrales Element der Multiplikation) gesetzt, was den absolut einfachsten Fall darstellt. Obwohl
+der Algorithmus hier korrektes Verhalten aufweist, könnte es eventuell mit sehr kleinen oder großen Werten für die
+Learning-Rate zu Problemen kommen, bzw. sich Fehler in der Formel offenbaren (ob die Learning Rate z.B. uberhaupt
+korrekt berücksichtigt wird). Behoben werden kann dies über zusätzliche Tests mit unterschiedlichen Konfiguration, um
+solche Fehler zu offenbaren. Auch Tests mit möglichen Edge-Cases wären denkbar z.B. mit Werten, die nicht auftreten
+dürfen (negative Werte z.B.).
 
 ````java
 @Test
@@ -483,6 +492,7 @@ void learningShouldAdjustOldStateActionPairCorrectly() {
 _[jeweils 1 positives und negatives Beispiel zu &#39;Professional&#39;; jeweils Code-Beispiel, Analyse und Begründung, was professionell/nicht professionell ist]_
 
 #### Professional Positiv:
+
 ```java
 @Test
 void actionsShouldTransitionEnvironmentToNewState() {
@@ -499,13 +509,12 @@ private void execActionAndCompareState(Action action, int expectedState) {
 }
 ```
 
-Positiv an diesem Beispiel ist der klare Name des Tests `actionsShouldTransitionEnvironmentToNewState`.
-Sobald man den Namen liest und die Zusammenhänge in der Domäne verstanden hat, sollte klar sein, dass hier
-die verschiedenen Aktionen getestet werden, die das Environment unterstützt.
-Als Konsequenz auf jede Aktion geht die Umgebung in einen neuen Zustand über, den es zu prüfen gilt.
-Genutzt werden wohlbekannte Assertions von JUnit wie z.B. `assertEquals`, in dem der erwartete Zustand mit dem aktuellen
-Zustand der Umgang nach der Aktion verglichen wird.
-Des Weiteren wurde versucht die Code-Duplikation durch das Einführen von einer neuen Methode zu reduzieren.
+Positiv an diesem Beispiel ist der klare Name des Tests `actionsShouldTransitionEnvironmentToNewState`. Sobald man den
+Namen liest und die Zusammenhänge in der Domäne verstanden hat, sollte klar sein, dass hier die verschiedenen Aktionen
+getestet werden, die das Environment unterstützt. Als Konsequenz auf jede Aktion geht die Umgebung in einen neuen
+Zustand über, den es zu prüfen gilt. Genutzt werden wohlbekannte Assertions von JUnit wie z.B. `assertEquals`, in dem
+der erwartete Zustand mit dem aktuellen Zustand der Umgang nach der Aktion verglichen wird. Des Weiteren wurde versucht
+die Code-Duplikation durch das Einführen von einer neuen Methode zu reduzieren.
 
 #### Professional Negativ:
 
@@ -551,23 +560,21 @@ void prepare() {
 ```
 
 In beiden Beispielen werden sehr ähnliche Code-Abschnitte genutzt, vor allem wenn es um das Initialisieren
-des `RLSettings` Objektes geht.
-Auch wird zwei bzw. mehrmals derselbe oder ein ähnlicher ActionValueStore genutzt.
-Gelöst werden könnte dies über eine separate Klasse mit statischen Methoden, die solche "Default" Objekte bereitstellt (z.B. eine leeres `RLSettings` Objekt).
-Auch könnten unter Umständen das _Builder_-Pattern genutzt werden, um die Erstellung von solchen Objekten abzukürzen, damit diese
-nicht mehr Platz einnehmen als nötig.
+des `RLSettings` Objektes geht. Auch wird zwei bzw. mehrmals derselbe oder ein ähnlicher ActionValueStore genutzt.
+Gelöst werden könnte dies über eine separate Klasse mit statischen Methoden, die solche "Default" Objekte bereitstellt (
+z.B. eine leeres `RLSettings` Objekt). Auch könnten unter Umständen das _Builder_-Pattern genutzt werden, um die
+Erstellung von solchen Objekten abzukürzen, damit diese nicht mehr Platz einnehmen als nötig.
 
 ### ​Code Coverage
 
 _[Code Coverage im Projekt analysieren und begründen]_
 
 In der Folgenden Analyse der Code-Coverage sind nur die Module des tatsächlichen Reinforcement Learning Projektes
-beinhaltet. Das Utils Modul, welches den CLI parser und die Dependency Injection zur Verfügung
-stellt wurde bewusst davon ausgenommen, da dieses nicht wirklich Logik für das Reinforcement Learning ansich
-bereitstellt und "nur" als Exkurs zum Lernen prgrammiert wurde.
-Dennoch sind selbstverständlich einige Aspekte dieses Moduls getestet, allem voran 
-die zahlreichen Funktionen, die die Reflection durchführen.
-Auch ist der `InjectionContext` selbst mit Tests versehen, um das Mapping der Interfaces auf konkrete Klassen zu testen.
+beinhaltet. Das Utils Modul, welches den CLI parser und die Dependency Injection zur Verfügung stellt wurde bewusst
+davon ausgenommen, da dieses nicht wirklich Logik für das Reinforcement Learning ansich bereitstellt und "nur" als
+Exkurs zum Lernen prgrammiert wurde. Dennoch sind selbstverständlich einige Aspekte dieses Moduls getestet, allem voran
+die zahlreichen Funktionen, die die Reflection durchführen. Auch ist der `InjectionContext` selbst mit Tests versehen,
+um das Mapping der Interfaces auf konkrete Klassen zu testen.
 
 | Modul/Layer | Coverage | Begründung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 |-------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -584,22 +591,23 @@ _[Analyse und Begründung des Einsatzes von 2 Fake/Mock-Objekten; zusätzlich je
 
 ![Mock Environment](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/mockEnvironment.puml)
 
-Ein Interface, welches häufig gemockt wird, damit keine konkrete Implementierung erforderlich ist, ist das Interface `Environment`.
-Den Gettern werden dabei spezifische Rückgabewerte zugewiesen, die teilweise von den übergebenen Parametern an die Methoden abhängig sind.
-Zusätzlich dazu ist das Mocken dieses Interfaces recht einfach, da es sehr simpel aufgebaut ist und keine komplizierten Eingaben bzw. Ausgaben besitzt.
-Beispielsweise wird dieser Mock in der Klasse `SimpleAgentFactoryTest` genutzt, um die `SimpleAgentFactory` zu testen.
-Für die Funktionalität ist zunächst kein konkretes Environment erforderlich, allerdings sollte es, auch im Zuge späterer Erweiterungen auch nicht
-NULL sein.
+Ein Interface, welches häufig gemockt wird, damit keine konkrete Implementierung erforderlich ist, ist das
+Interface `Environment`. Den Gettern werden dabei spezifische Rückgabewerte zugewiesen, die teilweise von den
+übergebenen Parametern an die Methoden abhängig sind. Zusätzlich dazu ist das Mocken dieses Interfaces recht einfach, da
+es sehr simpel aufgebaut ist und keine komplizierten Eingaben bzw. Ausgaben besitzt. Beispielsweise wird dieser Mock in
+der Klasse `SimpleAgentFactoryTest` genutzt, um die `SimpleAgentFactory` zu testen. Für die Funktionalität ist zunächst
+kein konkretes Environment erforderlich, allerdings sollte es, auch im Zuge späterer Erweiterungen auch nicht NULL sein.
 
 #### Mock 2:
 
 ![Mock Observer](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/mockObserver.puml)
 
-Ein weiteres gemocktes Interface ist `SzenarioExecutionObserver` welches in der Klasse `ExecutionServiceTest` dazu genutzt wird genau zu überprüfen,
-wie oft die verschiedenen Methoden aufgerufen werden.
-Beispielsweise sollte die Methoden `onSzenarioStart` und `onSzenarioEnd`, per Definition, nur einmal aufgerufen werden.
-Genauso verhält es sich mit den Methoden `preSzenarioStep` und `postSzenarioStep`, die so oft wie die Anzahl der Szenarioschritte aufgerufen werden sollten. 
-Mockito bietet dafür die Methoden `verify()` und `times()` an, mit denen sich die genaue Anzahl der Aufrufe ermitteln lässt, wie unten am Codebeispiel zu erkennen ist.
+Ein weiteres gemocktes Interface ist `SzenarioExecutionObserver` welches in der Klasse `ExecutionServiceTest` dazu
+genutzt wird genau zu überprüfen, wie oft die verschiedenen Methoden aufgerufen werden. Beispielsweise sollte die
+Methoden `onSzenarioStart` und `onSzenarioEnd`, per Definition, nur einmal aufgerufen werden. Genauso verhält es sich
+mit den Methoden `preSzenarioStep` und `postSzenarioStep`, die so oft wie die Anzahl der Szenarioschritte aufgerufen
+werden sollten. Mockito bietet dafür die Methoden `verify()` und `times()` an, mit denen sich die genaue Anzahl der
+Aufrufe ermitteln lässt, wie unten am Codebeispiel zu erkennen ist.
 
 ```java
  @Test
@@ -632,22 +640,19 @@ _[4 Beispiele für die Ubiquitous Language; jeweils Bezeichung, Bedeutung und ku
 | Agent                | Ein Agent ist ein Akteur innerhalb einer Umgebung. Der Agent kann verschiedene Aktionen ausführem. die die Umgebung auf eine bestimmte Beweise beinflussen und ihren Zustand ändern.                                                                                                                                                                                                                                               |     |
 | Policy               | Eine Policy ist prinzipiell nur ein Hinweisgeber, der einem Agenten sagt, welche Aktion in welchem Zustand wie sinnvoll ist.                                                                                                                                                                                                                                                                                                       |     |
 | Algorithmus          | Ein Algorithmus modifiziert eine Policy, damit diese bessere Ergebnisse erzielt. Der Algorithmus macht einen Agenten somit lernfähig.                                                                                                                                                                                                                                                                                              |     |
-| Grid-World           | Eine Umgebung, die aus einem 2D-Feld besteht. Es existieren verschiedene Felder die unterschiedliche Belohnungen geben.                                                                                                                                                                                                                                                                                                            |     |
-| K-Armed-Bandit       | Ein Armed Bandit, auch einarmiger Bandit oder einfach nur Spieleautomat (bei dem an einem Hebel gezogen wird) genannt, ist eine Umgebung bestehend aus K Spieleautomaten. Jeder Automat schüttet eine unterschiedliche Belohnung beim Ziehen des Hebels aus.                                                                                                                                                                       |     |
 
 ### ​Entities
 
 _[UML, Beschreibung und Begründung des Einsatzes einer Entity; falls keine Entity vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
 Innerhalb dieses Projektes gibt es leider keine Entities im klassischen Sinne, die einen typischen Lifecycle aufweisen.
-Die einzigen Objekte die eine wirkliche "Identität" besitzen und auch über diese Abgerufen bzw. abgespeichert werden können,
-sind die Descriptoren, wie am Beispiel der Klasse `AgentDescriptor` dargestellt.
-Alle Descriptoren beinhalten Metadaten über einen anderen Typ.
-In diesem Fall beschreibt ein `AgentDescriptor`, dass ein bestimmter Agent mit dem Namen `name` existiert und dieser 
-z.B. `actionSpace` Aktionen zur Verfügung hat. Dadurch muss keine konreket Instanz eines Agenten vorliegen, um seine Eigenschaften zu beschreiben.
-Alle Descriptoren sind über einen Namen eindeutig identifizierbar und können über diesen durch die entsprechende Repository
-abgerufen werden.
-Da die Descriptoren über die Laufzeit des Programms nicht gelöscht werden können, exisitieren diese quasi "ewig".
+Die einzigen Objekte die eine wirkliche "Identität" besitzen und auch über diese Abgerufen bzw. abgespeichert werden
+können, sind die Descriptoren, wie am Beispiel der Klasse `AgentDescriptor` dargestellt. Alle Descriptoren beinhalten
+Metadaten über einen anderen Typ. In diesem Fall beschreibt ein `AgentDescriptor`, dass ein bestimmter Agent mit dem
+Namen `name` existiert und dieser z.B. `actionSpace` Aktionen zur Verfügung hat. Dadurch muss keine konreket Instanz
+eines Agenten vorliegen, um seine Eigenschaften zu beschreiben. Alle Descriptoren sind über einen Namen eindeutig
+identifizierbar und können über diesen durch die entsprechende Repository abgerufen werden. Da die Descriptoren über die
+Laufzeit des Programms nicht gelöscht werden können, exisitieren diese quasi "ewig".
 
 ![Agent Descriptor Entity](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/entityAgentDescriptor.puml)
 
@@ -655,23 +660,34 @@ Da die Descriptoren über die Laufzeit des Programms nicht gelöscht werden kön
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Value Objects; falls kein Value Object vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
-Ein häufig eingesetztes Value Object sind Objekte der Klasse `RLSettings`.
-Objekte der Klassen repräsentieren eine einfache, identitätslose Instanz, welche globale Einstellungen zum Reinforcement Learning beinhaltet.
-Jedes Objekt ist Read-Only. Sollte eine Änderung nötig sein, so wird ein neues erstellt.
+Ein häufig eingesetztes Value Object sind Objekte der Klasse `RLSettings`. Objekte der Klassen repräsentieren eine
+einfache, identitätslose Instanz, welche globale Einstellungen zum Reinforcement Learning beinhaltet. Jedes Objekt ist
+Read-Only. Sollte eine Änderung nötig sein, so wird ein neues erstellt.
 
 ![Settings Value Object](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/valueObjectRLSettings.puml)
 
+Beispiel, in dem ein neues Objekt erstellt wird, um einen bestimmten Wert zu überschreiben:
+
+````java
+public GreedyPolicy(ActionValueStore actionValueStore, RLSettings settings){
+    super(actionValueStore, new RLSettings(
+        settings.learningRate(),
+        settings.discountFactor(),
+        0, // Setze Explorations-Rate auf 0, sodass EpsilonGreedyPolicy nicht mehr erkundet.
+        settings.agentRewardStepSize()
+    ));
+}   
+````
 
 ### ​Repositories
 
 _[UML, Beschreibung und Begründung des Einsatzes eines Repositories; falls kein Repository vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
-Abgeleitete Klasse des Interfaces `ConfigRepository` sind dafür zuständig, die gespeicherten Einträge der Config zu verwalten.
-Die Aufgaben sind sowohl das Einlesen als auch das Modifizieren (Hinzufügen).
-Da für alle Schichten die konkrete Herkunft der Config-Items egal ist, wird dieses unwichtige Detail über das Interface abstrahiert.
+Abgeleitete Klasse des Interfaces `ConfigRepository` sind dafür zuständig, die gespeicherten Einträge der Config zu
+verwalten. Die Aufgaben sind sowohl das Einlesen als auch das Modifizieren (Hinzufügen). Da für alle Schichten die
+konkrete Herkunft der Config-Items egal ist, wird dieses unwichtige Detail über das Interface abstrahiert.
 
 ![Config Repo](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/repositoryConfig.puml)
-
 
 ### ​Aggregates
 
@@ -721,12 +737,14 @@ int bestValue = maxEntry.value();
 
 _[jeweils 1 Code-Beispiel zu 2 Code Smells aus der Vorlesung; jeweils Code-Beispiel und einen möglichen Lösungsweg bzw. den genommen Lösungsweg beschreiben (inkl.__(Pseudo-)Code)]_
 
-Die `createGridWorldEnvironment()` Methode der Klasse `SimpleEnvironmentFactory` hatte sich anfangs nur mit dem Erstellen einer Grid-World
-beschäftigt, die eine konfigurierbare Höhe bzw. Breite besaß. Später wurde die Möglichkeit hinzugefügt, die Grid-World über eine
-Datei zu initialisieren.
-Das Parsen bzw. Auslesen der Datei wurde in dieselbe Methode eingebaut (siehe Vorher), weswegen diese, jedenfalls aus meiner Wahrnehmung heraus, recht unübersichtlich wurde.
-Es war ohne Kontext nicht mehr wirklich verständlich, welchen konkreten Zweck die Methode besaß. (Soll sie Parsen? Wenn ja, was genau? ...)
-Um dies zu beheben wurde der Parsing Teil in eine eigene Methode ausgelagert, die mit dem Namen `parseGridWorldFile()` versehen wurde, der eindeutig beschreibt, welche Aufgabe der Code besitzt (Siehe Nachher).
+Die `createGridWorldEnvironment()` Methode der Klasse `SimpleEnvironmentFactory` hatte sich anfangs nur mit dem
+Erstellen einer Grid-World beschäftigt, die eine konfigurierbare Höhe bzw. Breite besaß. Später wurde die Möglichkeit
+hinzugefügt, die Grid-World über eine Datei zu initialisieren. Das Parsen bzw. Auslesen der Datei wurde in dieselbe
+Methode eingebaut (siehe Vorher), weswegen diese, jedenfalls aus meiner Wahrnehmung heraus, recht unübersichtlich wurde.
+Es war ohne Kontext nicht mehr wirklich verständlich, welchen konkreten Zweck die Methode besaß. (Soll sie Parsen? Wenn
+ja, was genau? ...)
+Um dies zu beheben wurde der Parsing Teil in eine eigene Methode ausgelagert, die mit dem Namen `parseGridWorldFile()`
+versehen wurde, der eindeutig beschreibt, welche Aufgabe der Code besitzt (Siehe Nachher).
 
 **Vorher:**
 
