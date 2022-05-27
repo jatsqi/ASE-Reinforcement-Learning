@@ -6,7 +6,7 @@ public record RLSettingsDto(double learningRate, double discountFactor, double e
     @Override
     public String toString() {
         return "Reinforcement Learning Setting: \n" +
-                "   Lernrate: " + learningRate +
+                "    Lernrate: " + learningRate +
                 "\n  Discount Factor: " + discountFactor +
                 "\n  Erkundungsfaktor: " + explorationRate +
                 "\n  Reward Step-Size: " + agentRewardStepSize;
