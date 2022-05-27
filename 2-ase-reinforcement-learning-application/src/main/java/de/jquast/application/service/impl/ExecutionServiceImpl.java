@@ -107,6 +107,11 @@ public class ExecutionServiceImpl implements ExecutionService {
                     steps,
                     szenario.settings()
             ));
+
+            // Streng genommen braucht es hier keinen gewrappten Observer, da die Session hier gestartet wird.
+            // Der Code für das Speichern könnte auch nach session.start() erscheinen.
+            // Für die sehr nahe Zukunft ist allerdings angedacht, dass eine Session ASYNCHRON gestartet wird,
+            // weswegen ein solcher Observer dann unabdingbar wird.
             session.addObserver(createWrappedTrainingObserver(observer));
 
             session.start();
@@ -151,6 +156,19 @@ public class ExecutionServiceImpl implements ExecutionService {
         }
     }
 
+    /**
+     * Erstellt ein grundsätzliches Szenario aus den übergeben Parametern, welches für das Training oder ähnliches
+     * genutzt werden kann.
+     *
+     * @param agentName     Name des Agenten.
+     * @param envName       Name des Environments.
+     * @param policyName    Name der Policy.
+     * @param envOptions    Optionen für das Environment.
+     * @param maxSteps      Maximale Anzahl an Trainingsschritten.
+     * @param storeId       Store ID, von der das Training fortgefahren wird.
+     * @return              Das erstellte Szenario.
+     * @throws SzenarioCreationException Wird ausgelöst, sofern etwas bei der Erstellung nicht geklappt hat.
+     */
     private Szenario createSzenario(
             String agentName,
             String envName,
@@ -158,8 +176,6 @@ public class ExecutionServiceImpl implements ExecutionService {
             String envOptions,
             long maxSteps,
             int storeId) throws SzenarioCreationException {
-        RLSettings settings = configService.getRLSettings();
-
         // Get & Check descriptor
         AgentDescriptor agentDescriptor = agentRepository
                 .getAgentInfo(agentName)
@@ -172,6 +188,9 @@ public class ExecutionServiceImpl implements ExecutionService {
                 .orElseThrow(() -> new SzenarioCreationException("Die Policy konnte nicht gefunden werden."));
 
         try {
+            // Settings abrufen
+            RLSettings settings = configService.getRLSettings();
+
             // Create Environment & Store
             Environment environment = environmentRepository.createEnvironmentInstance(envDescriptor, makeStringOptional(envOptions));
 
@@ -220,6 +239,13 @@ public class ExecutionServiceImpl implements ExecutionService {
         return actionValueRepository.persistActionValueStore(agent, environment, policy.getActionValueStore());
     }
 
+    /**
+     * Erstellt einen Wrapper um einen bestehenden Observer, um onSzenarioEnd() abzufangen, den Store zu speichern, un den
+     * gewrappten Observer durch einen Aufruf über onActionStorePersisted() über die Speicherung zu informieren.
+     *
+     * @param progressObserver  Der zu wrappende Observer.
+     * @return                  Ein Observer, welche den Store speichern kann.
+     */
     private SzenarioExecutionObserver createWrappedTrainingObserver(Optional<SzenarioExecutionObserver> progressObserver) {
         return new SzenarioExecutionObserver() {
             @Override
