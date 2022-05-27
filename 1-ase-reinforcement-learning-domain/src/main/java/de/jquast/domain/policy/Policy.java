@@ -9,12 +9,12 @@ public abstract class Policy implements ActionSource {
     private final RLSettings settings;
     private ActionValueStore actionValueStore;
 
-    public Policy(ActionValueStore actionValueStore, RLSettings settings) {
+    protected Policy(ActionValueStore actionValueStore, RLSettings settings) {
         this.actionValueStore = actionValueStore;
         this.settings = settings;
     }
 
-    public Policy(int stateCount, int actionCount, RLSettings settings) {
+    protected Policy(int stateCount, int actionCount, RLSettings settings) {
         this(new ActionValueStore(stateCount, actionCount), settings);
     }
 

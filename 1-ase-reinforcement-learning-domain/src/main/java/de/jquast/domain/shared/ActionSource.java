@@ -25,12 +25,4 @@ public interface ActionSource {
      * @param reward   Der erhaltene Reward.
      */
     void criticiseAction(int oldState, int action, int newState, double reward);
-
-    /**
-     * Gibt den durchschnittlichen Reward zurück, der von dieser Action Source zu erwarten ist.
-     *
-     * @return Der durchschnittliche Reward.
-     */
-    //double getAverageReward();
-
 }

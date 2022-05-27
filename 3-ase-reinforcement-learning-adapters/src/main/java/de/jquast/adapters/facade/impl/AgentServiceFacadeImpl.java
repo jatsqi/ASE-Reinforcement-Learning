@@ -23,7 +23,7 @@ public class AgentServiceFacadeImpl implements AgentServiceFacade {
 
     @Override
     public Collection<AgentDescriptorDto> getAgents() {
-        return service.getAgents().stream().map(MAPPER::toDto).collect(Collectors.toList());
+        return service.getAgents().stream().map(MAPPER::toDto).toList();
     }
 
     @Override

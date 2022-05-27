@@ -23,8 +23,12 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
     static {
         ENV_CONSTRUCTORS = new HashMap<>();
 
-        ENV_CONSTRUCTORS.put("k-armed-bandit", (descriptor, parameters) -> createKArmedBanditEnvironment(parameters));
-        ENV_CONSTRUCTORS.put("grid-world", (descriptor, parameters) -> createGridWorldEnvironment(parameters));
+        ENV_CONSTRUCTORS.put(
+                KArmedBanditEnvironment.K_ARMED_BANDIT_DESCRIPTOR.name(),
+                (descriptor, parameters) -> createKArmedBanditEnvironment(parameters));
+        ENV_CONSTRUCTORS.put(
+                GridWorldEnvironment.GRID_WORLD_DESCRIPTOR.name(),
+                (descriptor, parameters) -> createGridWorldEnvironment(parameters));
     }
 
     private static KArmedBanditEnvironment createKArmedBanditEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
@@ -39,7 +43,7 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
     private static GridWorldEnvironment createGridWorldEnvironment(Map<String, String> parameters) throws EnvironmentCreationException {
         if (!parameters.containsKey("from")) {
             if (!parameters.containsKey("height") || !parameters.containsKey("width"))
-                throw new EnvironmentCreationException("Höhe bzw. Breite oder ein Dateiname sind für die Erstellung erforderlich!", "grid-world");
+                throw new EnvironmentCreationException("Höhe bzw. Breite oder ein Dateiname sind für die Erstellung erforderlich!", GridWorldEnvironment.GRID_WORLD_DESCRIPTOR.name());
 
             try {
                 Integer height = Integer.parseInt(parameters.get("height"));
@@ -47,7 +51,7 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
 
                 return new GridWorldEnvironment(height, width);
             } catch (Exception e) {
-                throw new EnvironmentCreationException("Höhe oder Breite konnten nicht gelesen werden!", "grid-world");
+                throw new EnvironmentCreationException("Höhe oder Breite konnten nicht gelesen werden!", GridWorldEnvironment.GRID_WORLD_DESCRIPTOR.name());
             }
         }
 
@@ -57,14 +61,14 @@ public class SimpleEnvironmentFactory implements EnvironmentFactory {
             return new GridWorldEnvironment(parseGridWorldFile(fromPath));
         } catch (IOException e) {
             throw new EnvironmentCreationException(
-                    String.format("Die Datei '%s' konnte nicht korrekt gelesen werden!", from), "grid-world");
+                    String.format("Die Datei '%s' konnte nicht korrekt gelesen werden!", from), GridWorldEnvironment.GRID_WORLD_DESCRIPTOR.name());
         }
     }
 
     private static int[][] parseGridWorldFile(Path fromPath) throws IOException, EnvironmentCreationException {
         List<String> lines = Files.readAllLines(fromPath);
-        if (lines.size() <= 0)
-            throw new EnvironmentCreationException("Die angegebene Datei ist leer.", "grid-world");
+        if (lines.isEmpty())
+            throw new EnvironmentCreationException("Die angegebene Datei ist leer.", GridWorldEnvironment.GRID_WORLD_DESCRIPTOR.name());
 
         int[][] grid = new int[lines.get(0).length()][lines.size()];
 

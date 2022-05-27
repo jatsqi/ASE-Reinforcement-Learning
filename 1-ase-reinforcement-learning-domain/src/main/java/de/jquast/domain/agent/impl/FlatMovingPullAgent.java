@@ -1,6 +1,7 @@
 package de.jquast.domain.agent.impl;
 
 import de.jquast.domain.agent.Agent;
+import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.shared.Action;
@@ -10,6 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FlatMovingPullAgent extends Agent {
+
+    public static final AgentDescriptor PULL_AGENT_DESCRIPTOR = new AgentDescriptor(
+            "pull",
+            "Agent, der an Hebeln ziehen kann",
+            new Action[]{Action.MOVE_X_UP, Action.MOVE_X_UP, Action.PULL, Action.DO_NOTHING},
+            4);
 
     private static Map<Integer, Action> ACTION_INT_TO_ACTION_MAPPING;
 

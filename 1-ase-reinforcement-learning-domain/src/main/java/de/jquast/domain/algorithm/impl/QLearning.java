@@ -1,11 +1,18 @@
 package de.jquast.domain.algorithm.impl;
 
 import de.jquast.domain.algorithm.RLAlgorithm;
+import de.jquast.domain.algorithm.RLAlgorithmDescriptor;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.shared.ActionSource;
 import de.jquast.domain.shared.ActionValueStore;
 
 public class QLearning extends RLAlgorithm {
+
+    public static final RLAlgorithmDescriptor Q_LEARNING_ALGORITHM_DESCRIPTOR = new RLAlgorithmDescriptor(
+            "qlearning",
+            "Off Policy Lernalgorithmus",
+            QLearning.class
+    );
 
     public QLearning(ActionValueStore actionValueStore, ActionSource actionSource, RLSettings settings) {
         super(actionValueStore, actionSource, settings);

@@ -20,8 +20,12 @@ public class SimpleAgentFactory implements AgentFactory {
     static {
         AGENT_CONSTRUCTORS = new HashMap<>();
 
-        AGENT_CONSTRUCTORS.put("pull", (descriptor, environment, source, settings) -> new FlatMovingPullAgent(environment, source, settings));
-        AGENT_CONSTRUCTORS.put("2d-moving-agent", (descriptor, environment, source, settings) -> new MovingAgent2D(environment, source, settings));
+        AGENT_CONSTRUCTORS.put(
+                FlatMovingPullAgent.PULL_AGENT_DESCRIPTOR.name(),
+                (descriptor, environment, source, settings) -> new FlatMovingPullAgent(environment, source, settings));
+        AGENT_CONSTRUCTORS.put(
+                MovingAgent2D.MOVING_AGENT_DESCRIPTOR.name(),
+                (descriptor, environment, source, settings) -> new MovingAgent2D(environment, source, settings));
     }
 
     @Override

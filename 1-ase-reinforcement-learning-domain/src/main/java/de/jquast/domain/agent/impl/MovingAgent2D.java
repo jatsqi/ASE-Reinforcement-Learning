@@ -1,6 +1,7 @@
 package de.jquast.domain.agent.impl;
 
 import de.jquast.domain.agent.Agent;
+import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.shared.Action;
@@ -10,6 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MovingAgent2D extends Agent {
+
+    public static final AgentDescriptor MOVING_AGENT_DESCRIPTOR = new AgentDescriptor(
+            "2d-moving-agent",
+                "Agent, der sich auf einer 2D-Ebene fortbewegen kann",
+                        new Action[]{Action.MOVE_X_UP, Action.MOVE_X_UP, Action.MOVE_Y_UP, Action.MOVE_Y_DOWN, Action.DO_NOTHING},
+            5);
 
     private static Map<Integer, Action> ACTION_INT_TO_ACTION_MAPPING;
 

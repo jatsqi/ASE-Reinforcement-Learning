@@ -1,7 +1,5 @@
 package de.jquast.plugin.repository;
 
-import de.jquast.application.service.AgentService;
-import de.jquast.application.service.EnvironmentService;
 import de.jquast.domain.exception.PersistStoreException;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
@@ -23,16 +21,10 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     private static final String STORAGE_FILE_EXTENSION = "store";
     private static final String STORAGE_FILE_DELIMITER = ";";
 
-    private Map<Integer, PersistedStoreInfo> valueInfo = new HashMap();
-
-    private AgentService agentService;
-    private EnvironmentService environmentService;
+    private Map<Integer, PersistedStoreInfo> valueInfo = new HashMap<>();
 
     @Inject
-    public FileSystemActionValueRepository(AgentService agentService, EnvironmentService environmentService) {
-        this.agentService = agentService;
-        this.environmentService = environmentService;
-
+    public FileSystemActionValueRepository() {
         try {
             if (!Files.exists(Path.of(STORAGE_FOLDER_PATH))) {
                 Files.createDirectory(Path.of(STORAGE_FOLDER_PATH));
@@ -84,7 +76,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
     public PersistedStoreInfo persistActionValueStore(String agentName, String envName, ActionValueStore store) throws PersistStoreException {
         int id = 0;
         try {
-            id = findNextId(agentName, envName);
+            id = findNextId();
         } catch (IOException e) {
             throw new PersistStoreException("Es gab einen Fehler beim Lesen des Ordners der Value Stores!");
         }
@@ -95,7 +87,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
 
             for (int i = 0; i < store.getStateCount(); i++) {
                 for (int j = 0; j < store.getActionCount(); j++) {
-                    writer.write(String.format(Locale.US, "%d;%d;%f\n", i, j, store.getActionValue(i, j)));
+                    writer.write(String.format(Locale.US, "%d;%d;%f%n", i, j, store.getActionValue(i, j)));
                 }
             }
         } catch (IOException e) {
@@ -165,7 +157,7 @@ public class FileSystemActionValueRepository implements ActionValueRepository {
         );
     }
 
-    private int findNextId(String agentName, String envName) throws IOException {
+    private int findNextId() throws IOException {
         int currentMaxId = 0;
 
         try (Stream<Path> foundFiles = Files.walk(Path.of(STORAGE_FOLDER_PATH))) {

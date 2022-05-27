@@ -6,6 +6,8 @@ import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyDescriptor;
 import de.jquast.domain.policy.PolicyFactory;
 import de.jquast.domain.policy.PolicyRepository;
+import de.jquast.domain.policy.impl.EpsilonGreedyPolicy;
+import de.jquast.domain.policy.impl.GreedyPolicy;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.utils.di.annotations.Inject;
 
@@ -16,20 +18,12 @@ import java.util.Optional;
 
 public class InMemoryPolicyRepository implements PolicyRepository {
 
-    private static final Map<String, PolicyDescriptor> POLICIES = new HashMap<>();
+    private static final Map<String, PolicyDescriptor> POLICIES;
 
     static {
-        String epsilonGreedy = "epsilon-greedy";
-        POLICIES.put(epsilonGreedy, new PolicyDescriptor(
-                epsilonGreedy,
-                "Eine Policy, die mit einer Wahrscheinlichkeit von Epsilon eine zufällige Aktion ausführt."
-        ));
-
-        String greedy = "greedy";
-        POLICIES.put(greedy, new PolicyDescriptor(
-                greedy,
-                "Führt immer die aktuell Beste Aktion aus."
-        ));
+        POLICIES = new HashMap<>();
+        POLICIES.put(EpsilonGreedyPolicy.EPSILON_GREEDY_POLICY_DESCRIPTOR.name(), EpsilonGreedyPolicy.EPSILON_GREEDY_POLICY_DESCRIPTOR);
+        POLICIES.put(GreedyPolicy.GREEDY_POLICY_DESCRIPTOR.name(), GreedyPolicy.GREEDY_POLICY_DESCRIPTOR);
     }
 
     private final PolicyFactory factory;

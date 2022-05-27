@@ -1,9 +1,15 @@
 package de.jquast.domain.policy.impl;
 
 import de.jquast.domain.algorithm.RLSettings;
+import de.jquast.domain.policy.PolicyDescriptor;
 import de.jquast.domain.shared.ActionValueStore;
 
 public class GreedyPolicy extends EpsilonGreedyPolicy {
+
+    public static final PolicyDescriptor GREEDY_POLICY_DESCRIPTOR = new PolicyDescriptor(
+            "greedy",
+            "Führt immer die aktuell Beste Aktion aus."
+    );
 
     public GreedyPolicy(ActionValueStore actionValueStore, RLSettings settings) {
         super(actionValueStore, new RLSettings(

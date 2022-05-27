@@ -14,7 +14,7 @@ public abstract class Agent {
     protected int totalActionsTaken;
     protected double averageReward;
 
-    public Agent(Environment environment, ActionSource source, RLSettings settings) {
+    protected Agent(Environment environment, ActionSource source, RLSettings settings) {
         this.environment = environment;
         this.actionSource = source;
         this.settings = settings;

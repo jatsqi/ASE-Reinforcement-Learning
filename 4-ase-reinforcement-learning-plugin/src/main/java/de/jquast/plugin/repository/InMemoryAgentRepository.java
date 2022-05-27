@@ -5,6 +5,8 @@ import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.agent.AgentRepository;
+import de.jquast.domain.agent.impl.FlatMovingPullAgent;
+import de.jquast.domain.agent.impl.MovingAgent2D;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.exception.AgentCreationException;
 import de.jquast.domain.shared.Action;
@@ -23,21 +25,8 @@ public class InMemoryAgentRepository implements AgentRepository {
     static {
         AGENTS = new HashMap<>();
 
-        String pullAgent = "pull";
-        AGENTS.put(pullAgent, new AgentDescriptor(
-                pullAgent,
-                "Agent, der an Hebeln ziehen kann",
-                new Action[]{Action.MOVE_X_UP, Action.MOVE_X_UP, Action.PULL, Action.DO_NOTHING},
-                4
-        ));
-
-        String movingAgent2d = "2d-moving-agent";
-        AGENTS.put(movingAgent2d, new AgentDescriptor(
-                movingAgent2d,
-                "Agent, der sich auf einer 2D-Ebene fortbewegen kann",
-                new Action[]{Action.MOVE_X_UP, Action.MOVE_X_UP, Action.MOVE_Y_UP, Action.MOVE_Y_DOWN, Action.DO_NOTHING},
-                5
-        ));
+        AGENTS.put(FlatMovingPullAgent.PULL_AGENT_DESCRIPTOR.name(), FlatMovingPullAgent.PULL_AGENT_DESCRIPTOR);
+        AGENTS.put(MovingAgent2D.MOVING_AGENT_DESCRIPTOR.name(), MovingAgent2D.MOVING_AGENT_DESCRIPTOR);
     }
 
     private final ConfigService configService;

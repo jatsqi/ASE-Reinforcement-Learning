@@ -11,17 +11,17 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AlgorithmMapperTest {
+class AlgorithmMapperTest {
 
     private AlgorithmMapper mapper;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         mapper = new AlgorithmMapper();
     }
 
     @Test
-    public void dtoAttributesShouldHaveSameValue() {
+    void dtoAttributesShouldHaveSameValue() {
         RLAlgorithmDescriptor descriptor = new RLAlgorithmDescriptor(
                 "my cool algorithm",
                 "this is a cool algorithm",
@@ -37,7 +37,7 @@ public class AlgorithmMapperTest {
     }
 
     @Test
-    public void emptyOptionalShouldReturnEmptyDtoOptional() {
+    void emptyOptionalShouldReturnEmptyDtoOptional() {
         assertTrue(mapper.toDto(Optional.empty()).isEmpty());
     }
 

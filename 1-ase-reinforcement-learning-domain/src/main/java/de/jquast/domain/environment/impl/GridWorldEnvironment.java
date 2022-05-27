@@ -1,9 +1,17 @@
 package de.jquast.domain.environment.impl;
 
 import de.jquast.domain.environment.Environment;
+import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.shared.Action;
 
 public class GridWorldEnvironment implements Environment {
+
+    public static final EnvironmentDescriptor GRID_WORLD_DESCRIPTOR = new EnvironmentDescriptor(
+            "grid-world", "Eine Welt bestehend aus Kacheln",
+            new Action[]{Action.DO_NOTHING,
+                Action.MOVE_X_DOWN, Action.MOVE_X_UP,
+                Action.MOVE_Y_DOWN, Action.MOVE_Y_UP}
+    );
 
     public static final int STATE_NORMAL = 0;
     public static final int STATE_TERMINAL = 1;

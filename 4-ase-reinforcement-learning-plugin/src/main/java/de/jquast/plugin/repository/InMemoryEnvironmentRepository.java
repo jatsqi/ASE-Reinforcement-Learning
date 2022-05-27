@@ -4,6 +4,8 @@ import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.environment.EnvironmentRepository;
+import de.jquast.domain.environment.impl.GridWorldEnvironment;
+import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
 import de.jquast.domain.exception.EnvironmentCreationException;
 import de.jquast.domain.shared.Action;
 import de.jquast.utils.di.annotations.Inject;
@@ -19,27 +21,14 @@ public class InMemoryEnvironmentRepository implements EnvironmentRepository {
 
     static {
         ENVIRONMENTS = new HashMap<>();
-
-        String kArmedBandit = "k-armed-bandit";
-        ENVIRONMENTS.put(kArmedBandit, new EnvironmentDescriptor(
-                kArmedBandit,
-                "N Spieleautomaten (einarmige Banditen) mit jeweils einem Hebel.",
-                new Action[]{
-                        Action.DO_NOTHING,
-                        Action.PULL
-                }
-        ));
-
-        String gridWorld = "grid-world";
-        ENVIRONMENTS.put(gridWorld, new EnvironmentDescriptor(
-                gridWorld,
-                "Eine Welt bestehend aus Kacheln",
-                new Action[]{
-                        Action.DO_NOTHING,
-                        Action.MOVE_X_DOWN, Action.MOVE_X_UP,
-                        Action.MOVE_Y_DOWN, Action.MOVE_Y_UP
-                }
-        ));
+        ENVIRONMENTS.put(
+                KArmedBanditEnvironment.K_ARMED_BANDIT_DESCRIPTOR.name(),
+                KArmedBanditEnvironment.K_ARMED_BANDIT_DESCRIPTOR
+        );
+        ENVIRONMENTS.put(
+                GridWorldEnvironment.GRID_WORLD_DESCRIPTOR.name(),
+                GridWorldEnvironment.GRID_WORLD_DESCRIPTOR
+        );
     }
 
     private final EnvironmentFactory factory;

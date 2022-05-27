@@ -19,7 +19,9 @@ public class SimpleAlgorithmFactory implements AlgorithmFactory {
     static {
         ALGORITHM_CONSTRUCTORS = new HashMap<>();
 
-        ALGORITHM_CONSTRUCTORS.put("qlearning", (descriptor, store, delegate, settings) -> new QLearning(store, delegate, settings));
+        ALGORITHM_CONSTRUCTORS.put(
+                QLearning.Q_LEARNING_ALGORITHM_DESCRIPTOR.name(),
+                (descriptor, store, delegate, settings) -> new QLearning(store, delegate, settings));
     }
 
     @Override

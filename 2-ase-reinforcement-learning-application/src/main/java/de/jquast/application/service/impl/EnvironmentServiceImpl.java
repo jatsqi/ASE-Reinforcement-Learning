@@ -12,12 +12,10 @@ import java.util.Optional;
 public class EnvironmentServiceImpl implements EnvironmentService {
 
     private final EnvironmentRepository environmentRepository;
-    private final EnvironmentFactory environmentFactory;
 
     @Inject
-    public EnvironmentServiceImpl(EnvironmentRepository environmentRepository, EnvironmentFactory factory) {
+    public EnvironmentServiceImpl(EnvironmentRepository environmentRepository) {
         this.environmentRepository = environmentRepository;
-        this.environmentFactory = factory;
     }
 
     public Collection<EnvironmentDescriptor> getEnvironmentsInfo() {

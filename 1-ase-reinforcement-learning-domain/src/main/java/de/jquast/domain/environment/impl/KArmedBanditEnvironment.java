@@ -1,11 +1,18 @@
 package de.jquast.domain.environment.impl;
 
 import de.jquast.domain.environment.Environment;
+import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.shared.Action;
 
 import java.util.Random;
 
 public class KArmedBanditEnvironment implements Environment {
+
+    public static final EnvironmentDescriptor K_ARMED_BANDIT_DESCRIPTOR = new EnvironmentDescriptor(
+            "k-armed-bandit",
+            "N Spieleautomaten (einarmige Banditen) mit jeweils einem Hebel.",
+                        new Action[]{Action.DO_NOTHING, Action.PULL, Action.MOVE_X_UP, Action.MOVE_X_DOWN}
+        );
 
     private static final Random RND = new Random();
 

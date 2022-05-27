@@ -46,7 +46,7 @@ public class SzenarioSession {
     }
 
     private void execWhenPresent(Consumer<SzenarioProgressObserver> consumer) {
-        if (observer.size() > 0) {
+        if (!observer.isEmpty()) {
             observer.forEach(consumer::accept);
         }
     }

@@ -22,12 +22,7 @@ public class InMemoryAlgorithmRepository implements RLAlgorithmRepository {
     static {
         ALGORITHMS = new HashMap<>();
 
-        String qLearning = "qlearning";
-        ALGORITHMS.put(qLearning, new RLAlgorithmDescriptor(
-                qLearning,
-                "Off Policy Lernalgorithmus",
-                QLearning.class
-        ));
+        ALGORITHMS.put(QLearning.Q_LEARNING_ALGORITHM_DESCRIPTOR.name(), QLearning.Q_LEARNING_ALGORITHM_DESCRIPTOR);
     }
 
     private final AlgorithmFactory factory;

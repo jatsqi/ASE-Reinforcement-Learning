@@ -9,7 +9,7 @@ public abstract class RLAlgorithm implements ActionSource {
     protected ActionValueStore actionValueStoreDelegate;
     protected ActionSource actionSourceDelegate;
 
-    public RLAlgorithm(ActionValueStore actionValueStore, ActionSource actionSource, RLSettings settings) {
+    protected RLAlgorithm(ActionValueStore actionValueStore, ActionSource actionSource, RLSettings settings) {
         this.actionValueStoreDelegate = actionValueStore;
         this.actionSourceDelegate = actionSource;
         this.settings = settings;

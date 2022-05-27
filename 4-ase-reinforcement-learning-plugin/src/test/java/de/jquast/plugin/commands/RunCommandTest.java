@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RunCommandTest {
+class RunCommandTest {
 
     @Mock
     private ExecutionServiceFacade executionServiceFacade;
@@ -26,10 +26,10 @@ public class RunCommandTest {
     private RunCommand command;
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         MockitoAnnotations.openMocks(this);
 
-        when(configServiceFacade.getConfigItem(eq(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_STEPS))).thenReturn(new ConfigItemDto(
+        when(configServiceFacade.getConfigItem(DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_STEPS)).thenReturn(new ConfigItemDto(
                 DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_STEPS.getKey(),
                 DefaultConfigItem.MESSAGE_TRAINING_AVERAGE_REWARD_STEPS.getDefaultValue()
         ));
@@ -44,7 +44,7 @@ public class RunCommandTest {
     }
 
     @Test
-    public void commandShouldCallStartTrainingWhenEvalOptionIsNotSet() throws StartSzenarioException {
+    void commandShouldCallStartTrainingWhenEvalOptionIsNotSet() throws StartSzenarioException {
         command.evalMode = false;
         command.run();
 
@@ -59,7 +59,7 @@ public class RunCommandTest {
     }
 
     @Test
-    public void commandShouldCallStartEvaluationWhenEvalOptionIsSet() throws StartSzenarioException {
+    void commandShouldCallStartEvaluationWhenEvalOptionIsSet() throws StartSzenarioException {
         command.evalMode = true;
         command.run();
 

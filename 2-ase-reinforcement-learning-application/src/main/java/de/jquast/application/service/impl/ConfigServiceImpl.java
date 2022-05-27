@@ -59,14 +59,12 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     public RLSettings getRLSettings() {
-        RLSettings settings = new RLSettings(
+        return new RLSettings(
                 getDoubleConfigItem(DefaultConfigItem.ALGORITHM_LEARNING_RATE),
                 getDoubleConfigItem(DefaultConfigItem.ALGORITHM_DISCOUNT_FACTOR),
                 getDoubleConfigItem(DefaultConfigItem.ALGORITHM_EXPLORATION_RATE),
                 getDoubleConfigItem(DefaultConfigItem.AGENT_REWARD_UPDATE_STEP_SIZE)
         );
-
-        return settings;
     }
 
     private double getDoubleConfigItem(DefaultConfigItem item) {

@@ -15,7 +15,7 @@ public abstract class PolicyVisualizer {
     protected final Policy policy;
     protected final Environment environment;
 
-    public PolicyVisualizer(Agent agent, Policy policy, Environment environment) {
+    protected PolicyVisualizer(Agent agent, Policy policy, Environment environment) {
         this.agent = agent;
         this.policy = policy;
         this.environment = environment;
