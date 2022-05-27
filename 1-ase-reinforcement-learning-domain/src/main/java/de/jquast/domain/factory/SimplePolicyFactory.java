@@ -19,7 +19,7 @@ public class SimplePolicyFactory implements PolicyFactory {
     static {
         POLICY_CONSTRUCTORS = new HashMap<>();
 
-        POLICY_CONSTRUCTORS.put("epislon-greedy", (descriptor, store, settings) -> new EpsilonGreedyPolicy(store, settings));
+        POLICY_CONSTRUCTORS.put("epsilon-greedy", (descriptor, store, settings) -> new EpsilonGreedyPolicy(store, settings));
         POLICY_CONSTRUCTORS.put("greedy", (descriptor, store, settings) -> new GreedyPolicy(store, settings));
     }
 
