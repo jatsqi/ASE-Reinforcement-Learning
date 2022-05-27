@@ -31,6 +31,8 @@ package Domain <<Rectangle>> {
         +double discountFactor
         +double explorationRate
         +double agentRewardStepSize
+        ---
+        -{static} void checkArgumentRangeZeroToOneInclusive(double value, String error)
     }
 
     interface AgentRepository {
@@ -53,7 +55,7 @@ package Application <<Rectangle>> {
     }
 }
 
-package Adapters {
+package Adapters <<Rectangle>> {
     class AgentDescriptorDto {
         +String name
         +String description

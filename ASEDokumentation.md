@@ -2,7 +2,9 @@
 
 # ASE Reinforcement Learning
 
-Name: Quast, Johannes Martrikelnummer: 6897847
+Name: Quast, Johannes 
+
+Martrikelnummer: 6897847
 
 Abgabedatum: 28.05.2022
 

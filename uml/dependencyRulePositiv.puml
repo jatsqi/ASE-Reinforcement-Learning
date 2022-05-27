@@ -14,6 +14,8 @@ package Domain <<Rectangle>> {
         +double discountFactor
         +double explorationRate
         +double agentRewardStepSize
+        ---
+        -{static} void checkArgumentRangeZeroToOneInclusive(double value, String error)
     }
 
      class ConfigItem {

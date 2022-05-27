@@ -6,6 +6,8 @@ class RLSettings {
     +double discountFactor
     +double explorationRate
     +double agentRewardStepSize
+    ---
+    -{static} void checkArgumentRangeZeroToOneInclusive(double value, String error)
 }
 
 @enduml
