@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Command(
         name = "run",
-        description = "Ein bestimmtes Szenario für einen Agenten starten"
+        description = "Ein bestimmtes Szenario für einen Agenten starten."
 )
 public class RunCommand implements Runnable {
 

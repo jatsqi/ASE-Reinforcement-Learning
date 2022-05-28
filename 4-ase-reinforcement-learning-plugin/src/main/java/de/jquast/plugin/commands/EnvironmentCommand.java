@@ -10,8 +10,7 @@ import java.util.Optional;
 
 @Command(
         name = "env",
-        description = "tbd",
-        help = "tbd"
+        description = "Gibt Informationen über die unterstützten Umgebungen aus."
 )
 public class EnvironmentCommand implements Runnable {
 

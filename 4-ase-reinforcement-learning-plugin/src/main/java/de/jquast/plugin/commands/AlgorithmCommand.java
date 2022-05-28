@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Command(
         name = "algorithm",
-        description = "Gibt "
+        description = "Gibt Informationen über die unterstützten Algorithmen aus."
 )
 public class AlgorithmCommand implements Runnable {
 

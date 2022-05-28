@@ -11,7 +11,7 @@ import java.util.Optional;
 @Command(
         name = "agent",
         description = "Informationen über Agenten abrufen",
-        help = "tbd"
+        help = "Gibt Informationen über alle verfügbaren Agenten aus."
 )
 public class AgentCommand implements Runnable {
 

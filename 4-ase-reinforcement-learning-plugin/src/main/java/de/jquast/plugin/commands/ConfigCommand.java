@@ -16,7 +16,12 @@ import java.util.Optional;
                 ConfigCommand.ConfigGetCommand.class
         }
 )
-public class ConfigCommand {
+public class ConfigCommand implements Runnable {
+
+    @Override
+    public void run() {
+        System.out.println("Bitte 'config get' oder 'config set' nutzen.");
+    }
 
     @Command(
             name = "set",

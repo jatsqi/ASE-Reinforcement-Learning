@@ -6,7 +6,7 @@ Name: Quast, Johannes
 
 Martrikelnummer: 6897847
 
-Abgabedatum: 28.05.2022
+Abgabedatum: 29.05.2022
 
 ## _Allgemeine Anmerkungen:_
 
@@ -59,7 +59,7 @@ Requirements:
 
 * Java 16+
 * Maven
-* Im Verzeichnis der JAR den Ordner `stored_values` mit ausreichend Berechtigungen erstellen
+* Die JAR muss ausreichend Berechtigungen besitzen, um im aktuellen Verzeichnis einen weiteren Ordner zu erstellen
 
 #### Projekt herunterladen
 
@@ -76,7 +76,7 @@ mvn package
 #### JAR finden
 
 ```shell
-cd 4-ase-reinforcement-learning-plugin
+cd 4-ase-reinforcement-learning-plugin/target
 ```
 
 Die JAR hat standardmäßig den Namen `4-ase-reinforcement-learning-plugin-1.0-SNAPSHOT-jar-with-dependencies.jar`
@@ -334,7 +334,27 @@ eine für das Environment verständliche Aktion um.
 Die Methode `executeNextAction()`, die bereits in der Basisklasse implementiert ist und die für **alle** Agenten 
 gleiche Logik zum Ausführen einer Aktion beinhaltet, ruft diese dann auf, um die konkrete Aktion zu holen. 
 Sämtliche Logik, die zum Trainieren des Agenten genutzt wird, bleibt unverändert, sobald ein neuer Agent hinzugefügt 
-wird, da diese Klassen alle entweder `transformAction` aufrufen oder`executeNextAction` direkt (siehe dazu Klasse `SzenarioSession` für konkretes Beispiel). 
+wird, da diese Klassen alle entweder `transformAction` aufrufen oder`executeNextAction` direkt, wie im unteren Beispiel.
+
+````java
+public void start() {
+    long currStep = 0;
+    execWhenPresent(obs -> obs.onSzenarioStart(this));
+
+    while (currStep < szenario.maxSteps()) {
+        final long currentStepCached = currStep;
+        execWhenPresent(obs -> obs.preSzenarioStep(this, currentStepCached, szenario.agent().getCurrentAverageReward()));
+        
+        szenario.environment().tick();
+        szenario.agent().executeNextAction();
+
+        execWhenPresent(obs -> obs.postSzenarioStep(this, currentStepCached, szenario.agent().getCurrentAverageReward()));
+        currStep++;
+    }
+
+    execWhenPresent(obs -> obs.onSzenarioEnd(this, szenario.agent().getCurrentAverageReward()));
+}
+````
 
 Nützlich war dies vor allem bei den zwei unterschiedlichen Agenten `MovingAgent2d` und `FlatMovingPullAgent`, die jeweils nur
 `transformAction` überschreiben. Sie können per **Plug & Play** überall eingesetzt werden.
@@ -425,7 +445,7 @@ von dieser bereitgestellt werden muss.
 Alle Methoden und Attribute, die die Klasse besitzt, beziehen sich einzig und alleine auf *dieses konkrete* Environment
 und damit auf seine Hauptaufgabe.
 Sie sind alle unabdingbar, damit dieses seine korrekte Funktionalität gewährleisten kann und können alle schwierig bis
-gar nicht in weitere module ausgelagert werden.
+gar nicht in weitere Module ausgelagert werden.
 
 
 ### ​**Don&#39;t Repeat Yourself (DRY)**
@@ -689,13 +709,13 @@ die die Reflection und damit das Kernstück der _Dependency Injection_ durchfüh
 um das Mapping der Interfaces auf konkrete Klassen zu testen.
 
 Triviale Pfade wie z.B. einzelne Get Methoden oder Value-Objekte, die ausschließlich Daten beinhalten wurden nicht getestet,
-da hier das Aufwand/Nutzen verhätnis nicht wirklich gegeben ist.
+da hier das Aufwand/Nutzen Verhältnis nicht wirklich gegeben ist.
 
 | Modul/Layer | Coverage | Begründung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 |-------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Domain      | ca. 55%  | Die Tests decken alle wichtigen Kernfunktionalitäten ab, wie z.B alles was Logik beinhaltet und **grundlegende** Funktionalität nach außen bereitstellt (Agent Klasse z.B.). Teilweise nicht durch Tests abgedeckt sind Exceptions oder die Value-Objects, da diese teilweise nur triviale Get-Methode beinhalten.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | Applikation | ca. 77%  | Die einzigen Services im Applikations-Layer, die tatsächlich wichtige Logik beinhalten, sind der `ExecutionService` und der `ConfigService`  bzw. deren Implementierung. Beide Services werden entsprechend soweit wie möglich mit gemockten Dependencies isoliert getestet. Die übrigen Services wie z.B. `AgentService` oder `EnvironmentService` reichen alle Calls momentan 1 zu 1 an die Repository weiter. Sie existieren aus dem Grund, dass wenn die Services später erweitert werden sollen, nicht erst in anderen Klassen auf einen Service gewechselt werden muss. Beide Services sind nahezu 100% getestet. Des Weiteren werden wichtige Kernfunktionalitäten wie die Implementierten Environments, Algorithmen sowie verschiedenen Policy-Varianten zu fast 100% abgedeckt. |
-| Adapters    | ca. 60%  | In der Adapter-Schicht werden momentan nur die wichtigsten Klassen getestet, welche im Moment die Mapper sind. Diese mappen ein bestimmtes Domain-Objekt auf den entsprechenden DTO. Zusätzlich wird für die `ExecutionServiceFacade` getestet, ob die `startTraining` bzw. `startEvaluation` Methoden die richtige Methode im gemockten Service aufrufen. Die übrigenden Fassaden sind momentan ungetestet, da diese ausschließlich den entsprechenden Mapper aufrufen und keine testenswerte Logik beinhalten.                                                                                                                                                                                                                                                                         |
+| Adapters    | ca. 60%  | In der Adapter-Schicht werden momentan nur die wichtigsten Klassen getestet, welche im Moment die Mapper sind. Diese mappen ein bestimmtes Domain-Objekt auf den entsprechenden DTO. Zusätzlich wird für die `ExecutionServiceFacade` getestet, ob die `startTraining` bzw. `startEvaluation` Methoden die richtige Methode im gemockten Service aufrufen. Die übrigen Fassaden sind momentan ungetestet, da diese ausschließlich den entsprechenden Mapper aufrufen und keine testenswerte Logik beinhalten.                                                                                                                                                                                                                                                                            |
 | Plugin      | ca. 15%  | Das aktuell am wenigsten getestete Modul ist das Plugin-Modul, welches das CLI beinhaltet. Auch hier wird im Moment nur für den `RunCommand` getestet, ob je nach Parameter die richtige Methode in der `ExecutionServiceFacade` aufgerufen wird. Dies ist sehr wichtig, da diese beiden Methode den Eintrittspunkt für die gesamte Funktionalität darstellen. Alle übrigen Commands printen die DTOs eins zu eins in die Konsole. Die genaue Ausgabe in der Konsole zu testen erschien nicht sinnvoll bzw. das Aufwand-Nutzen Verhätnis ist hier nicht wirklich gegeben.                                                                                                                                                                                                                |
 
 ### Fakes und Mocks
@@ -729,7 +749,7 @@ werden sollten. Mockito bietet dafür die Methoden `verify()` und `times()` an, 
 Aufrufe ermitteln lässt, wie unten am Codebeispiel zu erkennen ist.
 
 ```java
- @Test
+@Test
 void startSzenarioShouldCallAllObserverMethods() throws StartSzenarioException {
     executionService.startTraining(
             "best-agent",
@@ -762,25 +782,27 @@ welches aus den Komponenten _Agent_ und _Environment_ besteht. Ein Agent kann da
 die daraufhin in einen neuen Zustand übergeht und dem Agenten eine Belohnung bzw. Bestrafung zuweist.
 Die Bedeutung dieser und weiterer Begriffe ist in der folgenden Tabelle zusammengefasst:
 
-| **Bezeichung**       | **Bedeutung**                                                                                                                                                                                                                                                                                                                                                                                                                       | **Begründung**                                                                                                                                                                                                                                                                                                                                                                                   |
-|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Bezeichung**       | **Bedeutung**                                                                                                                                                                                                                                                                                                                                                                                                                       | **Begründung**                                                                                                                                                                                                                                                                                                                                                                                     |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Umgebung/Environment | Eine Umgebung bzw. Environment stellt ein Umfeld für Agenten zur Verfügung. Jede Umgebung erlaubt dabei ein bestimmtes Subset an Aktionen. Zur Vereinfachung sind die Environments in diesem Projekt eine Art Controller, der zugleich den Zustand über z.B. die aktuelle Position des Agenten beinhaltet. In klassischen Implementierung würde dies eine separate Engine tun, was allerdings das Projekt nur verkomplizieren würde. | Die Umgebung ist neben dem Agenten ein zentraler Bestandteil der Domäne. Ohne eine Umgebung kann ein Reinforcement Learning System, wie oben abgebildet, nicht funktionieren. Es ist deshalb wichtig, dass die klare Bedeutung festgestellt wird. Mit einer _Umgebung_ ist deswegen nicht die Entwicklungsumgebung o.ä. gemeint, sondern die Stellung dieser Komponente im Reinforcement Learning. |
-| Agent                | Ein Agent ist ein Akteur innerhalb einer Umgebung. Der Agent kann verschiedene Aktionen ausführem. die die Umgebung auf eine bestimmte Beweise beinflussen und ihren Zustand ändern.                                                                                                                                                                                                                                                | Für den Agenten gilt dasselbe wie für die Umgebung. Der Agent ist der zentrale Akteur und besitzt ebenfalls eine zentrale Bedeutung.                                                                                                                                                                                                                                                             |
-| Policy               | Eine Policy ist prinzipiell nur ein Hinweisgeber, der einem Agenten sagt, welche Aktion in welchem Zustand wie sinnvoll ist. Anschaulich bestimmt die Policy die Aktion _A_, wie oben im Bild dargestellt.                                                                                                                                                                                                                          | Mit einer Policy wird häufig ein Regelwerk oder ähnliches gemeint, was nicht der Bedeutung eines Hinweisgebers bzw. Kommandeurs entspricht, wie in diesem Fall.                                                                                                                                                                                                                                  |
-| Algorithmus          | Ein Algorithmus modifiziert eine Policy, damit diese bessere Ergebnisse erzielt. Der Algorithmus macht einen Agenten somit lernfähig.                                                                                                                                                                                                                                                                                               | Der Begriff _Algorithmus_ ist sehr vielseitig besetzt. In diesem konkreten Fall geht es ausschließlich um den Fakt, dass ein Algorithmus einen Handlungsvorschrift darstellt, die den Agenten mit voranschreitender Zeit **besser** macht, in dem was er tut.                                                                                                                |
+| Agent                | Ein Agent ist ein Akteur innerhalb einer Umgebung. Der Agent kann verschiedene Aktionen ausführem. die die Umgebung auf eine bestimmte Beweise beinflussen und ihren Zustand ändern.                                                                                                                                                                                                                                                | Für den Agenten gilt dasselbe wie für die Umgebung. Der Agent ist der zentrale Akteur und besitzt ebenfalls eine zentrale Bedeutung. Der Agent ist zudem ein sehr wichtiger Grundbegriff des Reinforcement Learnings.                                                                                                                                                                              |
+| Policy               | Eine Policy ist prinzipiell nur ein Hinweisgeber, der einem Agenten sagt, welche Aktion in welchem Zustand wie sinnvoll ist. Anschaulich bestimmt die Policy die Aktion _A_, wie oben im Bild dargestellt.                                                                                                                                                                                                                          | Mit einer Policy wird häufig ein Regelwerk oder ähnliches gemeint, was nicht der Bedeutung eines Hinweisgebers bzw. Kommandeurs entspricht, wie in diesem Fall.                                                                                                                                                                                                                                    |
+| Algorithmus          | Ein Algorithmus modifiziert eine Policy, damit diese bessere Ergebnisse erzielt. Der Algorithmus macht einen Agenten somit lernfähig.                                                                                                                                                                                                                                                                                               | Der Begriff _Algorithmus_ ist sehr vielseitig besetzt. In diesem konkreten Fall geht es ausschließlich um den Fakt, dass ein Algorithmus einen Handlungsvorschrift darstellt, die den Agenten mit voranschreitender Zeit **besser** macht, in dem was er tut.                                                                                                                                      |
 
 ### ​Entities
 
 _[UML, Beschreibung und Begründung des Einsatzes einer Entity; falls keine Entity vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]_
 
 Innerhalb dieses Projektes gibt es leider keine Entities im klassischen Sinne, die einen typischen Lifecycle aufweisen.
-Die einzigen Objekte die eine wirkliche "Identität" besitzen und auch über diese Abgerufen bzw. abgespeichert werden
+Die einzigen Objekte, die eine wirkliche "Identität" besitzen und auch über diese Abgerufen bzw. abgespeichert werden
 können, sind die Descriptoren, wie am Beispiel der Klasse `AgentDescriptor` dargestellt. Alle Descriptoren beinhalten
 Metadaten über einen anderen Typ. In diesem Fall beschreibt ein `AgentDescriptor`, dass ein bestimmter Agent mit dem
 Namen `name` existiert und dieser z.B. `actionSpace` Aktionen zur Verfügung hat. Dadurch muss keine konreket Instanz
 eines Agenten vorliegen, um seine Eigenschaften zu beschreiben. Alle Descriptoren sind über einen Namen eindeutig
 identifizierbar und können über diesen durch die entsprechende Repository abgerufen werden. Da die Descriptoren über die
-Laufzeit des Programms nicht gelöscht werden können, exisitieren diese quasi "ewig".
+Laufzeit des Programms nicht gelöscht werden können, existieren diese quasi "ewig".
+Wichtig, besonders bei den Descriptoren, ist, dass diese **eindeutig** einem Agenten zugeordnet werden können,
+da sie als Grundlagen zur Erstellung des konkreten Typs benutzt werden, den sie beschreiben.
 
 ![Agent Descriptor Entity](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/jatsqi/ASE-Reinforcement-Learning/master/uml/entityAgentDescriptor.puml)
 
@@ -852,7 +874,7 @@ Commit-ID: 28d6e5b4b81c28e6eb989d5d95b44936ac9e6813
 
 Dieser Code Smell ist während der Einführung der Klasse `ActionValueStore` aufgefallen. An zwei Stellen im Code wurde
 für einen gegebenen Zustand die Aktion mit dem maximalen Value benötigt. Diese Funktionalität war davor separat an zwei
-Stellen zu finden (Klasse `QLearning` + `EpislonGreedyPolicy`). Behoben durch das verschieden des Codes in eine
+Stellen zu finden (Klasse `QLearning` + `EpislonGreedyPolicy`). Behoben wurde der Code-Smell durch das Verschieben des Codes in eine
 gemeinsame Methode in der Klasse `ActionValueStore`.
 
 Vorher, an beiden Stellen:
@@ -986,9 +1008,9 @@ private int[][] parseGridWorldFile(Path fromPath) throws IOException {
 
 _[2 unterschiedliche Refactorings aus der Vorlesung anwenden, begründen, sowie UML vorher/nachher liefern; jeweils auf die Commits verweisen]_
 
-| **Refactoring** | **Begründung**| **Commit** |
+| **Refactoring** | **Begründung**                                                                                                                                                                        | **Commit** |
 |-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-| Rename Method   | Methodename deutete darauf hin, dass<br/> ausschließlich das Training mit diesem Observer<br/>beobachtet werden kann<br/>Allerdings war dieser für alle Szenarien gedacht.            |499c5493af7518e04cb6c1e5c19ab92a38edae4f|
+| Rename Method   | Methodename deutete darauf hin, dass ausschließlich das Training mit diesem Observer beobachtet werden kann. Allerdings war dieser für alle Szenarien gedacht.                        |499c5493af7518e04cb6c1e5c19ab92a38edae4f|
 | Extract Method  | In der Klasse `RunCommand` wurde, neben einigen weiteren Änderungen, die Erstellung des Observers in eine eigene Methode ausgelagert, damit die `run()` Methode übersichtlich bleibt. |dbabe3845931cad4d9708778fd0c784a7cbe1ee8                                        |
 
 #### Refactoring 1 (Vorher):
