@@ -81,14 +81,14 @@ AgentFactory --- Environment
 AgentFactory --- ActionSource
 
 AgentServiceImpl o-- AgentRepository
-AgentService <|-- AgentServiceImpl
+AgentService <|.. AgentServiceImpl
 
 AgentRepository --- Environment
 AgentRepository --- AgentDescriptor
 AgentRepository --- ActionSource
 
 AgentDescriptorDto <.. AgentServiceFacade
-AgentServiceFacade <|-- AgentServiceFacadeImpl
+AgentServiceFacade <|.. AgentServiceFacadeImpl
 AgentServiceFacadeImpl o--right AgentService
 
 @enduml

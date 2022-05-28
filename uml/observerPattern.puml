@@ -55,7 +55,7 @@ end note
 'end note
 
 SzenarioSession o-- SzenarioProgressObserver
-SzenarioProgressObserver <|-- SzenarioExecutionObserver
+SzenarioProgressObserver <|.. SzenarioExecutionObserver
 SzenarioExecutionObserver <..ExecutionServiceImpl
 SzenarioSession <.. ExecutionServiceImpl
 

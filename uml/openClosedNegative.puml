@@ -25,6 +25,6 @@ note right of SimpleAgentFactory::createAgent
 end note
 
 SimpleAgentFactory *-- AgentConstructor
-AgentFactory <|-- SimpleAgentFactory
+AgentFactory <|.. SimpleAgentFactory
 
 @enduml

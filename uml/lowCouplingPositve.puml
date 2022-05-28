@@ -28,7 +28,7 @@ class InMemoryAgentRepository {
     +Agent createAgentInstance(AgentDescriptor descriptor, Environment environment, ActionSource source)
 }
 
-AgentRepository <|-- InMemoryAgentRepository
+AgentRepository <|.. InMemoryAgentRepository
 InMemoryAgentRepository o-- ConfigService
 InMemoryAgentRepository o-- AgentFactory
 

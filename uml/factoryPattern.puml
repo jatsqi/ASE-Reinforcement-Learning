@@ -27,7 +27,7 @@ class SimplePolicyVisualizerFactory {
 }
 
 
-PolicyVisualizerFactory         <|-- SimplePolicyVisualizerFactory
+PolicyVisualizerFactory         <|.. SimplePolicyVisualizerFactory
 SimplePolicyVisualizerFactory  .l> GridWorldVisualizer
 PolicyVisualizer                <|-- GridWorldVisualizer
 

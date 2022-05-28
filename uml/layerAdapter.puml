@@ -41,7 +41,7 @@ EnvironmentMapper o-- ActionMapper
 ActionMapper ..> ActionDto
 
 EnvironmentServiceFacadeImpl o-- EnvironmentMapper
-EnvironmentServiceFacade <|-- EnvironmentServiceFacadeImpl
+EnvironmentServiceFacade <|.. EnvironmentServiceFacadeImpl
 EnvironmentServiceFacade ..> EnvironmentDescriptorDto
 EnvironmentDescriptorDto *-- ActionDto
 

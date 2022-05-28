@@ -22,6 +22,6 @@ note left of SimpleEnvironmentFactory::parseGridWorldFile
     return grid
 end note
 
-EnvironmentFactory <|-- SimpleEnvironmentFactory
+EnvironmentFactory <|.. SimpleEnvironmentFactory
 
 @enduml

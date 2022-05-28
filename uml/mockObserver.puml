@@ -12,6 +12,6 @@ interface SzenarioExecutionObserver {
     +{abstract} void onActionStorePersisted(PersistedStoreInfo info)
 }
 
-SzenarioProgressObserver <|-- SzenarioExecutionObserver
+SzenarioProgressObserver <|.. SzenarioExecutionObserver
 
 @enduml

@@ -69,7 +69,7 @@ RLSettings <.. ConfigServiceImpl
 ConfigItem <.. ConfigRepository
 'ConfigItem <.. ConfigServiceImpl
 'ConfigItem <.. PropertiesConfigRepository
-ConfigRepository <|-- PropertiesConfigRepository
+ConfigRepository <|.. PropertiesConfigRepository
 ConfigRepository --o ConfigServiceImpl
 PropertiesConfigRepository -> ConfigServiceImpl : injected in
 ConfigServiceImpl ..> DefaultConfigItem

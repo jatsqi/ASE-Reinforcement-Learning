@@ -27,6 +27,6 @@ note left of RunCommand::run
     ...
 end note
 
-Runnable <|-- RunCommand
+Runnable <|.. RunCommand
 
 @enduml

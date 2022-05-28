@@ -33,7 +33,7 @@ class KArmedBanditEnvironment {
     -void recomputeRewards()
 }
 
-RewardSource <|-- Environment
-Environment <|-- KArmedBanditEnvironment
+RewardSource <|.. Environment
+Environment <|.. KArmedBanditEnvironment
 
 @enduml
