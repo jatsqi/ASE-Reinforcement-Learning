@@ -6,8 +6,8 @@ import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyDescriptor;
 import de.jquast.domain.policy.PolicyFactory;
 import de.jquast.domain.policy.PolicyRepository;
-import de.jquast.domain.policy.impl.EpsilonGreedyPolicy;
-import de.jquast.domain.policy.impl.GreedyPolicy;
+import de.jquast.application.policy.EpsilonGreedyPolicy;
+import de.jquast.application.policy.GreedyPolicy;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.utils.di.annotations.Inject;
 

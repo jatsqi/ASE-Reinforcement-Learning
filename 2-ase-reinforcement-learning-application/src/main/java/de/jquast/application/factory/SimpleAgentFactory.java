@@ -1,10 +1,10 @@
-package de.jquast.domain.factory;
+package de.jquast.application.factory;
 
+import de.jquast.application.agent.FlatMovingPullAgent;
+import de.jquast.application.agent.MovingAgent2D;
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;
 import de.jquast.domain.agent.AgentFactory;
-import de.jquast.domain.agent.impl.FlatMovingPullAgent;
-import de.jquast.domain.agent.impl.MovingAgent2D;
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.environment.Environment;
 import de.jquast.domain.shared.ActionSource;

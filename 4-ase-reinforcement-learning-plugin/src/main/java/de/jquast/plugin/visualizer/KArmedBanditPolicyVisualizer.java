@@ -1,8 +1,8 @@
-package de.jquast.domain.visualizer.impl;
+package de.jquast.plugin.visualizer;
 
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.environment.Environment;
-import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
+import de.jquast.application.environment.KArmedBanditEnvironment;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.shared.Action;
 import de.jquast.domain.visualizer.PolicyVisualizer;

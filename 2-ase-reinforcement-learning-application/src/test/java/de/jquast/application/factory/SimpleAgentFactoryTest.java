@@ -1,4 +1,4 @@
-package de.jquast.domain.factory;
+package de.jquast.application.factory;
 
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.agent.AgentDescriptor;

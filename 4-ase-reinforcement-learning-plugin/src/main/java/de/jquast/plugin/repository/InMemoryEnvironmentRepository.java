@@ -4,8 +4,8 @@ import de.jquast.domain.environment.Environment;
 import de.jquast.domain.environment.EnvironmentDescriptor;
 import de.jquast.domain.environment.EnvironmentFactory;
 import de.jquast.domain.environment.EnvironmentRepository;
-import de.jquast.domain.environment.impl.GridWorldEnvironment;
-import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
+import de.jquast.application.environment.GridWorldEnvironment;
+import de.jquast.application.environment.KArmedBanditEnvironment;
 import de.jquast.domain.exception.EnvironmentCreationException;
 import de.jquast.utils.di.annotations.Inject;
 

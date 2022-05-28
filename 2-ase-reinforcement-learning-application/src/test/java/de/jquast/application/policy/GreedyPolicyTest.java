@@ -1,8 +1,6 @@
-package de.jquast.domain.policy;
+package de.jquast.application.policy;
 
 import de.jquast.domain.algorithm.RLSettings;
-import de.jquast.domain.policy.impl.EpsilonGreedyPolicy;
-import de.jquast.domain.policy.impl.GreedyPolicy;
 import de.jquast.domain.shared.ActionValueStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

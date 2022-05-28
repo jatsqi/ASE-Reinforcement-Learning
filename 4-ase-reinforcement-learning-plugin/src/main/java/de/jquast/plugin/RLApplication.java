@@ -2,8 +2,12 @@ package de.jquast.plugin;
 
 import de.jquast.adapters.facade.*;
 import de.jquast.adapters.facade.impl.*;
+import de.jquast.application.factory.SimpleAgentFactory;
+import de.jquast.application.factory.SimpleEnvironmentFactory;
+import de.jquast.application.factory.SimplePolicyFactory;
 import de.jquast.application.service.*;
 import de.jquast.application.service.impl.*;
+import de.jquast.plugin.factory.SimplePolicyVisualizerFactory;
 import de.jquast.domain.agent.AgentFactory;
 import de.jquast.domain.agent.AgentRepository;
 import de.jquast.domain.algorithm.AlgorithmFactory;

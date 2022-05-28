@@ -1,6 +1,5 @@
-package de.jquast.domain.environment;
+package de.jquast.application.environment;
 
-import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
 import de.jquast.domain.shared.Action;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

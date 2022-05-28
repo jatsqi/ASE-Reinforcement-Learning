@@ -1,4 +1,4 @@
-package de.jquast.domain.policy.impl;
+package de.jquast.application.policy;
 
 import de.jquast.domain.algorithm.RLSettings;
 import de.jquast.domain.policy.PolicyDescriptor;

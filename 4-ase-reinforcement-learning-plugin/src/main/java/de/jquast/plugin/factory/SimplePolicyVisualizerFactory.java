@@ -1,14 +1,14 @@
-package de.jquast.domain.factory;
+package de.jquast.plugin.factory;
 
 import de.jquast.domain.agent.Agent;
 import de.jquast.domain.environment.Environment;
-import de.jquast.domain.environment.impl.GridWorldEnvironment;
-import de.jquast.domain.environment.impl.KArmedBanditEnvironment;
+import de.jquast.application.environment.GridWorldEnvironment;
+import de.jquast.application.environment.KArmedBanditEnvironment;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.visualizer.PolicyVisualizer;
 import de.jquast.domain.visualizer.PolicyVisualizerFactory;
-import de.jquast.domain.visualizer.impl.GridWorldVisualizer;
-import de.jquast.domain.visualizer.impl.KArmedBanditPolicyVisualizer;
+import de.jquast.plugin.visualizer.GridWorldVisualizer;
+import de.jquast.plugin.visualizer.KArmedBanditPolicyVisualizer;
 
 import java.util.HashMap;
 import java.util.Map;
