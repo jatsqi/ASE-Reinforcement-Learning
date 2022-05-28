@@ -37,10 +37,21 @@ Abgabedatum: 28.05.2022
 
 ### Übersicht über die Applikation
 
-Das Projekt "ASE Reinforcement Learning" soll ein einfaches CLI zur Verfügung stellen, mit dem jeder typische Beispiele
-(aktuell nur eins) des Reinforcement Learnings ausprobieren und über einige Parameter anpassen kann. Das Ergebnis des
+Das Projekt "ASE Reinforcement Learning" soll ein einfaches CLI zur Verfügung stellen, mit dem Jeder typische Beispiele
+(aktuell nur zwei) des Reinforcement Learnings ausprobieren und über einige Parameter anpassen kann. Das Ergebnis des
 Trainings wird als CSV zur Verfügung gestellt und kann anschließend für andere Projekte genutzt werden. Auch können,
 basierend auf bestehenden Beispielen, eigene Beispiele erstellt werden.
+
+Über verschiedene Kommandos, die im folgenden näher gezeigt werden, kann der Nutzer verschiedene Aktionen ausführen.
+Im Moment beschränkt sich dies auf folgende Kernpunkte:
+
+* Anzeigen von Informationen über die Applikation
+  * Welche Agenten stehen zur Verfügung?
+  * Welche Environments stehen zur Verfügung?
+  * Welche Algorithmen stehen zur Verfügung?
+  * Welche Einstellungen in der Config gibt es?
+* Starten eines Trainings
+* Starten einer Evaluation
 
 ### Wie startet man die Applikation?
 
@@ -48,7 +59,7 @@ Requirements:
 
 * Java 16+
 * Maven
-* Im Verzeichnis der JAR den Ordner `stored_values` erstellen
+* Im Verzeichnis der JAR den Ordner `stored_values` mit ausreichend Berechtigungen erstellen
 
 #### Projekt herunterladen
 
@@ -152,11 +163,37 @@ java -jar <jar> run --agent 2d-moving-agent --environment grid-world --steps 100
 
 _[allgemeine Beschreibung der Clean Architecture in eigenen Worten]_
 
-Als Clean-Architecture wird eine extrem vielseitige und anpassungsfähige Architektur bezeichnet, deren Aufbau häufig mit
-einer Zwiebel verglichen wird, da sich die verschiedenen Schichten ummanteln. Primäres Ziel ist es, den technologisch
-unabhängigen Kern vom Rest der Applikation zu trennen, damit Abhängigkeiten nach außen schnell ausgetauscht werden bzw.
-verändert werden können und die eigentliche Business-Logik bzw. Modellierung der Domäne keine Rücksicht auf konkrete
-technische Details nehmen muss.
+Als Clean-Architecture wird eine extrem vielseitige und anpassungsfähige Architektur bezeichnet, nach der sich viele
+Anwendungen sauber und vorallem **wartbar**, bzw. **erweiterbar** modellieren lassen.
+Größere Projekte bestehen häufig aus vielen unterschiedlichen Komponenten wie z.B. Datenbankanbindung, Models, Factories,
+UI bzw. einer Anzeigekomponente o.ä., die sich mitunter unabhängig voneinander entwickeln lassen.
+Besonders in modernen Applikation besteht das Problem, dass Entwickler mit Tools wie z.B. Maven dazu verleitet
+werden, sämtliche Komponenten miteinander zu "verweben" oder externe Frameworks zu benutzen, von dem die
+entwickelten Komponenten abhängig werden.
+Aus bequemlichkeit gelangt so häufig Applikationslogik z.B. in das UI, welches sich eigentlich nur um die Anzeige
+kümmern sollte.
+Soll spätere die gundlegende Technologie wie z.B. das Framework oder Bestandteile des UI geändert werden, so können selbst Komponenten,
+die dieses eigentlich nicht benötigen, davon betroffen sein.
+
+Um diese Abhängigkeit zwischen verschiedenen Komponenten oder auf bestimmte Technologien zu brechen,
+kann eine Applikation "clean" in verschiedene Ebenen eingeteilt werden, die häufig die folgenden Aufgabenbereiche
+getrennt voneinander wahrnehmen:
+
+1) Eine Ebene, die die Domäne darstellt und technologisch unabhängige, langlebige Komponenten bereitstellt, die 
+   unabhängig von dem genutzten UI o.ä. funktionieren.
+   Auch sollen hier die verschiedenen Invarianten sichergestellt werden, sodass bestimmte Objekte
+   keinen inkonsistenen Zustand erreichen.
+2) Eine Ebene, die die bestimmte Business-Logik und die Use-Cases beinhaltet => _Was kann die Applikation nach außen hin?_
+3) Eine Ebene, die zwischen den Use-Cases und z.B. dem UI "vermittelt". Objekte der Domäne, die sich mitunter ändern können,
+   sollen möglichst keine Änderungen im UI oder ähnliches nachsichziehen.
+4) Eine Ebene, die zur Darstellung gedacht ist. Sie zeigt prinzipiell nur die Ergebnisse an, besitzt ein eigenes Model,
+   welches speziell für das UI vorgesehen ist, sodass die Domäne frei von diesen Details bleibt.
+   Diese Ebene wird häufig, im Gegensatz zum "Kern" als sehr schnelllebig bezeichnet und sollte
+   **ohne Probleme** austauschbar sein, ohne dass der Rest der Applikation davon beiinflusst wird.
+
+Dieser Aufbau wird häufig mit einer Zwiebel verglichen, da sich die verschiedenen Schichten "ummanteln".
+Primäres Ziel ist es, den technologisch unabhängigen Kern sowie die Business-Logik von den konkreten Details der Applikation 
+wie z.B dem UI zu trennen, damit Abhängigkeiten außen schnell ausgetauscht werden bzw. verändert werden können.
 
 ### Analyse der Dependency Rule
 
@@ -654,12 +691,12 @@ um das Mapping der Interfaces auf konkrete Klassen zu testen.
 Triviale Pfade wie z.B. einzelne Get Methoden oder Value-Objekte, die ausschließlich Daten beinhalten wurden nicht getestet,
 da hier das Aufwand/Nutzen verhätnis nicht wirklich gegeben ist.
 
-| Modul/Layer | Coverage | Begründung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-|-------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Domain      | ca. 60%  | Die Tests decken alle wichtigen Kernfunktionalitäten ab, d.h. die Implementierten Environments, Algorithmen sowie verschiedenen Policy-Varianten. Kurz: Alles, was Logik beinhaltet und Funktionalität nach außen bereitstellt. Teilweise nicht durch Tests abgedeckt sind die Factories, die die Domain-Objekte erstellen.                                                                                                                                                                                                                                                                                              |
-| Applikation | ca. 84%  | Die einzigen Services im Applikationslayer, die tatsächlich wichtige Logik beinhalten, sind der `ExecutionService` und der `ConfigService`  bzw. deren Implementierung. Beide Services werden entsprechend soweit wie möglich mit gemockten Dependencies isoliert getestet. Die übrigen Services wie z.B. `AgentService` oder `EnvironmentService` reichen alle Calls momentan 1 zu 1 an die Repository weiter. Sie existieren aus dem Grund, dass wenn die Services später erweitert werden sollen, nicht erst in anderen Klassen auf einen Service gewechselt werden muss. Beide Services sind nahezu 100% getestet. |
-| Adapters    | ca. 60%  | In der Adapter-Schicht werden momentan nur die wichtigsten Klassen getestet, welche im Moment die Mapper sind. Diese mappen ein bestimmtes Domain-Objekt auf den entsprechenden DTO. Zusätzlich wird für die `ExecutionServiceFacade` getestet, ob die `startTraining` bzw. `startEvaluation` Methoden die richtige Methode im gemockten Service aufrufen. Die übrigenden Fassaden sind momentan ungetestet, da diese ausschließlich den entsprechenden Mapper aufrufen und keine testenswerte Logik beinhalten.                                                                                                         |
-| Plugin      | ca. 15%  | Das aktuell am wenigsten getestete Modul ist das Plugin-Modul, welches das CLI beinhaltet. Auch hier wird im Moment nur für den `RunCommand` getestet, ob je nach Parameter die richtige Methode in der `ExecutionServiceFacade` aufgerufen wird. Dies ist sehr wichtig, da diese beiden Methode den Eintrittspunkt für die gesamte Funktionalität darstellen. Alle übrigen Commands printen die DTOs eins zu eins in die Konsole. Die genaue Ausgabe in der Konsole zu testen erschien nicht sinnvoll bzw. das Aufwand-Nutzen Verhätnis ist hier nicht wirklich gegeben.                                                |
+| Modul/Layer | Coverage | Begründung                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+|-------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Domain      | ca. 55%  | Die Tests decken alle wichtigen Kernfunktionalitäten ab, d.h. die Implementierten Environments, Algorithmen sowie verschiedenen Policy-Varianten. Kurz: Alles, was Logik beinhaltet und Funktionalität nach außen bereitstellt. Teilweise nicht durch Tests abgedeckt sind die Factories, die die Domain-Objekte erstellen.                                                                                                                                                                                                                                                                                             |
+| Applikation | ca. 77%  | Die einzigen Services im Applikations-Layer, die tatsächlich wichtige Logik beinhalten, sind der `ExecutionService` und der `ConfigService`  bzw. deren Implementierung. Beide Services werden entsprechend soweit wie möglich mit gemockten Dependencies isoliert getestet. Die übrigen Services wie z.B. `AgentService` oder `EnvironmentService` reichen alle Calls momentan 1 zu 1 an die Repository weiter. Sie existieren aus dem Grund, dass wenn die Services später erweitert werden sollen, nicht erst in anderen Klassen auf einen Service gewechselt werden muss. Beide Services sind nahezu 100% getestet. |
+| Adapters    | ca. 60%  | In der Adapter-Schicht werden momentan nur die wichtigsten Klassen getestet, welche im Moment die Mapper sind. Diese mappen ein bestimmtes Domain-Objekt auf den entsprechenden DTO. Zusätzlich wird für die `ExecutionServiceFacade` getestet, ob die `startTraining` bzw. `startEvaluation` Methoden die richtige Methode im gemockten Service aufrufen. Die übrigenden Fassaden sind momentan ungetestet, da diese ausschließlich den entsprechenden Mapper aufrufen und keine testenswerte Logik beinhalten.                                                                                                        |
+| Plugin      | ca. 15%  | Das aktuell am wenigsten getestete Modul ist das Plugin-Modul, welches das CLI beinhaltet. Auch hier wird im Moment nur für den `RunCommand` getestet, ob je nach Parameter die richtige Methode in der `ExecutionServiceFacade` aufgerufen wird. Dies ist sehr wichtig, da diese beiden Methode den Eintrittspunkt für die gesamte Funktionalität darstellen. Alle übrigen Commands printen die DTOs eins zu eins in die Konsole. Die genaue Ausgabe in der Konsole zu testen erschien nicht sinnvoll bzw. das Aufwand-Nutzen Verhätnis ist hier nicht wirklich gegeben.                                               |
 
 ### Fakes und Mocks
 
@@ -805,9 +842,9 @@ Es ist somit nicht sinnvoll, in z.B. Repositores ein Aggregate zu verwenden bzw.
 einheitlich der Zugriff auf mehrere Entities geschieht, da alle Entities im Projekt völlig unabhöngig voneinander existieren und
 verwendet werden können.
 
-# ​Kapitel 7: Refactoring
+# Kapitel 7: Refactoring
 
-### ​Code Smells
+### Code Smells
 
 #### Code-Smell 1: Duplicated Code
 
