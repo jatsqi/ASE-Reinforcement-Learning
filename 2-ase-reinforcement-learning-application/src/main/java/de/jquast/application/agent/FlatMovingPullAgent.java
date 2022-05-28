@@ -15,7 +15,7 @@ public class FlatMovingPullAgent extends Agent {
     public static final AgentDescriptor PULL_AGENT_DESCRIPTOR = new AgentDescriptor(
             "pull",
             "Agent, der an Hebeln ziehen kann",
-            new Action[]{Action.MOVE_X_UP, Action.MOVE_X_UP, Action.PULL, Action.DO_NOTHING},
+            new Action[]{Action.MOVE_X_DOWN, Action.MOVE_X_UP, Action.PULL, Action.DO_NOTHING},
             4);
 
     private static Map<Integer, Action> ACTION_INT_TO_ACTION_MAPPING;

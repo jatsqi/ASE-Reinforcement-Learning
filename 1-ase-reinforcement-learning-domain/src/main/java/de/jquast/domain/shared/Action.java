@@ -31,7 +31,7 @@ public enum Action {
         return description;
     }
 
-    public Action[] computeMissingRequirements(Action[] capabilities, Action[] requirements) {
+    public static Action[] computeMissingRequirements(Action[] capabilities, Action[] requirements) {
         Set<Action> capSet = new HashSet<>(Arrays.asList(capabilities));
         Set<Action> reqSet = new HashSet<>(Arrays.asList(requirements));
 

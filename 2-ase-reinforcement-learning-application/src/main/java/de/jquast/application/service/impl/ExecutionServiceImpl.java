@@ -21,6 +21,7 @@ import de.jquast.domain.exception.PersistStoreException;
 import de.jquast.domain.policy.Policy;
 import de.jquast.domain.policy.PolicyDescriptor;
 import de.jquast.domain.policy.PolicyRepository;
+import de.jquast.domain.shared.Action;
 import de.jquast.domain.shared.ActionValueRepository;
 import de.jquast.domain.shared.ActionValueStore;
 import de.jquast.domain.shared.PersistedStoreInfo;
@@ -186,6 +187,9 @@ public class ExecutionServiceImpl implements ExecutionService {
         PolicyDescriptor policyDescriptor = policyRepository
                 .getPolicyInfo(policyName)
                 .orElseThrow(() -> new SzenarioCreationException("Die Policy konnte nicht gefunden werden."));
+
+        if (Action.computeMissingRequirements(agentDescriptor.availableCapabilities(), envDescriptor.requiredCapabilities()).length > 0)
+            throw new SzenarioCreationException("Dieser Agent und das Environment sind nicht miteinander kompatibel!");
 
         try {
             // Settings abrufen
